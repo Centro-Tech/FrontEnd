@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,100..900;1,100..900&family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Average&family=Average+Sans&family=Petrona:ital,wght@0,100..900;1,100..900&family=Press+Start+2P&display=swap');
+
+
+.container-cadastro {
+    margin-top: 3%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.box-cadastro {
+  width: 949px;
+  height: 650px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; 
+  border-radius: 20px;
+    background-color: #D7BFD3;
+}
+
+.box-container-titulo {
+  font-size: 40px;
+  font-weight: bold;
+  font-family: 'Petrona', serif;
+}
+
+.form-group {
+  font-family: 'Average+Sans', serif;
+  font-style: normal;
+  font-size: 21px;    
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 310px;
+  height: 21px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.form-group select {
+    margin-bottom: 20px;
+  color: #000;
+  font-family: 'Petrona', serif;
+    font-size: 16px;
+    font-weight: 500;
+  width: 331px;
+  height: 43px;
+  padding: 10px;
+  border: 1px;
+  border-radius: 5px;
+}
+
+.box-cadastro button {
+    margin-top: 20px;
+  width: 331px;
+  height: 45px;
+  background-color: #864176;
+  color: #fff;
+  font-family: 'Petrona', serif;
+    font-size: 16px;
+    font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.box-cadastro button:hover {
+  background-color: #6a335e;
+  width: 340;
+  color: #ffe6fa;
+  transition: background 0.2s, color 0.2s;
+}

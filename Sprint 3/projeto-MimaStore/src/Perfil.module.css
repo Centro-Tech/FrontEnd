@@ -1,0 +1,20 @@
+.perfil {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.fotoPerfil {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+
+.iconExpandir {
+    margin-left: 10px;
+    width: 29px;
+    height: 29px;
+    cursor: pointer;
+}
