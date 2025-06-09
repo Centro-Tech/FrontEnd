@@ -3,6 +3,7 @@ import styles from './Perfil.module.css';
 import iconExpandir from './assets/icons8-seta-para-expandir-50.png'; 
 
 
+
 export function Perfil({ nome, fotoId}) {
     /*
     const [menuAberto, setMenuAberto] = useState(false);
