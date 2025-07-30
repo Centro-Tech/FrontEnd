@@ -1,5 +1,5 @@
-import styles from './Navbar.module.css';
-import Logo from './assets/Group 2.png'
+import styles from './Componentes - CSS/Navbar.module.css';
+import Logo from './assets/Group 2.png';
 import iconCardapio from './assets/icons8-cardápio.svg'
 import fotoId from './assets/fotoIconExemplo.jpg';
 import { Perfil } from './perfil.jsx';

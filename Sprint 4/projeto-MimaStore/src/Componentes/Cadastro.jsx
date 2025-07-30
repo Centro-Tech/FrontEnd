@@ -1,4 +1,4 @@
-import styles from './Cadastro.module.css';
+import styles from './Componentes - CSS/Cadastro.module.css';
 import React, { useState } from 'react';
 
 

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import API from "./Provider/API";
+import API from "../Provider/API";
 
 function HomeMettods() {
 

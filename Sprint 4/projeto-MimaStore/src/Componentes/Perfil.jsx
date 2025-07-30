@@ -1,4 +1,4 @@
-import styles from './Perfil.module.css';
+import styles from './Componentes - CSS/Perfil.module.css';
 /*import { useState } from 'react';*/
 import iconExpandir from './assets/icons8-seta-para-expandir-50.png'; 
 
