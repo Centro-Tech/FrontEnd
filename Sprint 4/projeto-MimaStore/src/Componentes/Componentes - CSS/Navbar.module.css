@@ -11,28 +11,53 @@ body {
     padding: 0;
     margin: 0;
     background-color: #D7BFD3;
-    height: 100px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .logo {
-    width: 200px;
-    margin: 50px;
-    margin-bottom: 55px;
+    width: 150px;
+    margin: 0;
 }
 
 .navbar {
     list-style: none;
     display: flex;
     align-items: center;
-    height: 42px;
-    justify-content: center;
+    height: 70px;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0;
+    padding: 0 20px;
 }
 
 .iconCardapio {
-    margin-right: 887px;
-    width: 40px;
-    height: 40px;
-    margin-left: -7px;
-    margin-bottom: 10px;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+}
+
+.item-left {
+    display: flex;
+    align-items: center;
+}
+
+.right-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
 }

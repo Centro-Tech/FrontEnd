@@ -6,25 +6,23 @@ import { Perfil } from './perfil.jsx';
 
 export function Navbar() {
     return (
-    
         <div className={styles['header']}>
             <div className={styles["container"]}>
-                <img src="./assets/icons8-cardápio.svg" alt="" />
                 <ul className={styles["navbar"]}>
-                    
-                   
-                    <li className={styles["item"]}>
+                    <li className={styles["item-left"]}>
                         <img src={iconCardapio} alt="" className={styles['iconCardapio']}/>
                     </li>
-                    <li className={styles["item"]}>
-                        <Perfil nome="Karin Miralha" fotoId={fotoId} />
-                    </li>
-                    <li className={styles["logo"]}>
-                        <img src={Logo} alt="Logo" className={styles['logo']}/>
-                    </li>
+                    
+                    <div className={styles["right-section"]}>
+                        <li className={styles["item"]}>
+                            <Perfil nome="Karin Miralha" fotoId={fotoId} />
+                        </li>
+                        <li className={styles["logo"]}>
+                            <img src={Logo} alt="Logo" className={styles['logo']}/>
+                        </li>
+                    </div>
                 </ul>
             </div>
         </div>
-
     )
 }

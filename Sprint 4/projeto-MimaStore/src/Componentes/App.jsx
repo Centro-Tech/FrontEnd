@@ -1,10 +1,10 @@
 import './Componentes - CSS/App.css';
 import { Navbar } from './Navbar.jsx'
-import { TelaBase } from './TelaBase.jsx';
+import { MenuInicial } from './MenuInicial.jsx';
 
 
 export function App() {
   return(
-    <TelaBase/>  
+    <MenuInicial/>  
     )
 }

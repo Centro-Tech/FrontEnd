@@ -1,0 +1,27 @@
+.botaoEscuro {
+    background-color: #864176;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 25px 50px;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 380px;
+    height: 70px;
+    margin: 15px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.botaoEscuro:hover {
+    background-color: #724165;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.botaoEscuro:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

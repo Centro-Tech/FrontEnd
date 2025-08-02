@@ -1,0 +1,27 @@
+.botaoClaro {
+    background-color: #D7BFD3;
+    color: black;
+    border: none;
+    border-radius: 4px;
+    padding: 20px 40px;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 380px;
+    height: 60px;
+    margin: 12px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.botaoClaro:hover {
+    background-color: #cdb4c8;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.botaoClaro:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
