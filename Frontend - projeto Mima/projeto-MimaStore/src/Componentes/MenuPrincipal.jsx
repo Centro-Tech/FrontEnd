@@ -2,7 +2,11 @@ import { BotaoEscuro } from './BotaoEscuro';
 import { BotaoClaro } from './BotaoClaro';
 import styles from './Componentes - CSS/MenuPrincipal.module.css';
 
-export function MenuPrincipal() {
+export function MenuPrincipal({ aoNavegar }) {
+    const handleRealizarVenda = () => {
+        aoNavegar('realizar-venda');
+    };
+
     return (
         <div className={styles.menuPrincipal}>
             <div className={styles.container}>
@@ -19,7 +23,7 @@ export function MenuPrincipal() {
                     
                     <div className={styles.coluna}>
                         <BotaoEscuro texto="Vendas" />
-                        <BotaoClaro texto="Realizar Venda" />
+                        <BotaoClaro texto="Realizar Venda" onClick={handleRealizarVenda} />
                         <BotaoClaro texto="Histórico de vendas" />
                         <BotaoClaro texto="Dashboard" />
                     </div>
