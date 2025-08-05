@@ -3,10 +3,14 @@ import { Navbar } from "./Navbar";
 import { FaixaSair } from "./FaixaSair";
 
 export function MenuInicial({ aoNavegar }) {
+    const handleSairSistema = () => {
+        aoNavegar('splash');
+    };
+
     return (
         <div>
             <Navbar />
-            <FaixaSair />
+            <FaixaSair aoClicar={handleSairSistema} />
             <MenuPrincipal aoNavegar={aoNavegar} />
         </div>
     );
