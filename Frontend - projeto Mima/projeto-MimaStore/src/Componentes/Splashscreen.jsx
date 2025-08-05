@@ -1,0 +1,31 @@
+import React from "react";
+import styles from "./Componentes - CSS/splashscreen.module.css";
+
+export default function Splashscreen() {
+  return (
+    <div className={styles.splashscreenBg}>
+      <div className={styles.splashscreenCard}>
+        <div className={styles.splashscreenLeft}>
+          <h1 className={styles.splashscreenTitle}>
+            MIMA<br />STORE
+          </h1>
+          <p className={styles.splashscreenDesc}>
+            Gerencie seu estoque e acompanhe suas vendas<br />
+            de forma simples, rápida e eficiente
+          </p>
+          <div className={styles.splashscreenButtons}>
+            <button className={styles.splashscreenBtn}>PRIMEIRO ACESSO</button>
+            <button className={styles.splashscreenBtn}>FAZER LOGIN</button>
+          </div>
+        </div>
+        <div className={styles.splashscreenRight}>
+          <img
+            src="src/Componentes/assets/atendimento.png"
+            alt="Ilustração de atendimento"
+            className={styles.splashscreenImg}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}

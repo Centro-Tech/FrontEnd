@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Average+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Average+Sans&family=Inria+Serif:wght@400;700&display=swap');
+
+.splashscreenBg {
+  background: #d1bbd6;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.splashscreenCard {
+  background: #fff;
+  border-radius: 18px;
+  padding: 40px 32px;
+  display: flex;
+  gap: 48px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+  max-width: 840px;
+  width: 100%;
+  min-height: 350px;
+}
+.splashscreenLeft {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+font-family: 'Average Sans', sans-serif;
+}
+.splashscreenTitle {
+  font-size: 8rem;
+  font-weight: bold;
+  margin: 0 0 16px 0;
+  font-family: 'Inria Serif', serif;
+  line-height: 1;
+}
+.splashscreenDesc {
+  font-size: 1.1rem;
+  margin-bottom: 32px;
+}
+.splashscreenButtons {
+  display: flex;
+  gap: 24px;
+}
+.splashscreenBtn {
+  background: #8d5c87;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 28px;
+  font-size: 1rem;
+  font-family: serif;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.splashscreenBtn:hover {
+  background: #6e466a;
+}
+.splashscreenRight {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.splashscreenImg {
+  width: 390px;
+  max-width: 100%;
+  border-radius: 10px;
+}
