@@ -3,6 +3,7 @@ import axios from "axios";
 import { Tabela } from "../VisualizarEstoque/Tabela";
 import EstoquePopUp from "../VisualizarEstoque/EstoquePopUp";
 import { Navbar } from "../../Componentes/Navbar";
+import { FaixaVoltar } from "../FaixaVoltar";
 
 import {
   Button,
@@ -71,7 +72,7 @@ const MOCK_ITENS = [
   },
 ];
 
-export default function HistoricoVendas() {
+export default function HistoricoVendas({aoVoltar}) {
   const [clientes, setClientes] = useState([]);
   const [buscaClientes, setBuscaClientes] = useState("");
   const [clientesFiltrados, setClientesFiltrados] = useState([]);
@@ -413,6 +414,7 @@ export default function HistoricoVendas() {
   return (
      <>
      <Navbar />
+       <FaixaVoltar aoClicar={aoVoltar} />
     <div className={styles["page-container"]}>
       <h1 className={styles["page-title"]}>Histórico de Vendas</h1>
 

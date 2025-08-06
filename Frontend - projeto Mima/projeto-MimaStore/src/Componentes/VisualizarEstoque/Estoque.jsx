@@ -3,7 +3,7 @@ import axios from "axios";
 import { Tabela } from "./Tabela";
 import EstoquePopUp from "./EstoquePopUp";
 import { Navbar } from "../../Componentes/Navbar";
-
+import { FaixaVoltar } from "../FaixaVoltar";
 import {
   Button,
   TextField,
@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import styles from "../../Componentes/Componentes - CSS/estiloTabelas.module.css";
 
-export default function Estoque() {
+export default function Estoque({aoVoltar}) {
   const [itens, setItens] = useState([]);
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [itensPorPagina] = useState(7);
@@ -148,6 +148,7 @@ export default function Estoque() {
   return (
      <>
          <Navbar />
+          <FaixaVoltar aoClicar={aoVoltar} />
     <Box className={`${styles["container"]} ${styles["page-container"]}`} sx={{ padding: "0 0 32px 0" }}>
       <div className={styles["estoque-title"]}>Estoque</div>
       <div className={styles["estoque-content-center"]}>
