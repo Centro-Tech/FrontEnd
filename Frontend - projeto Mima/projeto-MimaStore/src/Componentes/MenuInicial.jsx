@@ -1,17 +1,20 @@
+import { useNavigate } from 'react-router-dom';
 import { MenuPrincipal } from "./MenuPrincipal";
 import { Navbar } from "./Navbar";
 import { FaixaSair } from "./FaixaSair";
 
-export function MenuInicial({ aoNavegar }) {
+export function MenuInicial() {
+    const navigate = useNavigate();
+    
     const handleSairSistema = () => {
-        aoNavegar('splash');
+        navigate('/splash');
     };
 
     return (
         <div>
             <Navbar />
             <FaixaSair aoClicar={handleSairSistema} />
-            <MenuPrincipal aoNavegar={aoNavegar} />
+            <MenuPrincipal />
         </div>
     );
 }

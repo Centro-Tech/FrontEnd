@@ -1,7 +1,20 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./Componentes - CSS/splashscreen.module.css";
 
 export default function Splashscreen() {
+  const navigate = useNavigate();
+
+  const handlePrimeiroAcesso = () => {
+    // Aqui você pode adicionar lógica para primeiro acesso
+    navigate('/menu-inicial');
+  };
+
+  const handleFazerLogin = () => {
+    // Aqui você pode adicionar lógica para login
+    navigate('/menu-inicial');
+  };
+
   return (
     <div className={styles.splashscreenBg}>
       <div className={styles.splashscreenCard}>
@@ -14,8 +27,12 @@ export default function Splashscreen() {
             de forma simples, rápida e eficiente
           </p>
           <div className={styles.splashscreenButtons}>
-            <button className={styles.splashscreenBtn}>PRIMEIRO ACESSO</button>
-            <button className={styles.splashscreenBtn}>FAZER LOGIN</button>
+            <button className={styles.splashscreenBtn} onClick={handlePrimeiroAcesso}>
+              PRIMEIRO ACESSO
+            </button>
+            <button className={styles.splashscreenBtn} onClick={handleFazerLogin}>
+              FAZER LOGIN
+            </button>
           </div>
         </div>
         <div className={styles.splashscreenRight}>

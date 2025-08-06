@@ -1,10 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import { BotaoEscuro } from './BotaoEscuro';
 import { BotaoClaro } from './BotaoClaro';
 import styles from './Componentes - CSS/MenuPrincipal.module.css';
 
-export function MenuPrincipal({ aoNavegar }) {
+export function MenuPrincipal() {
+    const navigate = useNavigate();
+    
     const handleRealizarVenda = () => {
-        aoNavegar('realizar-venda');
+        navigate('/realizar-venda');
     };
 
     return (

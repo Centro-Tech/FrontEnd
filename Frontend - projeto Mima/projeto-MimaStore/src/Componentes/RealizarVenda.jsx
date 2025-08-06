@@ -1,14 +1,20 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Componentes - CSS/RealizarVenda.module.css';
 import { Navbar } from './Navbar.jsx';
 import { FaixaVoltar } from './FaixaVoltar.jsx';
 
-export function RealizarVenda({ aoVoltar }) {
+export function RealizarVenda() {
+    const navigate = useNavigate();
     const [codigoPeca, setCodigoPeca] = useState('');
     const [quantidadeProduto, setQuantidadeProduto] = useState(1);
     const [produtosPesquisa, setProdutosPesquisa] = useState([]);
     const [carrinho, setCarrinho] = useState([]);
     const [valorTotal, setValorTotal] = useState(0);
+
+    const voltarAoMenu = () => {
+        navigate('/menu-inicial');
+    };
 
     // Função para pesquisar produto por código
     const pesquisarProduto = async () => {
@@ -102,7 +108,7 @@ export function RealizarVenda({ aoVoltar }) {
     return (
         <div className={styles.container}>
             <Navbar />
-            <FaixaVoltar aoClicar={aoVoltar} />
+            <FaixaVoltar aoClicar={voltarAoMenu} />
             
             <div className={styles.conteudo}>
                 <h1 className={styles.titulo}>Realizar Venda</h1>
