@@ -15,7 +15,7 @@ export function MenuPrincipal({ aoNavegar }) {
                 <div className={styles.secoes}>
                     <div className={styles.coluna}>
                         <BotaoEscuro texto="Estoque" />
-                        <BotaoClaro texto="Visualizar Estoque" />
+                        <BotaoClaro texto="Visualizar Estoque" onClick={() => aoNavegar('estoque')} />
                         <BotaoClaro texto="Repor Estoque" />
                         <BotaoClaro texto="Cadastrar Novas Peças" />
                         <BotaoClaro texto="Cadastrar Atributos" />
@@ -24,7 +24,7 @@ export function MenuPrincipal({ aoNavegar }) {
                     <div className={styles.coluna}>
                         <BotaoEscuro texto="Vendas" />
                         <BotaoClaro texto="Realizar Venda" onClick={handleRealizarVenda} />
-                        <BotaoClaro texto="Histórico de vendas" />
+                        <BotaoClaro texto="Histórico de vendas" onClick={() => aoNavegar('historico-vendas')} />
                         <BotaoClaro texto="Dashboard" />
                     </div>
                     
