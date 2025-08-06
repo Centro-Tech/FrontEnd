@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Tabela } from "./Tabela";
 import EstoquePopUp from "./EstoquePopUp";
+import { Navbar } from "../../Componentes/Navbar";
+
 import {
   Button,
   TextField,
@@ -144,6 +146,8 @@ export default function Estoque() {
   ];
 
   return (
+     <>
+         <Navbar />
     <Box className={`${styles["container"]} ${styles["page-container"]}`} sx={{ padding: "0 0 32px 0" }}>
       <div className={styles["estoque-title"]}>Estoque</div>
       <div className={styles["estoque-content-center"]}>
@@ -297,5 +301,6 @@ export default function Estoque() {
         </Box>
       </Drawer>
     </Box>
+    </>
   );
 }

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Tabela } from "../VisualizarEstoque/Tabela";
 import EstoquePopUp from "../VisualizarEstoque/EstoquePopUp";
+import { Navbar } from "../../Componentes/Navbar";
+
 import {
   Button,
   TextField,
@@ -409,6 +411,8 @@ export default function HistoricoVendas() {
   }
 
   return (
+     <>
+     <Navbar />
     <div className={styles["page-container"]}>
       <h1 className={styles["page-title"]}>Histórico de Vendas</h1>
 
@@ -781,6 +785,7 @@ export default function HistoricoVendas() {
           </>
         )}
       </div>
+      
 
       <EstoquePopUp
         mostrar={mostrarPopUp}
@@ -789,5 +794,6 @@ export default function HistoricoVendas() {
         onCancelar={cancelarExclusao}
       />
     </div>
+     </>
   );
 }
