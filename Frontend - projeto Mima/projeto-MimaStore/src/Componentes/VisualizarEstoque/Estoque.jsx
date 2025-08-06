@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Tabela } from "./Tabela";
 import EstoquePopUp from "./EstoquePopUp";
@@ -16,8 +17,13 @@ import {
 } from "@mui/material";
 import styles from "../../Componentes/Componentes - CSS/estiloTabelas.module.css";
 
-export default function Estoque({aoVoltar}) {
+export default function Estoque() {
+  const navigate = useNavigate();
   const [itens, setItens] = useState([]);
+
+  const voltarAoMenu = () => {
+    navigate('/menu-inicial');
+  };
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [itensPorPagina] = useState(7);
   const [modoDelecao, setModoDelecao] = useState(false);
@@ -148,7 +154,7 @@ export default function Estoque({aoVoltar}) {
   return (
      <>
          <Navbar />
-          <FaixaVoltar aoClicar={aoVoltar} />
+          <FaixaVoltar aoClicar={voltarAoMenu} />
     <Box className={`${styles["container"]} ${styles["page-container"]}`} sx={{ padding: "0 0 32px 0" }}>
       <div className={styles["estoque-title"]}>Estoque</div>
       <div className={styles["estoque-content-center"]}>

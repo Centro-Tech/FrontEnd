@@ -10,6 +10,14 @@ export function MenuPrincipal() {
         navigate('/realizar-venda');
     };
 
+    const handleVisualizarEstoque = () => {
+        navigate('/estoque');
+    };
+
+    const handleHistoricoVendas = () => {
+        navigate('/historico-vendas');
+    };
+
     return (
         <div className={styles.menuPrincipal}>
             <div className={styles.container}>
@@ -18,7 +26,7 @@ export function MenuPrincipal() {
                 <div className={styles.secoes}>
                     <div className={styles.coluna}>
                         <BotaoEscuro texto="Estoque" />
-                        <BotaoClaro texto="Visualizar Estoque" onClick={() => aoNavegar('estoque')} />
+                        <BotaoClaro texto="Visualizar Estoque" onClick={handleVisualizarEstoque} />
                         <BotaoClaro texto="Repor Estoque" />
                         <BotaoClaro texto="Cadastrar Novas Peças" />
                         <BotaoClaro texto="Cadastrar Atributos" />
@@ -27,7 +35,7 @@ export function MenuPrincipal() {
                     <div className={styles.coluna}>
                         <BotaoEscuro texto="Vendas" />
                         <BotaoClaro texto="Realizar Venda" onClick={handleRealizarVenda} />
-                        <BotaoClaro texto="Histórico de vendas" onClick={() => aoNavegar('historico-vendas')} />
+                        <BotaoClaro texto="Histórico de vendas" onClick={handleHistoricoVendas} />
                         <BotaoClaro texto="Dashboard" />
                     </div>
                     

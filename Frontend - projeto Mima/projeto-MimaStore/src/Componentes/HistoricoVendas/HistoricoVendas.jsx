@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Tabela } from "../VisualizarEstoque/Tabela";
 import EstoquePopUp from "../VisualizarEstoque/EstoquePopUp";
@@ -72,12 +73,17 @@ const MOCK_ITENS = [
   },
 ];
 
-export default function HistoricoVendas({aoVoltar}) {
+export default function HistoricoVendas() {
+  const navigate = useNavigate();
   const [clientes, setClientes] = useState([]);
   const [buscaClientes, setBuscaClientes] = useState("");
   const [clientesFiltrados, setClientesFiltrados] = useState([]);
 
   const [clienteSelecionado, setClienteSelecionado] = useState(null);
+
+  const voltarAoMenu = () => {
+    navigate('/menu-inicial');
+  };
   const [itensFiltrados, setItensFiltrados] = useState([]);
   const [itensPagina, setItensPagina] = useState([]);
   const [paginaAtualItens, setPaginaAtualItens] = useState(1);
@@ -414,7 +420,7 @@ export default function HistoricoVendas({aoVoltar}) {
   return (
      <>
      <Navbar />
-       <FaixaVoltar aoClicar={aoVoltar} />
+       <FaixaVoltar aoClicar={voltarAoMenu} />
     <div className={styles["page-container"]}>
       <h1 className={styles["page-title"]}>Histórico de Vendas</h1>
 
