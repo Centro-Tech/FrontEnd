@@ -10,6 +10,8 @@ import { CadastrarAtributo } from './CadastrarAtributos.jsx';
 import { CadastrarFornecedor } from './CadastrarFornecedor.jsx';
 import { CadastroNovoVestuario } from './CadastrarNovoVestuario.jsx';
 import { ReporVestuario } from './ReporVestuario.jsx';
+import PrimeiroAcesso from './PrimeiroAcesso.jsx';
+import  Login  from './Login.jsx';
 
 
 export function AppRouter() {
@@ -17,6 +19,9 @@ export function AppRouter() {
      <Routes>
       {/* Rota raiz redireciona para splash */}
       <Route path="/" element={<Navigate to="/splash" replace />} />
+      
+      <Route path="/PrimeiroAcesso" element={<PrimeiroAcesso />} />
+      <Route path="/login" element={<Login />} />
       
       {/* Rota da tela inicial/splash */}
       <Route path="/splash" element={<Splashscreen />} />

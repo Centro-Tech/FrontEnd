@@ -7,12 +7,12 @@ export default function Splashscreen() {
 
   const handlePrimeiroAcesso = () => {
     // Aqui você pode adicionar lógica para primeiro acesso
-    navigate('/menu-inicial');
+    navigate('/PrimeiroAcesso');
   };
 
   const handleFazerLogin = () => {
     // Aqui você pode adicionar lógica para login
-    navigate('/menu-inicial');
+      navigate('/login');
   };
 
   return (
