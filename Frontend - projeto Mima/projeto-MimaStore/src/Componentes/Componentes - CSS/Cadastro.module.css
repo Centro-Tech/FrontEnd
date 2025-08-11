@@ -1,86 +1,100 @@
 @import url('https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,100..900;1,100..900&family=Press+Start+2P&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Average&family=Average+Sans&family=Petrona:ital,wght@0,100..900;1,100..900&family=Press+Start+2P&display=swap');
 
-
+/* ---------- CONTAINER EXTERNO ---------- */
 .container-cadastro {
-    margin-top: 3%;
+  margin-top: 3%;
   width: 100%;
-  height: 100%;
+  min-height: 70vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
+/* ---------- FORMULÁRIO ---------- */
 .box-cadastro {
-  width: 949px;
-  height: 650px;
+  width: 60%;
+  min-height: 65vh;
+  padding: 2rem;
+  border-radius: 20px;
+  background-color: #D7BFD3;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; 
-  border-radius: 20px;
-    background-color: #D7BFD3;
+  justify-content: flex-start;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+/* ---------- TÍTULO ---------- */
 .box-container-titulo {
-  font-size: 40px;
+  font-size: 32px;
   font-weight: bold;
   font-family: 'Petrona', serif;
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
+/* ---------- GRUPOS DE FORMULÁRIO ---------- */
 .form-group {
-  font-family: 'Average+Sans', serif;
-  font-style: normal;
-  font-size: 21px;    
-  width: 80%;
+  font-family: 'Average Sans', sans-serif;
+  font-size: 18px;
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
 }
 
+/* ---------- LABELS ---------- */
 .form-group label {
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+  color: #333;
 }
 
-.form-group input {
-  width: 310px;
-  height: 21px;
+/* ---------- INPUTS ---------- */
+.form-group input,
+.form-group select {
+  width: 500px;
   padding: 10px;
+  font-size: 16px;
+  font-family: 'Average Sans', sans-serif;
   border: 1px solid #ccc;
   border-radius: 5px;
+  box-sizing: border-box;
+  transition: border 0.2s ease;
 }
 
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #864176;
+  outline: none;
+}
+
+/* ---------- SELECT ESPECÍFICO ---------- */
 .form-group select {
-    margin-bottom: 20px;
+  background-color: #fff;
   color: #000;
-  font-family: 'Petrona', serif;
-    font-size: 16px;
-    font-weight: 500;
-  width: 331px;
-  height: 43px;
-  padding: 10px;
-  border: 1px;
-  border-radius: 5px;
 }
 
+/* ---------- BOTÃO ---------- */
 .box-cadastro button {
-    margin-top: 20px;
-  width: 331px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 500px;
   height: 45px;
   background-color: #864176;
   color: #fff;
   font-family: 'Petrona', serif;
-    font-size: 16px;
-    font-weight: bold;
+  font-size: 20px;
+  font-weight: bold;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background 0.2s, color 0.2s;
 }
 
+/* ---------- BOTÃO - HOVER ---------- */
 .box-cadastro button:hover {
   background-color: #6a335e;
-  width: 340;
   color: #ffe6fa;
-  transition: background 0.2s, color 0.2s;
 }

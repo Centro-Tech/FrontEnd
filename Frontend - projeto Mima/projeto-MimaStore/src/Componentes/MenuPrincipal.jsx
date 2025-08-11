@@ -18,6 +18,27 @@ export function MenuPrincipal() {
         navigate('/historico-vendas');
     };
 
+    const handleCadastrarFornecedor = () => {
+        navigate('/cadastrar-fornecedor');
+    };
+
+    const handleCadastrarFuncionarios = () => {
+        navigate('/cadastrar-funcionarios');
+    };
+
+     const handleCadastrarAtributos = () => {
+        navigate('/cadastrar-atributos');
+    };
+
+     const handleCadastrarNovoVestuario = () => {
+        navigate('/cadastrar-vestuario');
+    };
+
+     const handleReporVestuario = () => {
+        navigate('/cadastrar-vestuario-existente');
+    };
+
+
     return (
         <div className={styles.menuPrincipal}>
             <div className={styles.container}>
@@ -27,9 +48,9 @@ export function MenuPrincipal() {
                     <div className={styles.coluna}>
                         <BotaoEscuro texto="Estoque" />
                         <BotaoClaro texto="Visualizar Estoque" onClick={handleVisualizarEstoque} />
-                        <BotaoClaro texto="Repor Estoque" />
-                        <BotaoClaro texto="Cadastrar Novas Peças" />
-                        <BotaoClaro texto="Cadastrar Atributos" />
+                        <BotaoClaro texto="Repor Estoque" onClick={handleReporVestuario}/>
+                        <BotaoClaro texto="Cadastrar Novas Peças" onClick={handleCadastrarNovoVestuario}/>
+                        <BotaoClaro texto="Cadastrar Atributos" onClick={handleCadastrarAtributos}/>
                     </div>
                     
                     <div className={styles.coluna}>
@@ -41,8 +62,8 @@ export function MenuPrincipal() {
                     
                     <div className={styles.coluna}>
                         <BotaoEscuro texto="Pessoas" />
-                        <BotaoClaro texto="Cadastrar Funcionário" />
-                        <BotaoClaro texto="Cadastrar Fornecedor" />
+                        <BotaoClaro texto="Cadastrar Funcionário" onClick={handleCadastrarFuncionarios}/>
+                        <BotaoClaro texto="Cadastrar Fornecedor" onClick={handleCadastrarFornecedor}/>
                     </div>
                 </div>
             </div>

@@ -5,9 +5,16 @@ import Splashscreen from "./Splashscreen.jsx";
 import Estoque from './VisualizarEstoque/Estoque.jsx';
 import HistoricoVendas from './HistoricoVendas/HistoricoVendas.jsx';
 
+import { CadastroFuncionario } from './Cadastro.jsx';
+import { CadastrarAtributo } from './CadastrarAtributos.jsx';
+import { CadastrarFornecedor } from './CadastrarFornecedor.jsx';
+import { CadastroNovoVestuario } from './CadastrarNovoVestuario.jsx';
+import { ReporVestuario } from './ReporVestuario.jsx';
+
+
 export function AppRouter() {
   return (
-    <Routes>
+     <Routes>
       {/* Rota raiz redireciona para splash */}
       <Route path="/" element={<Navigate to="/splash" replace />} />
       
@@ -25,9 +32,17 @@ export function AppRouter() {
       
       {/* Rota para histórico de vendas */}
       <Route path="/historico-vendas" element={<HistoricoVendas />} />
-      
+
+      {/* Novas rotas adicionadas */}
+      <Route path="/cadastrar-fornecedor" element={<CadastrarFornecedor />} />
+      <Route path="/cadastrar-funcionarios" element={<CadastroFuncionario />} />
+      <Route path="/cadastrar-atributos" element={<CadastrarAtributo />} />
+      <Route path="/cadastrar-vestuario" element={<CadastroNovoVestuario />} />
+      <Route path="/cadastrar-vestuario-existente" element={<ReporVestuario />} />
+
       {/* Rota catch-all para páginas não encontradas */}
       <Route path="*" element={<Navigate to="/splash" replace />} />
+  
     </Routes>
   );
 }
