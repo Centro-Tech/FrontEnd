@@ -106,7 +106,7 @@ export default function PrimeiroAcesso() {
             {sucesso && (
               <div className={styles.sucessoWrapper}>
               <div className={styles.sucesso}>
-                Senha Cadastrada Com Sucesso!<br />
+               <br /> Senha Cadastrada Com Sucesso!<br /><br />
                 Redirecionando para a página de login...
               </div>
             </div>
