@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import styles from './Componentes - CSS/Cadastro.module.css';
+import styles from '../Componentes/Componentes - CSS/Cadastro.module.css';
 
-import { Navbar } from './Navbar';
-import { FaixaVoltar } from './FaixaVoltar';
+import { Navbar } from '../Componentes/Navbar';
+import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import { useNavigate } from 'react-router-dom';
 
 export function CadastrarAtributo() {
@@ -64,7 +64,7 @@ export function CadastrarAtributo() {
                             />
                         </div>
 
-                        <button type="submit">CADASTRAR</button>
+                        <button type="submit">Cadastrar</button>
                     </form>
 
                     {mensagem && <h1>{mensagem}</h1>}

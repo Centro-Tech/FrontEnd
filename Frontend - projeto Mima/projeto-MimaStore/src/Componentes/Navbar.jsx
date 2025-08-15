@@ -2,7 +2,7 @@ import styles from './Componentes - CSS/Navbar.module.css';
 import Logo from './assets/Group 2.png';
 import iconCardapio from './assets/icons8-cardápio.svg'
 import fotoId from './assets/fotoIconExemplo.jpg';
-import { Perfil } from './Perfil.jsx';
+import { Perfil } from '../Telas/Perfil.jsx';
 
 export function Navbar() {
     return (

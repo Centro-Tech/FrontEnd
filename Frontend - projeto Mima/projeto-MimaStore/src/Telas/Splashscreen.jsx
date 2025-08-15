@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "./Componentes - CSS/splashscreen.module.css";
+import styles from "../Componentes/Componentes - CSS/Splashscreen.module.css";
 
 export default function Splashscreen() {
   const navigate = useNavigate();
@@ -28,10 +28,10 @@ export default function Splashscreen() {
           </p>
           <div className={styles.splashscreenButtons}>
             <button className={styles.splashscreenBtn} onClick={handlePrimeiroAcesso}>
-              PRIMEIRO ACESSO
+              Primeiro acesso
             </button>
             <button className={styles.splashscreenBtn} onClick={handleFazerLogin}>
-              FAZER LOGIN
+              Fazer login
             </button>
           </div>
         </div>

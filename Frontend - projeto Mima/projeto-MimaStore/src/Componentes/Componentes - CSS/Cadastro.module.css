@@ -16,7 +16,7 @@
   width: 60%;
   min-height: 65vh;
   padding: 2rem;
-  border-radius: 20px;
+  border-radius: 8px;
   background-color: #D7BFD3;
   display: flex;
   flex-direction: column;
@@ -32,6 +32,7 @@
   font-family: 'Petrona', serif;
   margin-bottom: 2rem;
   text-align: center;
+  color: #864176;
 }
 
 /* ---------- GRUPOS DE FORMULÁRIO ---------- */
@@ -59,7 +60,7 @@
   font-size: 16px;
   font-family: 'Average Sans', sans-serif;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 6px;
   box-sizing: border-box;
   transition: border 0.2s ease;
 }
@@ -73,7 +74,7 @@
 /* ---------- SELECT ESPECÍFICO ---------- */
 .form-group select {
   background-color: #fff;
-  color: #000;
+  color: #333;
 }
 
 /* ---------- BOTÃO ---------- */
@@ -84,17 +85,17 @@
   height: 45px;
   background-color: #864176;
   color: #fff;
-  font-family: 'Petrona', serif;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 20px;
   font-weight: bold;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
 }
 
 /* ---------- BOTÃO - HOVER ---------- */
 .box-cadastro button:hover {
-  background-color: #6a335e;
-  color: #ffe6fa;
+  background-color: #724165;
+  color: #fff;
 }

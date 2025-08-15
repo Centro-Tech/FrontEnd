@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { MenuPrincipal } from "./MenuPrincipal";
-import { Navbar } from "./Navbar";
-import { FaixaSair } from "./FaixaSair";
+import { Navbar } from "../Componentes/Navbar";
+import { FaixaSair } from "../Componentes/FaixaSair";
 
 export function MenuInicial() {
     const navigate = useNavigate();

@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Tabela } from "./Tabela";
 import EstoquePopUp from "./EstoquePopUp";
-import { Navbar } from "../../Componentes/Navbar";
-import { FaixaVoltar } from "../FaixaVoltar";
+import { Navbar } from "./Navbar";
+import { FaixaVoltar } from "./FaixaVoltar";
 import {
   Button,
   TextField,
@@ -15,7 +15,7 @@ import {
   Slider,
   Typography,
 } from "@mui/material";
-import styles from "../../Componentes/Componentes - CSS/estiloTabelas.module.css";
+import styles from "./Componentes - CSS/estiloTabelas.module.css";
 
 export default function Estoque() {
   const navigate = useNavigate();
@@ -179,7 +179,7 @@ export default function Estoque() {
             onClick={() => (modoDelecao ? abrirPopup() : setModoDelecao(true))}
             disabled={modoDelecao && selecionados.length === 0}
           >
-            {modoDelecao ? "Confirmar remoção" : "DELETAR PEÇAS"}
+            {modoDelecao ? "Confirmar remoção" : "Deletar peças"}
           </Button>
         </Box>
 

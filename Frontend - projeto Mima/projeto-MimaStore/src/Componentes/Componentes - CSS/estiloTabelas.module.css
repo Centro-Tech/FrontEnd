@@ -1,6 +1,5 @@
 body, .page-container, .container {
   background-color: #f6f0ef !important;
-  font-family: 'Inter', sans-serif !important;
   min-height: 100vh;
   margin: 0;
   padding: 0;
@@ -9,11 +8,10 @@ body, .page-container, .container {
 .page-title, .estoque-title {
   font-size: 36px;
   font-weight: bold;
-  color: #000;
+  color: #333;
   margin-bottom: 44px; 
   text-align: center;
   margin-top: 32px;
-  font-family: 'Inter', sans-serif;
 }
 
 .estoque-content-center {
@@ -104,7 +102,7 @@ body, .page-container, .container {
   background: #f6f0ef;
   font-weight: bold;
   font-size: 17px;
-  color: #000;
+  color: #333;
   border: 1.2px solid #d6d3d1;
   padding: 10px 0;
   text-align: center;
@@ -197,7 +195,6 @@ body, .page-container, .container {
   color: #1a001a;
   text-align: center;
   margin-bottom: 18px;
-  font-family: 'Inter', sans-serif;
 }
 
 .popup-estoque-table {
@@ -213,7 +210,6 @@ body, .page-container, .container {
   padding: 8px 8px;
   text-align: center;
   font-size: 1.05rem;
-  font-family: 'Inter', sans-serif;
 }
 
 .popup-estoque-table th {
@@ -245,7 +241,7 @@ body, .page-container, .container {
   padding: 10px 0;
   width: 140px;
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   transition: background 0.2s;
   letter-spacing: 1px;
 }

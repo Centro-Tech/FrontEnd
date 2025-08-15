@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { BotaoEscuro } from './BotaoEscuro';
-import { BotaoClaro } from './BotaoClaro';
-import styles from './Componentes - CSS/MenuPrincipal.module.css';
+import { BotaoEscuro } from '../Componentes/BotaoEscuro';
+import { BotaoClaro } from '../Componentes/BotaoClaro';
+import styles from '../Componentes/Componentes - CSS/MenuPrincipal.module.css';
 
 export function MenuPrincipal() {
     const navigate = useNavigate();

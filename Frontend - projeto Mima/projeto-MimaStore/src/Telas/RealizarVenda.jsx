@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './Componentes - CSS/RealizarVenda.module.css';
-import { Navbar } from './Navbar.jsx';
-import { FaixaVoltar } from './FaixaVoltar.jsx';
+import styles from '../Componentes/Componentes - CSS/RealizarVenda.module.css';
+import { Navbar } from '../Componentes/Navbar.jsx';
+import { FaixaVoltar } from '../Componentes/FaixaVoltar.jsx';
 
 export function RealizarVenda() {
     const navigate = useNavigate();
@@ -171,7 +171,7 @@ export function RealizarVenda() {
                                     className={styles.botaoAdicionar}
                                     onClick={() => adicionarAoCarrinho(produtosPesquisa[0])}
                                 >
-                                    ADICIONAR NO CARRINHO
+                                    Adicionar no carrinho
                                 </button>
                             </div>
                         )}
@@ -206,7 +206,7 @@ export function RealizarVenda() {
                                                     className={styles.botaoRemover}
                                                     onClick={() => removerDoCarrinho(item.codigo)}
                                                 >
-                                                    REMOVER
+                                                    Remover
                                                 </button>
                                             </td>
                                         </tr>
@@ -226,7 +226,7 @@ export function RealizarVenda() {
                                 onClick={finalizarVenda}
                                 disabled={carrinho.length === 0}
                             >
-                                FINALIZAR
+                                Finalizar
                             </button>
                         </div>
                     </div>

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Navbar } from "./Navbar.jsx";
-import { FaixaSair } from "./FaixaSair.jsx";
-import styles from "./Componentes - CSS/PrimeiroAcesso.module.css"; // Crie um CSS para estilizar
+import { Navbar } from "../Componentes/Navbar.jsx";
+import { FaixaSair } from "../Componentes/FaixaSair.jsx";
+import styles from "../Componentes/Componentes - CSS/PrimeiroAcesso.module.css"; // Crie um CSS para estilizar
 
 export default function PrimeiroAcesso() {
   const navigate = useNavigate();
@@ -97,7 +97,7 @@ export default function PrimeiroAcesso() {
               />
               {erro && <div className={styles.erro}>{erro}</div>}
               <button type="submit" className={styles.btn}>
-                ENTRAR
+                Entrar
               </button>
             </form>
             <div className={styles.link}>

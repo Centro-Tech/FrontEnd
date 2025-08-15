@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../../Componentes/Componentes - CSS/estiloTabelas.module.css";
+import styles from "./Componentes - CSS/estiloTabelas.module.css";
 
 export default function EstoquePopUp({ mostrar, itens, onConfirmar, onCancelar }) {
   if (!mostrar || !itens.length) return null;
@@ -72,10 +72,10 @@ export default function EstoquePopUp({ mostrar, itens, onConfirmar, onCancelar }
         </table>
         <div className={styles["popup-estoque-btns"]}>
           <button className={`${styles["popup-btn"]} ${styles["cancelar"]}`} onClick={onCancelar}>
-            CANCELAR
+            Cancelar
           </button>
           <button className={`${styles["popup-btn"]} ${styles["remover"]}`} onClick={onConfirmar}>
-            REMOVER
+            Remover
           </button>
         </div>
       </div>

@@ -1,8 +1,8 @@
-import styles from './Componentes - CSS/CadastroVestiario.module.css';
+import styles from '../Componentes/Componentes - CSS/CadastroVestiario.module.css';
 import React, { useState } from 'react';
 
-import { Navbar } from './Navbar';
-import { FaixaVoltar } from './FaixaVoltar';
+import { Navbar } from '../Componentes/Navbar';
+import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import { useNavigate } from 'react-router-dom';
 
 export function CadastroNovoVestuario() {
@@ -128,7 +128,7 @@ export function CadastroNovoVestuario() {
 
                         {/* Botão ocupando 2 colunas */}
                         <div className={styles['form-button']}>
-                            <button type="submit">CADASTRAR</button>
+                            <button type="submit">Cadastrar</button>
                         </div>
                     </form>
 

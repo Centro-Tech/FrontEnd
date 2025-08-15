@@ -1,8 +1,8 @@
-import styles from './Componentes - CSS/Cadastro.module.css';
+import styles from '../Componentes/Componentes - CSS/Cadastro.module.css';
 import React, { useState } from 'react';
 
-import { Navbar } from './Navbar';
-import { FaixaVoltar } from './FaixaVoltar';
+import { Navbar } from '../Componentes/Navbar';
+import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import { useNavigate } from 'react-router-dom';
 
 export function CadastroFuncionario() {

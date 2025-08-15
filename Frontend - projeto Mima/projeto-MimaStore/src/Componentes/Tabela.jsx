@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../../Componentes/Componentes - CSS/estiloTabelas.module.css";
+import styles from "./Componentes - CSS/estiloTabelas.module.css";
 
 import {
   Checkbox,
