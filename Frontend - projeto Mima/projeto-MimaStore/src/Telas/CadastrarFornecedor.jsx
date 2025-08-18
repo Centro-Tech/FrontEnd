@@ -4,6 +4,7 @@ import styles from '../Componentes/Componentes - CSS/Cadastro.module.css';
 import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import { useNavigate } from 'react-router-dom';
+import API from '../Provider/API';// importa axios configurado
 
 export function CadastrarFornecedor() {
     const navigate = useNavigate();
@@ -16,11 +17,24 @@ export function CadastrarFornecedor() {
         navigate('/menu-inicial');
     };
 
-    function cadastrar(event) {
+    async function cadastrar(event) {
         event.preventDefault();
         const fornecedor = { nome, telefone, email };
-        console.log(JSON.stringify(fornecedor));
-        setMensagem('Fornecedor cadastrado com sucesso!');
+
+        try {
+            const response = await API.post("/fornecedores", fornecedor);
+            console.log(response.data);
+
+            setMensagem("Fornecedor cadastrado com sucesso!");
+        } catch (error) {
+            console.error("Erro ao cadastrar fornecedor:", error);
+
+            if (error.response?.status === 409) {
+                setMensagem("Fornecedor com este CNPJ já existe!");
+            } else {
+                setMensagem("Erro ao cadastrar fornecedor!");
+            }
+        }
 
         setTimeout(() => {
             setMensagem('');
@@ -41,15 +55,30 @@ export function CadastrarFornecedor() {
                     <form onSubmit={cadastrar}>
                         <div className={styles['form-group']}>
                             <label>Nome</label>
-                            <input type="text" value={nome} onChange={e => setNome(e.target.value)} required />
+                            <input 
+                                type="text" 
+                                value={nome} 
+                                onChange={e => setNome(e.target.value)} 
+                                required 
+                            />
                         </div>
                         <div className={styles['form-group']}>
                             <label>Telefone</label>
-                            <input type="tel" value={telefone} onChange={e => setTelefone(e.target.value)} required />
+                            <input 
+                                type="tel" 
+                                value={telefone} 
+                                onChange={e => setTelefone(e.target.value)} 
+                                required 
+                            />
                         </div>
                         <div className={styles['form-group']}>
                             <label>Email</label>
-                            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+                            <input 
+                                type="email" 
+                                value={email} 
+                                onChange={e => setEmail(e.target.value)} 
+                                required 
+                            />
                         </div>
                         <button type="submit">Cadastrar</button>
                     </form>

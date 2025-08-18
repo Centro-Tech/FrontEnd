@@ -1,44 +1,64 @@
 import styles from '../Componentes/Componentes - CSS/Cadastro.module.css';
 import React, { useState } from 'react';
-
 import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import { useNavigate } from 'react-router-dom';
+import API from '../Provider/API';
 
 export function CadastroFuncionario() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const [nomeInserido, setNomeInserido] = useState('');
     const [emailInserido, setEmailInserido] = useState(''); 
     const [senhaInserida, setSenhaInserida] = useState('');
     const [cargoInserido, setCargoInserido] = useState('');
-    const [Usuarios, setUsuarios] = useState([]);
+    const [enderecoInserido, setEnderecoInserido] = useState('');
     const [mensagem, setMensagem] = useState('');
+    const [erro, setErro] = useState('');
 
     const voltarAoMenu = () => {
         navigate('/menu-inicial');
     };
 
-    function cadastrarFuncionario(event) {
+    const cadastrarFuncionario = async (event) => {
         event.preventDefault();
-        const Usuario = {
+        setErro('');
+        setMensagem('');
+
+        if (!nomeInserido || !emailInserido || !senhaInserida || !cargoInserido || !enderecoInserido) {
+            setErro('Preencha todos os campos.');
+            return;
+        }
+
+        const novoUsuario = {
             nome: nomeInserido,
             email: emailInserido,
             senha: senhaInserida,
-            cargo: cargoInserido
+            cargo: cargoInserido,
+            endereco: enderecoInserido
         };
 
-        setUsuarios([...Usuarios, Usuario]);
-        console.log(JSON.stringify(Usuario));
-        setMensagem('Cadastro concluído!');
+        try {
+            const response = await API.post('/usuarios', novoUsuario);
+            setMensagem('Cadastro concluído com sucesso!');
+            
+            setTimeout(() => {
+                setMensagem('');
+                setNomeInserido('');
+                setEmailInserido('');
+                setSenhaInserida('');
+                setCargoInserido('');
+                setEnderecoInserido('');
+            }, 2000);
 
-        setTimeout(() => {
-            setMensagem('');
-            setNomeInserido('');
-            setEmailInserido('');
-            setSenhaInserida('');
-            setCargoInserido('');
-        }, 2000);
-    }
+        } catch (error) {
+            console.error('Erro ao cadastrar funcionário:', error);
+            if (error.response) {
+                setErro(error.response.data?.message || 'Erro ao cadastrar funcionário.');
+            } else {
+                setErro('Erro de conexão com o servidor.');
+            }
+        }
+    };
 
     return (
         <div>
@@ -68,15 +88,21 @@ export function CadastroFuncionario() {
                         <div className={styles['form-group']}>
                             <label htmlFor="cargo">Cargo</label>
                             <select id="cargo" required value={cargoInserido} onChange={e => setCargoInserido(e.target.value)}>
-                                <option value="" disabled>Seleciona uma opção</option>
+                                <option value="" disabled>Selecione uma opção</option>
                                 <option value="Gerente">Gerente</option>
                                 <option value="Funcionario">Funcionário</option>
                             </select>
                         </div>
+
+                        <div className={styles['form-group']}>
+                            <label htmlFor="endereco">Endereço</label>
+                            <input type="text" id="endereco" value={enderecoInserido} onChange={e => setEnderecoInserido(e.target.value)} required />
+                        </div>
                         
                         <button type='submit'>Cadastrar</button>
                     </form>
-                    {mensagem && <h1>{mensagem}</h1>}
+                    {mensagem && <h2 style={{ color: 'green' }}>{mensagem}</h2>}
+                    {erro && <h2 style={{ color: 'red' }}>{erro}</h2>}
                 </div>
             </div>
         </div>

@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "../Componentes/Navbar";
 import { FaixaSair } from "../Componentes/FaixaSair";
-import styles from "../Componentes/Componentes - CSS/PrimeiroAcesso.module.css"; // Reaproveitando o CSS
+import styles from "../Componentes/Componentes - CSS/PrimeiroAcesso.module.css";
+import API from "../Provider/API";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -14,27 +15,45 @@ export default function Login() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErro("");
+
     if (!form.email || !form.senha) {
       setErro("Preencha todos os campos.");
       return;
     }
-    // Simula sucesso
-    setSucesso(true);
-    setTimeout(() => {
-      navigate("/menu-inicial");
-    }, 2000);
+
+    try {
+      // envia email e senha no formato que o backend espera
+      const response = await API.post(
+        "/usuarios/login", // endpoint exato
+        { email: form.email, senha: form.senha }, 
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      setSucesso(true);
+
+      // redireciona após 2s
+      setTimeout(() => {
+        navigate("/menu-inicial");
+      }, 2000);
+    } catch (error) {
+      console.error("Erro no login:", error);
+      if (error.response?.status === 401 || error.response?.status === 404) {
+        setErro("E-mail ou senha inválidos.");
+      } else {
+        setErro("Erro ao realizar login. Tente novamente.");
+      }
+    }
   };
 
-  const handleSair = () => {
-    navigate("/splash");
-  };
-
-  const handlePrimeiroAcesso = () => {
-    navigate("/PrimeiroAcesso");
-  };
+  const handleSair = () => navigate("/splash");
+  const handlePrimeiroAcesso = () => navigate("/PrimeiroAcesso");
 
   return (
     <div>
@@ -72,13 +91,10 @@ export default function Login() {
                 autoComplete="current-password"
               />
               {erro && <div className={styles.erro}>{erro}</div>}
-              <button type="submit" className={styles.btn}>
-                Entrar
-              </button>
+              <button type="submit" className={styles.btn}>Entrar</button>
             </form>
             <div className={styles.link}>
-              Primeiro acesso?{" "}
-              <span onClick={handlePrimeiroAcesso}>Clique aqui!</span>
+              Primeiro acesso? <span onClick={handlePrimeiroAcesso}>Clique aqui!</span>
             </div>
           </div>
         </div>
@@ -86,9 +102,9 @@ export default function Login() {
       {sucesso && (
         <div className={styles.sucessoWrapper}>
           <div className={styles.sucesso}>
-            Login Realizado Com Sucesso!<br /><br />
+            Login realizado com sucesso!<br /><br />
             <span style={{ fontWeight: 400, fontSize: "1rem" }}>
-              Redirecionando para o menu principal....
+              Redirecionando para o menu principal...
             </span>
           </div>
         </div>

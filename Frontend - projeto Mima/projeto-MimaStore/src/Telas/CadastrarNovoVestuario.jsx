@@ -1,9 +1,9 @@
 import styles from '../Componentes/Componentes - CSS/CadastroVestiario.module.css';
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
 import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import { useNavigate } from 'react-router-dom';
+import API from '../Provider/API';
 
 export function CadastroNovoVestuario() {
     const navigate = useNavigate();
@@ -18,27 +18,81 @@ export function CadastroNovoVestuario() {
     const [material, setMaterial] = useState('');
     const [mensagem, setMensagem] = useState('');
 
-    const voltarAoMenu = () => {
-        navigate('/menu-inicial');
-    };
+    const [categorias, setCategorias] = useState([]);
+    const [fornecedores, setFornecedores] = useState([]);
+    const [cores, setCores] = useState([]);
+    const [tamanhos, setTamanhos] = useState([]);
+    const [materiais, setMateriais] = useState([]);
 
-    function cadastrar(event) {
+    useEffect(() => {
+        async function buscarListas() {
+            try {
+                const endpoints = [
+                    { url: '/categorias', setState: setCategorias, keyId: 'id', keyNome: 'nome' },
+                    { url: '/fornecedores', setState: setFornecedores, keyId: 'id', keyNome: 'nome' },
+                    { url: '/cores', setState: setCores, keyId: 'id', keyNome: 'nome' },
+                    { url: '/tamanhos', setState: setTamanhos, keyId: 'id', keyNome: 'nome' },
+                    { url: '/materiais', setState: setMateriais, keyId: 'id', keyNome: 'nome' },
+                ];
+
+                for (let ep of endpoints) {
+                    const res = await API.get(ep.url);
+                    const listaNormalizada = res.data.map(item => ({
+                        id: item[ep.keyId],
+                        nome: item[ep.keyNome]
+                    }));
+                    ep.setState(listaNormalizada);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar listas do backend:', error.response || error);
+                setMensagem('Erro ao carregar listas do banco. Verifique o console.');
+            }
+        }
+        buscarListas();
+    }, []);
+
+    const voltarAoMenu = () => navigate('/menu-inicial');
+
+    async function cadastrar(event) {
         event.preventDefault();
-        const vestuario = { nome, fornecedor, preco, quantidade, categoria, cor, tamanho, material };
-        console.log(JSON.stringify(vestuario));
-        setMensagem('Vestuário cadastrado com sucesso!');
 
-        setTimeout(() => {
-            setMensagem('');
-            setNome('');
-            setFornecedor('');
-            setPreco('');
-            setQuantidade('');
-            setCategoria('');
-            setCor('');
-            setTamanho('');
-            setMaterial('');
-        }, 2000);
+        const vestuario = {
+            nome: nome.trim(),
+            qtdEstoque: Number(quantidade),
+            preco: Number(preco),
+            idFornecedor: Number(fornecedor),
+            idCor: Number(cor),
+            idTamanho: Number(tamanho),
+            idMaterial: Number(material),
+            idCategoria: Number(categoria)
+        };
+
+        // validação rápida
+        for (let key in vestuario) {
+            if (vestuario[key] === '' || vestuario[key] === null || (typeof vestuario[key] === 'number' && isNaN(vestuario[key]))) {
+                setMensagem(`Preencha corretamente o campo ${key}`);
+                return;
+            }
+        }
+
+        try {
+            await API.post('/itens', vestuario);
+            setMensagem('Vestuário cadastrado com sucesso!');
+            setTimeout(() => {
+                setMensagem('');
+                setNome('');
+                setFornecedor('');
+                setPreco('');
+                setQuantidade('');
+                setCategoria('');
+                setCor('');
+                setTamanho('');
+                setMaterial('');
+            }, 2000);
+        } catch (error) {
+            console.error("Erro ao cadastrar vestuário:", error.response || error);
+            setMensagem('Erro ao cadastrar vestuário. Verifique os dados e tente novamente.');
+        }
     }
 
     return (
@@ -49,9 +103,8 @@ export function CadastroNovoVestuario() {
             <div className={styles['cadastro-vestuario-container']}>
                 <div className={styles['box-cadastro']}>
                     <h2 className={styles['box-container-titulo']}>Cadastrar Item no Estoque</h2>
-                    
+
                     <form onSubmit={cadastrar} className={styles['form-grid']}>
-                        
                         {/* Nome */}
                         <div className={styles['form-group']}>
                             <label>Nome</label>
@@ -63,10 +116,8 @@ export function CadastroNovoVestuario() {
                             <label>Categoria</label>
                             <select value={categoria} onChange={e => setCategoria(e.target.value)} required>
                                 <option value="">Selecione uma opção</option>
-                                <option value="camiseta">Camiseta</option>
-                                <option value="calça">Calça</option>
+                                {categorias.map(cat => <option key={cat.id} value={cat.id}>{cat.nome}</option>)}
                             </select>
-                            <small>Não encontrou a opção que queria? <a href="/cadastrar-categoria">Cadastre-a aqui!</a></small>
                         </div>
 
                         {/* Fornecedor */}
@@ -74,10 +125,8 @@ export function CadastroNovoVestuario() {
                             <label>Fornecedor</label>
                             <select value={fornecedor} onChange={e => setFornecedor(e.target.value)} required>
                                 <option value="">Selecione uma opção</option>
-                                <option value="fornecedor1">Fornecedor 1</option>
-                                <option value="fornecedor2">Fornecedor 2</option>
+                                {fornecedores.map(f => <option key={f.id} value={f.id}>{f.nome}</option>)}
                             </select>
-                            <small>Não encontrou a opção que queria? <a href="/cadastrar-fornecedor">Cadastre-a aqui!</a></small>
                         </div>
 
                         {/* Cor */}
@@ -85,16 +134,14 @@ export function CadastroNovoVestuario() {
                             <label>Cor</label>
                             <select value={cor} onChange={e => setCor(e.target.value)} required>
                                 <option value="">Selecione uma opção</option>
-                                <option value="vermelho">Vermelho</option>
-                                <option value="azul">Azul</option>
+                                {cores.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
                             </select>
-                            <small>Não encontrou a opção que queria? <a href="/cadastrar-cor">Cadastre-a aqui!</a></small>
                         </div>
 
-                        {/* Preço Unitário */}
+                        {/* Preço */}
                         <div className={styles['form-group']}>
                             <label>Preço unitário</label>
-                            <input type="number" value={preco} onChange={e => setPreco(e.target.value)} required />
+                            <input type="number" step="0.01" value={preco} onChange={e => setPreco(e.target.value)} required />
                         </div>
 
                         {/* Tamanho */}
@@ -102,14 +149,11 @@ export function CadastroNovoVestuario() {
                             <label>Tamanho</label>
                             <select value={tamanho} onChange={e => setTamanho(e.target.value)} required>
                                 <option value="">Selecione uma opção</option>
-                                <option value="P">P</option>
-                                <option value="M">M</option>
-                                <option value="G">G</option>
+                                {tamanhos.map(t => <option key={t.id} value={t.id}>{t.nome}</option>)}
                             </select>
-                            <small>Não encontrou a opção que queria? <a href="/cadastrar-tamanho">Cadastre-a aqui!</a></small>
                         </div>
 
-                        {/* Quantidade adquirida */}
+                        {/* Quantidade */}
                         <div className={styles['form-group']}>
                             <label>Quantidade adquirida</label>
                             <input type="number" value={quantidade} onChange={e => setQuantidade(e.target.value)} required />
@@ -120,13 +164,10 @@ export function CadastroNovoVestuario() {
                             <label>Material</label>
                             <select value={material} onChange={e => setMaterial(e.target.value)} required>
                                 <option value="">Selecione uma opção</option>
-                                <option value="algodão">Algodão</option>
-                                <option value="poliéster">Poliéster</option>
+                                {materiais.map(m => <option key={m.id} value={m.id}>{m.nome}</option>)}
                             </select>
-                            <small>Não encontrou a opção que queria? <a href="/cadastrar-material">Cadastre-a aqui!</a></small>
                         </div>
 
-                        {/* Botão ocupando 2 colunas */}
                         <div className={styles['form-button']}>
                             <button type="submit">Cadastrar</button>
                         </div>
