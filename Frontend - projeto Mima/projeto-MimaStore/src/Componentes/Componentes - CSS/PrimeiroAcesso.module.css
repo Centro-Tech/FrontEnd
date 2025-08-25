@@ -112,6 +112,7 @@ input:focus {
   background: #ffe6ee;
   border-radius: 6px;
   padding: 7px 12px;
+  width: fit-content;
   margin-top: 4px;
   font-size: 1rem;
 }

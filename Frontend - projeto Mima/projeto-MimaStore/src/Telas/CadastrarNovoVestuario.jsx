@@ -4,10 +4,12 @@ import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import { useNavigate } from 'react-router-dom';
 import API from '../Provider/API';
+import {MensagemErro} from "../Componentes/MensagemErro";
 
 export function CadastroNovoVestuario() {
     const navigate = useNavigate();
-
+    
+    const [erro, setErro]= useState('');
     const [nome, setNome] = useState('');
     const [fornecedor, setFornecedor] = useState('');
     const [preco, setPreco] = useState('');
@@ -55,6 +57,21 @@ export function CadastroNovoVestuario() {
 
     async function cadastrar(event) {
         event.preventDefault();
+       
+       setErro('');
+if (
+    !nome ||
+    !fornecedor ||
+    !preco ||
+    !quantidade ||
+    !categoria ||
+    !cor ||
+    !tamanho ||
+    !material
+) {
+    setErro('Preencha todos os campos.');
+    return;
+}
 
         const vestuario = {
             nome: nome.trim(),
@@ -108,13 +125,13 @@ export function CadastroNovoVestuario() {
                         {/* Nome */}
                         <div className={styles['form-group']}>
                             <label>Nome</label>
-                            <input type="text" value={nome} onChange={e => setNome(e.target.value)} required />
+                            <input type="text" value={nome} onChange={e => setNome(e.target.value)}  />
                         </div>
 
                         {/* Categoria */}
                         <div className={styles['form-group']}>
                             <label>Categoria</label>
-                            <select value={categoria} onChange={e => setCategoria(e.target.value)} required>
+                            <select value={categoria} onChange={e => setCategoria(e.target.value)} >
                                 <option value="">Selecione uma opção</option>
                                 {categorias.map(cat => <option key={cat.id} value={cat.id}>{cat.nome}</option>)}
                             </select>
@@ -123,7 +140,7 @@ export function CadastroNovoVestuario() {
                         {/* Fornecedor */}
                         <div className={styles['form-group']}>
                             <label>Fornecedor</label>
-                            <select value={fornecedor} onChange={e => setFornecedor(e.target.value)} required>
+                            <select value={fornecedor} onChange={e => setFornecedor(e.target.value)} >
                                 <option value="">Selecione uma opção</option>
                                 {fornecedores.map(f => <option key={f.id} value={f.id}>{f.nome}</option>)}
                             </select>
@@ -132,7 +149,7 @@ export function CadastroNovoVestuario() {
                         {/* Cor */}
                         <div className={styles['form-group']}>
                             <label>Cor</label>
-                            <select value={cor} onChange={e => setCor(e.target.value)} required>
+                            <select value={cor} onChange={e => setCor(e.target.value)} >
                                 <option value="">Selecione uma opção</option>
                                 {cores.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
                             </select>
@@ -141,13 +158,13 @@ export function CadastroNovoVestuario() {
                         {/* Preço */}
                         <div className={styles['form-group']}>
                             <label>Preço unitário</label>
-                            <input type="number" step="0.01" value={preco} onChange={e => setPreco(e.target.value)} required />
+                            <input type="number" step="0.01" value={preco} onChange={e => setPreco(e.target.value)}  />
                         </div>
 
                         {/* Tamanho */}
                         <div className={styles['form-group']}>
                             <label>Tamanho</label>
-                            <select value={tamanho} onChange={e => setTamanho(e.target.value)} required>
+                            <select value={tamanho} onChange={e => setTamanho(e.target.value)} >
                                 <option value="">Selecione uma opção</option>
                                 {tamanhos.map(t => <option key={t.id} value={t.id}>{t.nome}</option>)}
                             </select>
@@ -156,13 +173,13 @@ export function CadastroNovoVestuario() {
                         {/* Quantidade */}
                         <div className={styles['form-group']}>
                             <label>Quantidade adquirida</label>
-                            <input type="number" value={quantidade} onChange={e => setQuantidade(e.target.value)} required />
+                            <input type="number" value={quantidade} onChange={e => setQuantidade(e.target.value)}  />
                         </div>
 
                         {/* Material */}
                         <div className={styles['form-group']}>
                             <label>Material</label>
-                            <select value={material} onChange={e => setMaterial(e.target.value)} required>
+                            <select value={material} onChange={e => setMaterial(e.target.value)} >
                                 <option value="">Selecione uma opção</option>
                                 {materiais.map(m => <option key={m.id} value={m.id}>{m.nome}</option>)}
                             </select>
@@ -171,6 +188,7 @@ export function CadastroNovoVestuario() {
                         <div className={styles['form-button']}>
                             <button type="submit">Cadastrar</button>
                         </div>
+                        <MensagemErro mensagem={erro} />
                     </form>
 
                     {mensagem && <h1>{mensagem}</h1>}
