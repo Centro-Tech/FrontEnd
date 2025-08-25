@@ -99,3 +99,12 @@
   background-color: #724165;
   color: #fff;
 }
+
+.erro {
+  color: #b3003c;
+  background: #ffe6ee;
+  border-radius: 6px;
+  padding: 7px 12px;
+  margin-top: 4px;
+  font-size: 1rem;
+}

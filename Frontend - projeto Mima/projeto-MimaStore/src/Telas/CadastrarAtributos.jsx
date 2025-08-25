@@ -4,8 +4,10 @@ import styles from '../Componentes/Componentes - CSS/Cadastro.module.css';
 import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import { useNavigate } from 'react-router-dom';
+import {MensagemErro} from "../Componentes/MensagemErro";
 
 export function CadastrarAtributo() {
+    const [erro, setErro]= useState('');
     const navigate = useNavigate();
     const [tipoAtributo, setTipoAtributo] = useState('');
     const [nome, setNome] = useState('');
@@ -17,6 +19,12 @@ export function CadastrarAtributo() {
 
     function cadastrar(event) {
         event.preventDefault();
+        setErro('');
+        if (tipoAtributo === '' || nome === '') {
+            setErro('Preencha todos os campos.');
+            console.log(erro);
+            return;
+        }
 
         const atributo = { tipoAtributo, nome };
         console.log(JSON.stringify(atributo));
@@ -38,13 +46,13 @@ export function CadastrarAtributo() {
                 <div className={styles['box-cadastro']}>
                     <h2 className={styles['box-container-titulo']}>Cadastrar Atributo de Item</h2>
                     <form onSubmit={cadastrar}>
+
                         <div className={styles['form-group']}>
                             <label htmlFor="tipo">O que deseja cadastrar?</label>
                             <select 
                                 id="tipo" 
                                 value={tipoAtributo} 
-                                onChange={e => setTipoAtributo(e.target.value)} 
-                                required
+                                onChange={e => setTipoAtributo(e.target.value)}
                             >
                                 <option value="">Selecione uma opção</option>
                                 <option value="cor">Cor</option>
@@ -60,10 +68,9 @@ export function CadastrarAtributo() {
                                 id="nome" 
                                 value={nome} 
                                 onChange={e => setNome(e.target.value)} 
-                                required 
                             />
                         </div>
-
+                        <MensagemErro mensagem={erro} />
                         <button type="submit">Cadastrar</button>
                     </form>
 
