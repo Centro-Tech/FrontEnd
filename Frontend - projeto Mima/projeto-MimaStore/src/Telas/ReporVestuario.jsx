@@ -4,12 +4,14 @@ import React, { useState } from 'react';
 import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import { useNavigate } from 'react-router-dom';
+import {MensagemErro} from "../Componentes/MensagemErro";
 
 export function ReporVestuario() {
     const navigate = useNavigate();
     const [codigo, setCodigo] = useState('');
     const [quantidade, setQuantidade] = useState('');
     const [mensagem, setMensagem] = useState('');
+     const [erro, setErro] = useState('');
 
     const voltarAoMenu = () => {
         navigate('/menu-inicial');
@@ -17,6 +19,13 @@ export function ReporVestuario() {
 
     function repor(event) {
         event.preventDefault();
+         setErro('');
+        if (codigo === '' || quantidade === '') {
+            setErro('Preencha todos os campos.');
+            console.log(erro);
+            return;
+        }
+
         const reposicao = { codigo, quantidade };
         console.log(JSON.stringify(reposicao));
         setMensagem('Reposto com sucesso!');
@@ -39,13 +48,14 @@ export function ReporVestuario() {
                     <form onSubmit={repor}>
                         <div className={styles['form-group']}>
                             <label>Código</label>
-                            <input type="text" value={codigo} onChange={e => setCodigo(e.target.value)} required />
+                            <input type="text" value={codigo} onChange={e => setCodigo(e.target.value)}/>
                         </div>
                         <div className={styles['form-group']}>
                             <label>Quantidade para repor</label>
-                            <input type="number" value={quantidade} onChange={e => setQuantidade(e.target.value)} required />
+                            <input type="number" value={quantidade} onChange={e => setQuantidade(e.target.value)}/>
                         </div>
                         <button type="submit">Repor</button>
+                          <MensagemErro mensagem={erro} />
                     </form>
                     {mensagem && <h1>{mensagem}</h1>}
                 </div>
