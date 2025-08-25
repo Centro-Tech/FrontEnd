@@ -61,3 +61,114 @@ body {
     max-width: 1400px;
     margin: 0 auto;
 }
+
+.sidebarOverlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.3);
+    z-index: 1000;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 250px; height: 100vh;
+    background: #fff;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+    padding: 1rem 1rem;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+.sidebar.open {
+    transform: translateX(0);
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    align-self: flex-end;
+    cursor: pointer;
+    margin-bottom: -4rem;
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar nav ul li {
+    margin: 0.5rem 0;
+    padding: 0;
+}
+
+.sidebarItem {
+    display: block;
+    background: #f8e1f4; /* rosa claro */
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    margin: 0.5rem 0;
+    transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+    box-shadow: 0 1px 6px rgba(215,191,211,0.10);
+    font-size: 1.1rem;
+    color: #7c3a8c; /* rosa escuro */
+    text-decoration: none;
+    border: 1px solid #e0c3e3; /* borda rosa suave */
+}
+
+.sidebarItem:hover {
+    background: #e0c3e3; /* rosa médio */
+    box-shadow: 0 2px 12px rgba(215,191,211,0.18);
+    color: #a34ca3; /* rosa mais forte no hover */
+    text-decoration: none;
+    border: 1.5px solid #d7bfd3; /* borda mais destacada no hover */
+}
+
+.perfilWrapper {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.arrowDown {
+    font-size: 1.2rem;
+    color: #7c3a8c;
+    margin-left: 4px;
+}
+
+.perfilMenu {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    background: #fff;
+    border: 1px solid #e0c3e3;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(215,191,211,0.18);
+    padding: 0.5rem 0;
+    min-width: 140px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+}
+
+.perfilMenu button {
+    background: none;
+    border: none;
+    padding: 0.7rem 1rem;
+    text-align: left;
+    color: #7c3a8c;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.perfilMenu button:hover {
+    background: #e0c3e3;
+    color: #a34ca3;
+}

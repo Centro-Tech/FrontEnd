@@ -48,7 +48,7 @@ export default function PrimeiroAcesso() {
 
   return (
     <div>
-      <Navbar />
+       <Navbar mostrarHamburguer={false} mostrarPerfil={false}  />
       <FaixaSair aoClicar={handleSair} />
       <div className={styles.container}>
         <div className={styles.card}>
