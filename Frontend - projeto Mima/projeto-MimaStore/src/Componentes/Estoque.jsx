@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../Provider/API";
 import { Tabela } from "./Tabela";
 import EstoquePopUp from "./EstoquePopUp";
 import { Navbar } from "./Navbar";
@@ -50,10 +50,24 @@ export default function Estoque() {
 
   const buscarEstoque = async () => {
     try {
-      const res = await axios.get("http://localhost:3001/estoque-completo");
-      setItens(res.data);
+      const res = await API.get("/itens/estoque");
+      // Garante que itens será sempre um array
+      if (Array.isArray(res.data)) {
+        setItens(res.data);
+      } else if (Array.isArray(res.data.itens)) {
+        setItens(res.data.itens);
+      } else {
+        setItens([]);
+        console.error("Resposta inesperada da API:", res.data);
+      }
     } catch (err) {
-      console.error("Erro ao buscar estoque:", err);
+      if (err.response) {
+        console.error("Erro ao buscar estoque:", err.response.data);
+        console.log(`Erro ${err.response.status}: ${JSON.stringify(err.response.data)}`);
+      } else {
+        console.error("Erro ao buscar estoque:", err);
+        console.log("Erro ao buscar estoque. Veja o console para detalhes.");
+      }
     }
   };
 
@@ -67,7 +81,7 @@ export default function Estoque() {
       setPrecoMax(maxPreco);
       setFiltroPreco([minPreco, maxPreco]);
 
-      const qtds = itens.map((i) => i.qtd_estoque || 0);
+      const qtds = itens.map((i) => i.qtdEstoque || 0);
       const minQtd = Math.min(...qtds);
       const maxQtd = Math.max(...qtds);
       setQtdMin(minQtd);
@@ -80,23 +94,29 @@ export default function Estoque() {
   const itensFiltrados = itens.filter((item) => {
     const matchNome = item.nome.toLowerCase().includes(busca.toLowerCase());
     const matchTamanho =
-      filtroTamanhos.length === 0 || filtroTamanhos.includes(item.tamanho);
+      filtroTamanhos.length === 0 || filtroTamanhos.includes(item.tamanho?.nome);
     const matchFornecedor =
       filtroFornecedores.length === 0 || filtroFornecedores.includes(item.fornecedor?.nome);
     const matchPreco =
       item.preco >= filtroPreco[0] && item.preco <= filtroPreco[1];
     const matchQtd =
-      item.qtd_estoque >= filtroQtd[0] && item.qtd_estoque <= filtroQtd[1];
+      item.qtdEstoque >= filtroQtd[0] && item.qtdEstoque <= filtroQtd[1];
 
     return matchNome && matchTamanho && matchFornecedor && matchPreco && matchQtd;
   });
 
   // Filtra apenas os campos desejados para exibição
-  const camposExibidos = ["codigo", "nome", "tamanho", "qtd_estoque", "preco"];
+  const camposExibidos = ["codigo", "nome", "tamanho", "qtdEstoque", "preco"];
   const itensFiltradosParaTabela = itensFiltrados.map((item) => {
-    const novoItem = { id: item.id }; // mantém o id para seleção/deleção
+    const novoItem = { id: item.id };
     camposExibidos.forEach((campo) => {
-      novoItem[campo] = item[campo];
+      if (campo === "tamanho") {
+        novoItem[campo] = item.tamanho?.nome || "";
+      } else if (campo === "qtd_estoque") {
+        novoItem[campo] = item.qtdEstoque;
+      } else {
+        novoItem[campo] = item[campo];
+      }
     });
     return novoItem;
   });
@@ -121,7 +141,7 @@ export default function Estoque() {
 
   const handleConfirmarRemocao = async () => {
     try {
-      await axios.delete("http://localhost:3001/itens", {
+      await API.delete("/itens/deletarVestuario", {
         data: { ids: selecionados },
       });
       await buscarEstoque();
