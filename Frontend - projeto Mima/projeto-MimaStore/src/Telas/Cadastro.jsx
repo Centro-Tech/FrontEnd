@@ -4,6 +4,7 @@ import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import { useNavigate } from 'react-router-dom';
 import API from '../Provider/API';
+import {MensagemErro} from "../Componentes/MensagemErro";
 
 export function CadastroFuncionario() {
     const navigate = useNavigate();
@@ -14,6 +15,7 @@ export function CadastroFuncionario() {
     const [enderecoInserido, setEnderecoInserido] = useState('');
     const [mensagem, setMensagem] = useState('');
     const [erro, setErro] = useState('');
+
 
     const voltarAoMenu = () => {
         navigate('/menu-inicial');
@@ -72,22 +74,22 @@ export function CadastroFuncionario() {
                         
                         <div className={styles['form-group']}>
                             <label htmlFor="nome">Nome</label>
-                            <input type="text" id="nome" value={nomeInserido} onChange={e => setNomeInserido(e.target.value)} required />
+                            <input type="text" id="nome" value={nomeInserido} onChange={e => setNomeInserido(e.target.value)}  />
                         </div>
                         
                         <div className={styles['form-group']}>
                             <label htmlFor="email">Email</label>
-                            <input type="email" id="email" value={emailInserido} onChange={e => setEmailInserido(e.target.value)} required />
+                            <input type="email" id="email" value={emailInserido} onChange={e => setEmailInserido(e.target.value)} />
                         </div>
                         
                         <div className={styles['form-group']}>
                             <label htmlFor="senha">Senha</label>
-                            <input type="password" id="senha" value={senhaInserida} onChange={e => setSenhaInserida(e.target.value)} required />
+                            <input type="password" id="senha" value={senhaInserida} onChange={e => setSenhaInserida(e.target.value)} />
                         </div>
                         
                         <div className={styles['form-group']}>
                             <label htmlFor="cargo">Cargo</label>
-                            <select id="cargo" required value={cargoInserido} onChange={e => setCargoInserido(e.target.value)}>
+                            <select id="cargo"  value={cargoInserido} onChange={e => setCargoInserido(e.target.value)}>
                                 <option value="" disabled>Selecione uma opção</option>
                                 <option value="Gerente">Gerente</option>
                                 <option value="Funcionario">Funcionário</option>
@@ -96,13 +98,13 @@ export function CadastroFuncionario() {
 
                         <div className={styles['form-group']}>
                             <label htmlFor="endereco">Endereço</label>
-                            <input type="text" id="endereco" value={enderecoInserido} onChange={e => setEnderecoInserido(e.target.value)} required />
+                            <input type="text" id="endereco" value={enderecoInserido} onChange={e => setEnderecoInserido(e.target.value)} />
                         </div>
                         
                         <button type='submit'>Cadastrar</button>
                     </form>
                     {mensagem && <h2 style={{ color: 'green' }}>{mensagem}</h2>}
-                    {erro && <h2 style={{ color: 'red' }}>{erro}</h2>}
+                    <br /> <MensagemErro mensagem={erro} />
                 </div>
             </div>
         </div>

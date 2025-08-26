@@ -5,6 +5,7 @@ import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import { useNavigate } from 'react-router-dom';
 import API from '../Provider/API';// importa axios configurado
+import {MensagemErro} from "../Componentes/MensagemErro";
 
 export function CadastrarFornecedor() {
     const navigate = useNavigate();
@@ -12,6 +13,7 @@ export function CadastrarFornecedor() {
     const [telefone, setTelefone] = useState('');
     const [email, setEmail] = useState('');
     const [mensagem, setMensagem] = useState('');
+    const [erro, setErro] = useState('');
 
     const voltarAoMenu = () => {
         navigate('/menu-inicial');
@@ -19,6 +21,13 @@ export function CadastrarFornecedor() {
 
     async function cadastrar(event) {
         event.preventDefault();
+         setErro('');
+        if (nome === '' || telefone === '' || email === '') {
+            setErro('Preencha todos os campos.');
+            console.log(erro);
+            return;
+        }
+
         const fornecedor = { nome, telefone, email };
 
         try {
@@ -59,7 +68,7 @@ export function CadastrarFornecedor() {
                                 type="text" 
                                 value={nome} 
                                 onChange={e => setNome(e.target.value)} 
-                                required 
+                              
                             />
                         </div>
                         <div className={styles['form-group']}>
@@ -68,7 +77,7 @@ export function CadastrarFornecedor() {
                                 type="tel" 
                                 value={telefone} 
                                 onChange={e => setTelefone(e.target.value)} 
-                                required 
+                                
                             />
                         </div>
                         <div className={styles['form-group']}>
@@ -77,10 +86,11 @@ export function CadastrarFornecedor() {
                                 type="email" 
                                 value={email} 
                                 onChange={e => setEmail(e.target.value)} 
-                                required 
+                                
                             />
                         </div>
                         <button type="submit">Cadastrar</button>
+                          <MensagemErro mensagem={erro} />
                     </form>
                     {mensagem && <h1>{mensagem}</h1>}
                 </div>
