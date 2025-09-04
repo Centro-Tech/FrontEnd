@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from '../Componentes/Componentes - CSS/RealizarVenda.module.css';
 import { Navbar } from '../Componentes/Navbar.jsx';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar.jsx';
+import API from '../Provider/API';
 
 export function RealizarVenda() {
     const navigate = useNavigate();
@@ -17,26 +18,21 @@ export function RealizarVenda() {
     };
 
     // Função para pesquisar produto por código
-    const pesquisarProduto = async () => {
-        if (!codigoPeca.trim()) return;
-        
-        try {
-            // Aqui será integrado com o backend
-            // Por enquanto, simulo um produto
-            const produtoEncontrado = {
-                codigo: codigoPeca,
-                nome: 'Produto Exemplo',
-                tamanho: 'M',
-                disponivel: 10,
-                valor: 50.00
-            };
-            
-            setProdutosPesquisa([produtoEncontrado]);
-        } catch (error) {
-            console.error('Erro ao pesquisar produto:', error);
-            setProdutosPesquisa([]);
-        }
-    };
+   const pesquisarProduto = async () => {
+  if (!codigoPeca.trim()) return;
+
+  try {
+    const response = await API.get(`/itens/${codigoPeca}`);
+    const produtoEncontrado = response.data;
+
+    setProdutosPesquisa([produtoEncontrado]);
+  } catch (error) {
+    console.error('Erro ao pesquisar produto:', error);
+    setProdutosPesquisa([]);
+    alert('Produto não encontrado ou erro na pesquisa.');
+  }
+};
+
 
     // Função para adicionar produto ao carrinho
     const adicionarAoCarrinho = (produto) => {
@@ -85,25 +81,39 @@ export function RealizarVenda() {
     };
 
     // Função para finalizar venda
-    const finalizarVenda = async () => {
-        if (carrinho.length === 0) {
-            alert('Carrinho vazio');
-            return;
-        }
+   const finalizarVenda = async () => {
+  if (carrinho.length === 0) {
+    alert('Carrinho vazio');
+    return;
+  }
 
-        try {
-            // Aqui será integrado com o backend para processar a venda
-            console.log('Finalizando venda:', { carrinho, valorTotal });
-            alert(`Venda finalizada! Total: R$ ${valorTotal.toFixed(2)}`);
-            
-            // Limpa o carrinho após finalizar
-            setCarrinho([]);
-            setValorTotal(0);
-        } catch (error) {
-            console.error('Erro ao finalizar venda:', error);
-            alert('Erro ao finalizar venda');
-        }
+  try {
+    const vendaPayload = {
+      itens: carrinho.map(item => ({
+        codigoProduto: item.codigo,
+        quantidade: item.quantidade,
+        valorUnitario: item.valor,
+        valorTotal: item.valorTotal
+      })),
+      valorTotal
     };
+
+    await API.post('/vendas', vendaPayload, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    alert(`Venda finalizada com sucesso! Total: R$ ${valorTotal.toFixed(2)}`);
+    setCarrinho([]);
+    setValorTotal(0);
+  } catch (error) {
+    console.error('Erro ao finalizar venda:', error);
+    alert('Erro ao finalizar venda. Verifique os dados ou tente novamente.');
+  }
+};
+
 
     return (
         <div className={styles.container}>

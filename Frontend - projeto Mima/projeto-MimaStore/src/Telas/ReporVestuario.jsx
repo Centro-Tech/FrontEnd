@@ -5,6 +5,7 @@ import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import { useNavigate } from 'react-router-dom';
 import {MensagemErro} from "../Componentes/MensagemErro";
+import API from '../Provider/API';
 
 export function ReporVestuario() {
     const navigate = useNavigate();
@@ -27,9 +28,26 @@ export function ReporVestuario() {
         }
 
         const reposicao = { codigo, quantidade };
-        console.log(JSON.stringify(reposicao));
-        setMensagem('Reposto com sucesso!');
+       async function repor(event) {
+    event.preventDefault();
+    setErro('');
+    if (codigo === '' || quantidade === '') {
+        setErro('Preencha todos os campos.');
+        return;
+    }
 
+    const reposicao = { codigo, quantidade };
+
+    try {
+        await API.post('/estoque/repor', reposicao); // ajuste o endpoint conforme seu backend
+        setMensagem('Reposto com sucesso!');
+        setCodigo('');
+        setQuantidade('');
+        setTimeout(() => setMensagem(''), 2000);
+    } catch (error) {
+        setErro('Erro ao repor estoque.');
+    }
+}
         setTimeout(() => {
             setMensagem('');
             setCodigo('');
