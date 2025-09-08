@@ -98,7 +98,7 @@ export function RealizarVenda() {
       valorTotal
     };
 
-    await API.post('/vendas', vendaPayload, {
+    await API.post('/vendas/vender', vendaPayload, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
         "Content-Type": "application/json"

@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Average&family=Petrona:ital,wght@0,100..900;1,100..900&family=Press+Start+2P&display=swap');
 
 body {
-    font-family: 'Average', serif;
+    /* font-family: 'Average', serif; */
     margin: 0;
     padding: 0;
 }
@@ -109,24 +109,25 @@ body {
 
 .sidebarItem {
     display: block;
-    background: #f8e1f4; /* rosa claro */
-    border-radius: 10px;
+    background: #D7BFD3;; /* rosa claro */
+    border-radius: 4px;
     padding: 0.7rem 1rem;
     margin: 0.5rem 0;
     transition: background 0.2s, box-shadow 0.2s, color 0.2s;
-    box-shadow: 0 1px 6px rgba(215,191,211,0.10);
     font-size: 1.1rem;
-    color: #7c3a8c; /* rosa escuro */
+    color: black;
     text-decoration: none;
-    border: 1px solid #e0c3e3; /* borda rosa suave */
+    font-weight: 600;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
 }
 
 .sidebarItem:hover {
     background: #e0c3e3; /* rosa médio */
-    box-shadow: 0 2px 12px rgba(215,191,211,0.18);
-    color: #a34ca3; /* rosa mais forte no hover */
+    box-shadow: 0 2px 12px rgba(59, 58, 59, 0.167);
+    color: #f9e5fb; /* rosa mais forte no hover */
     text-decoration: none;
-    border: 1.5px solid #d7bfd3; /* borda mais destacada no hover */
+    
 }
 
 .perfilWrapper {
