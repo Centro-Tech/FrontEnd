@@ -16,7 +16,9 @@ import MudarSenha from '../Telas/MudarSenha.jsx';
 import { DeletarFuncionario } from '../Telas/DeletarFuncionario.jsx';
 import { DeletarFornecedor } from '../Telas/DeletarFornecedor.jsx';
 import { DeletarCliente } from '../Telas/DeletarCliente.jsx';
-import { TesteFornecedor } from '../Telas/TesteFornecedor.jsx';
+import { GestaoFornecedor } from '../Telas/GestaoFornecedor.jsx';
+import { GestaoFuncionarios } from '../Telas/GestaoFuncionarios.jsx';
+import { GestaoClientes } from '../Telas/GestaoClientes.jsx';
 // import { Configuracao } from '../Telas/Configuracao.jsx';
 
 export function AppRouter() {
@@ -54,7 +56,9 @@ export function AppRouter() {
       <Route path="/deletar-cliente" element={<DeletarCliente />} />
 
       {/* Rotas de Gestão */}
-      <Route path="/gestao-fornecedores" element={<TesteFornecedor />} />
+      <Route path="/gestao-fornecedores" element={<GestaoFornecedor />} />
+      <Route path="/gestao-funcionarios" element={<GestaoFuncionarios />} />
+      <Route path="/gestao-clientes" element={<GestaoClientes />} />
 
       {/* Rota catch-all para páginas não encontradas */}
       <Route path="*" element={<Navigate to="/splash" replace />} />

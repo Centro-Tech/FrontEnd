@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from '../Componentes/Componentes - CSS/TesteFornecedor.module.css';
+import styles from '../Componentes/Componentes - CSS/GestaoFornecedor.module.css';
 import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import API from '../Provider/API';
 import { MensagemErro } from '../Componentes/MensagemErro';
 import { Tabela } from '../Componentes/Tabela';
 
-export function TesteFornecedor() {
+export function GestaoFornecedor() {
     const navigate = useNavigate();
     const [fornecedores, setFornecedores] = useState([]);
     const [carregando, setCarregando] = useState(false);

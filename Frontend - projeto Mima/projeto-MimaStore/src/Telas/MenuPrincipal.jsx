@@ -50,6 +50,18 @@ export function MenuPrincipal() {
         navigate('/deletar-cliente');
     };
 
+    const handleGestaoFornecedores = () => {
+        navigate('/gestao-fornecedores');
+    };
+
+    const handleGestaoFuncionarios = () => {
+        navigate('/gestao-funcionarios');
+    };
+
+    const handleGestaoClientes = () => {
+        navigate('/gestao-clientes');
+    };
+
 
     return (
         <div className={styles.menuPrincipal}>
@@ -74,11 +86,15 @@ export function MenuPrincipal() {
                
                     <div className={styles.coluna}>
                         <BotaoEscuro texto="Pessoas" />
-                        <BotaoClaro texto="Cadastrar Funcionário" onClick={handleCadastrarFuncionarios}/>
-                        <BotaoClaro texto="Cadastrar Fornecedor" onClick={handleCadastrarFornecedor}/>
-                        <BotaoClaro texto="Deletar Funcionário" onClick={handleDeletarFuncionario}/>
-                        <BotaoClaro texto="Deletar Fornecedor" onClick={handleDeletarFornecedor}/>
-                        <BotaoClaro texto="Deletar Cliente" onClick={handleDeletarCliente}/>
+                        {/* <BotaoClaro texto="Cadastrar Funcionário" onClick={handleCadastrarFuncionarios}/> */}
+                        {/* <BotaoClaro texto="Cadastrar Fornecedor" onClick={handleCadastrarFornecedor}/> */}
+                        <BotaoClaro texto="Gestão de Fornecedores" onClick={handleGestaoFornecedores}/>
+                        <BotaoClaro texto="Gestão de Funcionários" onClick={handleGestaoFuncionarios}/>
+                        <BotaoClaro texto="Gestão de Clientes" onClick={handleGestaoClientes}/>
+                        {/* <BotaoClaro texto="Deletar Funcionário" onClick={handleDeletarFuncionario}/> */}
+                        {/* <BotaoClaro texto="Deletar Fornecedor" onClick={handleDeletarFornecedor}/> */}
+                        {/* <BotaoClaro texto="Deletar Cliente" onClick={handleDeletarCliente}/> */}
+                        
                        
                     </div>
                 </div>
