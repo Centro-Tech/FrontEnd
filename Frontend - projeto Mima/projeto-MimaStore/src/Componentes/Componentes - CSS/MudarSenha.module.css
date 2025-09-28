@@ -1,0 +1,411 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Petrona:wght@400;700&display=swap');
+
+/* ---------- CONTAINER PRINCIPAL ---------- */
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f4f7 0%, #ede3eb 100%);
+  font-family: 'Inter', sans-serif;
+}
+
+.centerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 20px;
+}
+
+/* ---------- CARDS PRINCIPAIS ---------- */
+.card {
+  background: #D7BFD3;
+  border-radius: 16px;
+  padding: 45px 40px;
+  box-shadow: 0 8px 32px rgba(135, 92, 106, 0.15);
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.cardConfirmacao {
+  background: #D7BFD3;
+  border-radius: 16px;
+  padding: 60px 45px;
+  box-shadow: 0 8px 32px rgba(135, 92, 106, 0.15);
+  max-width: 650px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.cardSucesso {
+  background: linear-gradient(135deg, #D7BFD3 0%, #c8a9c3 100%);
+  border-radius: 16px;
+  padding: 80px 45px;
+  box-shadow: 0 8px 32px rgba(135, 92, 106, 0.2);
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ---------- TIPOGRAFIA ---------- */
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d1b2e;
+  margin: 0 0 15px 0;
+  font-family: 'Petrona', serif;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.subtitle {
+  font-size: 15px;
+  color: #4a3d4b;
+  margin: 0 0 35px 0;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.titleConfirmacao {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2d1b2e;
+  margin: 0 0 25px 0;
+  line-height: 1.2;
+  font-family: 'Petrona', serif;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.descricaoConfirmacao {
+  font-size: 16px;
+  color: #4a3d4b;
+  margin: 0 0 45px 0;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.titleSucesso {
+  font-size: 36px;
+  font-weight: 700;
+  color: #2d1b2e;
+  margin: 0 0 20px 0;
+  font-family: 'Petrona', serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.subtitleSucesso {
+  font-size: 16px;
+  color: #4a3d4b;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ---------- FORMULÁRIOS ---------- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d1b2e;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input {
+  padding: 14px 18px;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.input:focus {
+  border-color: #875C6A;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(135, 92, 106, 0.1);
+}
+
+.input::placeholder {
+  color: #999;
+  font-weight: 400;
+}
+
+/* ---------- BOTÕES ---------- */
+.button {
+  background: linear-gradient(135deg, #875C6A 0%, #724165 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 16px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  box-shadow: 0 4px 12px rgba(135, 92, 106, 0.3);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(135, 92, 106, 0.4);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+.button:disabled {
+  background: #999;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 8px rgba(153, 153, 153, 0.3);
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.buttonPrimary {
+  background: linear-gradient(135deg, #875C6A 0%, #724165 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 16px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  box-shadow: 0 4px 12px rgba(135, 92, 106, 0.3);
+}
+
+.buttonPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(135, 92, 106, 0.4);
+}
+
+.buttonSecondary {
+  background: transparent;
+  color: #875C6A;
+  border: 2px solid #875C6A;
+  border-radius: 8px;
+  padding: 14px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.buttonSecondary:hover {
+  background: #875C6A;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(135, 92, 106, 0.3);
+}
+
+/* ---------- ILUSTRAÇÃO DA CONFIRMAÇÃO ---------- */
+.ilustracao {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 45px;
+  gap: 30px;
+}
+
+.phoneIcon {
+  width: 140px;
+  height: 240px;
+  background: linear-gradient(135deg, #2d1b2e 0%, #1a0f1b 100%);
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(45, 27, 46, 0.3);
+  border: 3px solid #444;
+}
+
+.phoneIcon::before {
+  content: '';
+  position: absolute;
+  top: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 18px;
+  background: #000;
+  border-radius: 12px;
+}
+
+.phoneIcon::after {
+  content: '';
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  background: #333;
+  border-radius: 50%;
+  border: 2px solid #555;
+}
+
+.emailIcon {
+  background: linear-gradient(135deg, #6366F1 0%, #4f46e5 100%);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.personIcon {
+  font-size: 80px;
+  filter: grayscale(1) brightness(0.7);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------- ANIMAÇÕES ---------- */
+.cardSucesso {
+  animation: sucessoEntrada 0.6s ease-out;
+}
+
+@keyframes sucessoEntrada {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.titleSucesso {
+  animation: tituloSucesso 0.8s ease-out 0.2s both;
+}
+
+@keyframes tituloSucesso {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- RESPONSIVIDADE ---------- */
+@media (max-width: 768px) {
+  .card,
+  .cardConfirmacao,
+  .cardSucesso {
+    margin: 15px;
+    padding: 35px 25px;
+  }
+  
+  .title {
+    font-size: 24px;
+  }
+  
+  .titleConfirmacao {
+    font-size: 26px;
+  }
+  
+  .titleSucesso {
+    font-size: 28px;
+  }
+  
+  .phoneIcon {
+    width: 100px;
+    height: 180px;
+  }
+  
+  .phoneIcon::before {
+    width: 50px;
+    height: 15px;
+    top: 20px;
+  }
+  
+  .personIcon {
+    font-size: 50px;
+  }
+  
+  .emailIcon {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+  
+  .ilustracao {
+    gap: 20px;
+    margin-bottom: 35px;
+  }
+  
+  .buttonGroup {
+    gap: 15px;
+  }
+  
+  .form {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .centerContainer {
+    padding: 10px;
+  }
+  
+  .card,
+  .cardConfirmacao,
+  .cardSucesso {
+    padding: 25px 20px;
+  }
+  
+  .title,
+  .titleConfirmacao {
+    font-size: 22px;
+  }
+  
+  .titleSucesso {
+    font-size: 24px;
+  }
+  
+  .subtitle,
+  .descricaoConfirmacao {
+    font-size: 14px;
+  }
+}

@@ -7,7 +7,7 @@ export default function Splashscreen() {
 
   const handlePrimeiroAcesso = () => {
     // Aqui você pode adicionar lógica para primeiro acesso
-    navigate('/PrimeiroAcesso');
+    navigate('/primeiro-acesso');
   };
 
   const handleFazerLogin = () => {

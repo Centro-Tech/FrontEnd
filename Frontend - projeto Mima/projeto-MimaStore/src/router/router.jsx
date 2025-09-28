@@ -12,42 +12,52 @@ import { CadastroNovoVestuario } from '../Telas/CadastrarNovoVestuario.jsx';
 import { ReporVestuario } from '../Telas/ReporVestuario.jsx';
 import PrimeiroAcesso from '../Telas/PrimeiroAcesso.jsx';
 import  Login  from '../Telas/Login.jsx';
-
+import MudarSenha from '../Telas/MudarSenha.jsx';
+import { DeletarFuncionario } from '../Telas/DeletarFuncionario.jsx';
+import { DeletarFornecedor } from '../Telas/DeletarFornecedor.jsx';
+import { DeletarCliente } from '../Telas/DeletarCliente.jsx';
+import { TesteFornecedor } from '../Telas/TesteFornecedor.jsx';
+// import { Configuracao } from '../Telas/Configuracao.jsx';
 
 export function AppRouter() {
   return (
-     <Routes>
+    <Routes>
       {/* Rota raiz redireciona para splash */}
       <Route path="/" element={<Navigate to="/splash" replace />} />
       
-      <Route path="/PrimeiroAcesso" element={<PrimeiroAcesso />} />
-      <Route path="/login" element={<Login />} />
-      
-      {/* Rota da tela inicial/splash */}
+      {/* Rotas de Autenticação */}
       <Route path="/splash" element={<Splashscreen />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/primeiro-acesso" element={<PrimeiroAcesso />} />
+      <Route path="/mudar-senha" element={<MudarSenha />} />
       
       {/* Rota do menu principal */}
       <Route path="/menu-inicial" element={<MenuInicial />} />
       
-      {/* Rota para realizar venda */}
+      {/* Rotas de Vendas */}
       <Route path="/realizar-venda" element={<RealizarVenda />} />
-      
-      {/* Rota para visualizar estoque */}
-      <Route path="/estoque" element={<Estoque />} />
-      
-      {/* Rota para histórico de vendas */}
       <Route path="/historico-vendas" element={<HistoricoVendas />} />
-
-      {/* Novas rotas adicionadas */}
-      <Route path="/cadastrar-fornecedor" element={<CadastrarFornecedor />} />
-      <Route path="/cadastrar-funcionarios" element={<CadastroFuncionario />} />
-      <Route path="/cadastrar-atributos" element={<CadastrarAtributo />} />
+      
+      {/* Rotas de Estoque */}
+      <Route path="/estoque" element={<Estoque />} />
       <Route path="/cadastrar-vestuario" element={<CadastroNovoVestuario />} />
       <Route path="/cadastrar-vestuario-existente" element={<ReporVestuario />} />
+      <Route path="/cadastrar-atributos" element={<CadastrarAtributo />} />
+
+      {/* Rotas de Pessoas - Cadastro */}
+      <Route path="/cadastrar-funcionarios" element={<CadastroFuncionario />} />
+      <Route path="/cadastrar-fornecedor" element={<CadastrarFornecedor />} />
+      
+      {/* Rotas de Pessoas - Exclusão */}
+      <Route path="/deletar-funcionario" element={<DeletarFuncionario />} />
+      <Route path="/deletar-fornecedor" element={<DeletarFornecedor />} />
+      <Route path="/deletar-cliente" element={<DeletarCliente />} />
+
+      {/* Rotas de Gestão */}
+      <Route path="/gestao-fornecedores" element={<TesteFornecedor />} />
 
       {/* Rota catch-all para páginas não encontradas */}
       <Route path="*" element={<Navigate to="/splash" replace />} />
-  
     </Routes>
   );
 }

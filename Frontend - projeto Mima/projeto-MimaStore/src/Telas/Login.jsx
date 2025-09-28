@@ -53,7 +53,7 @@ export default function Login() {
   };
 
   const handleSair = () => navigate("/splash");
-  const handlePrimeiroAcesso = () => navigate("/PrimeiroAcesso");
+  const handlePrimeiroAcesso = () => navigate("/primeiro-acesso");
 
   return (
     <div>
@@ -95,6 +95,9 @@ export default function Login() {
             </form>
             <div className={styles.link}>
               Primeiro acesso? <span onClick={handlePrimeiroAcesso}>Clique aqui!</span>
+            </div>
+            <div className={styles.link}>
+              Esqueceu sua senha? <span onClick={() => navigate("/mudar-senha")}>Clique aqui!</span>
             </div>
           </div>
         </div>

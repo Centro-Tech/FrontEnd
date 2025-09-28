@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Navbar } from "../Componentes/Navbar.jsx";
 import { FaixaSair } from "../Componentes/FaixaSair.jsx";
 import styles from "../Componentes/Componentes - CSS/PrimeiroAcesso.module.css"; // Crie um CSS para estilizar
+import API from "../Provider/API";
 
 export default function PrimeiroAcesso() {
   const navigate = useNavigate();
@@ -35,11 +36,35 @@ export default function PrimeiroAcesso() {
       setErro("As senhas não coincidem.");
       return;
     }
-    // Simula sucesso
-    setSucesso(true);
-    setTimeout(() => {
-      navigate("/login");
-    }, 2000);
+
+  //    async function cadastrar(event) {
+  //       event.preventDefault();
+  //       setErro('');
+  //       if (tipoAtributo === '' || nome === '') {
+  //           setErro('Preencha todos os campos.');
+  //           return;
+  //       }
+    
+  //       const atributo = { tipoAtributo, nome };
+    
+  //      try {
+  //       let endpoint = '';
+  //       if (tipoAtributo === 'cor') endpoint = '/cores';
+  //       else if (tipoAtributo === 'tamanho') endpoint = '/tamanhos';
+  //       else if (tipoAtributo === 'material') endpoint = '/materiais';
+    
+  //       await API.post(endpoint, atributo);
+  //       setMensagem('Atributo cadastrado com sucesso!');
+  //       setTipoAtributo('');
+  //       setNome('');
+  //       setTimeout(() => setMensagem(''), 2000);
+  //   } catch (error) {
+  //       setErro('Erro ao cadastrar atributo.');
+  //   }
+  //   }
+
+
+
   };
 
   const handleSair = () => {

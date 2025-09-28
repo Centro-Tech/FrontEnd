@@ -38,6 +38,18 @@ export function MenuPrincipal() {
         navigate('/cadastrar-vestuario-existente');
     };
 
+    const handleDeletarFuncionario = () => {
+        navigate('/deletar-funcionario');
+    };
+
+    const handleDeletarFornecedor = () => {
+        navigate('/deletar-fornecedor');
+    };
+
+    const handleDeletarCliente = () => {
+        navigate('/deletar-cliente');
+    };
+
 
     return (
         <div className={styles.menuPrincipal}>
@@ -59,11 +71,15 @@ export function MenuPrincipal() {
                         <BotaoClaro texto="Histórico de vendas" onClick={handleHistoricoVendas} />
                         <BotaoClaro texto="Dashboard" />
                     </div>
-                    
+               
                     <div className={styles.coluna}>
                         <BotaoEscuro texto="Pessoas" />
                         <BotaoClaro texto="Cadastrar Funcionário" onClick={handleCadastrarFuncionarios}/>
                         <BotaoClaro texto="Cadastrar Fornecedor" onClick={handleCadastrarFornecedor}/>
+                        <BotaoClaro texto="Deletar Funcionário" onClick={handleDeletarFuncionario}/>
+                        <BotaoClaro texto="Deletar Fornecedor" onClick={handleDeletarFornecedor}/>
+                        <BotaoClaro texto="Deletar Cliente" onClick={handleDeletarCliente}/>
+                       
                     </div>
                 </div>
             </div>
