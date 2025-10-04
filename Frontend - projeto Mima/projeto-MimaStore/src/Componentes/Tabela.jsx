@@ -62,8 +62,8 @@ export function Tabela({
             </TableRow>
           </TableHead>
           <TableBody>
-            {itens.map((item) => (
-              <TableRow key={item.id} className={styles["MuiTableBody-root"]}>
+            {itens.map((item, index) => (
+              <TableRow key={item.id ?? index} className={styles["MuiTableBody-root"]}>
                 {modoDelecao && (
                   <TableCell className={styles["MuiTableBody-root"]}>
                     <Checkbox

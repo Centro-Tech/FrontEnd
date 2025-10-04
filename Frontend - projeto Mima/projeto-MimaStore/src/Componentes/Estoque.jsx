@@ -1,333 +1,179 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import API from "../Provider/API";
-import { Tabela } from "./Tabela";
-import EstoquePopUp from "./EstoquePopUp";
-import { Navbar } from "./Navbar";
-import { FaixaVoltar } from "./FaixaVoltar";
-import {
-  Button,
-  TextField,
-  Box,
-  Checkbox,
-  FormControlLabel,
-  Drawer,
-  Slider,
-  Typography,
-} from "@mui/material";
-import styles from "./Componentes - CSS/estiloTabelas.module.css";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styles from './Componentes - CSS/GestaoFornecedor.module.css';
+import { Navbar } from './Navbar';
+import { FaixaVoltar } from './FaixaVoltar';
+import API from '../Provider/API';
+import { MensagemErro } from './MensagemErro';
+import { Tabela } from './Tabela';
 
 export default function Estoque() {
   const navigate = useNavigate();
   const [itens, setItens] = useState([]);
+  const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState('');
+  const [mensagem, setMensagem] = useState('');
+  const [busca, setBusca] = useState('');
+  const [mostrarModalRepor, setMostrarModalRepor] = useState(false);
+  const [itemParaRepor, setItemParaRepor] = useState(null);
+  const [quantidadeRepor, setQuantidadeRepor] = useState('');
+  const [mostrarModalConfirmacao, setMostrarModalConfirmacao] = useState(false);
+  const [itemParaExcluir, setItemParaExcluir] = useState(null);
 
-  const voltarAoMenu = () => {
-    navigate('/menu-inicial');
-  };
-  const [paginaAtual, setPaginaAtual] = useState(1);
-  const [itensPorPagina] = useState(7);
-  const [modoDelecao, setModoDelecao] = useState(false);
-  const [selecionados, setSelecionados] = useState([]);
-  const [busca, setBusca] = useState("");
-  const [mostrarPopup, setMostrarPopup] = useState(false);
-  const [filtrosAbertos, setFiltrosAbertos] = useState(false);
+  const voltarAoMenu = () => navigate('/menu-inicial');
 
-  // Filtros
-  const [filtroTamanhos, setFiltroTamanhos] = useState([]);
-  const [filtroFornecedores, setFiltroFornecedores] = useState([]);
-  const [filtroPreco, setFiltroPreco] = useState([0, 1000]);
-  const [filtroQtd, setFiltroQtd] = useState([0, 1000]);
-
-  // Guarda os valores mínimo e máximo reais para resetar filtros
-  const [precoMin, setPrecoMin] = useState(0);
-  const [precoMax, setPrecoMax] = useState(1000);
-  const [qtdMin, setQtdMin] = useState(0);
-  const [qtdMax, setQtdMax] = useState(1000);
-
-  useEffect(() => {
-    buscarEstoque();
-  }, []);
+  useEffect(() => { buscarEstoque(); }, []);
 
   const buscarEstoque = async () => {
+    setCarregando(true);
+    setErro('');
     try {
-      const res = await API.get("/itens/estoque");
-      // Garante que itens será sempre um array
-      if (Array.isArray(res.data)) {
-        setItens(res.data);
-      } else if (Array.isArray(res.data.itens)) {
-        setItens(res.data.itens);
-      } else {
-        setItens([]);
-        console.error("Resposta inesperada da API:", res.data);
-      }
+      const res = await API.get('/itens/estoque');
+      if (res.status === 204) { setItens([]); return; }
+      let itensCarregados = [];
+      if (Array.isArray(res.data)) itensCarregados = res.data;
+      else if (res.data && Array.isArray(res.data.itens)) itensCarregados = res.data.itens;
+      else if (res.data && Array.isArray(res.data.data)) itensCarregados = res.data.data;
+      else if (res.data && res.data.content && Array.isArray(res.data.content)) itensCarregados = res.data.content;
+      else { setItens([]); setErro('Formato de resposta da API não reconhecido.'); return; }
+      setItens(itensCarregados);
+      if (itensCarregados.length === 0) setErro('Nenhum item encontrado no estoque.');
     } catch (err) {
       if (err.response) {
-        console.error("Erro ao buscar estoque:", err.response.data);
-        console.log(`Erro ${err.response.status}: ${JSON.stringify(err.response.data)}`);
-      } else {
-        console.error("Erro ao buscar estoque:", err);
-        console.log("Erro ao buscar estoque. Veja o console para detalhes.");
-      }
-    }
+        if (err.response?.status === 404) { setItens([]); setErro('Endpoint não encontrado.'); }
+        else if (err.response?.status === 204) { setItens([]); setErro(''); }
+        else if (err.response?.status === 500) setErro('Erro interno do servidor ao carregar estoque.');
+        else setErro(`Erro ao carregar estoque (${err.response.status})`);
+      } else if (err.request) setErro('Erro de conexão com o servidor.');
+      else setErro(`Erro inesperado: ${err.message}`);
+    } finally { setCarregando(false); }
   };
 
-  // Atualiza filtroPreco e filtroQtd para o intervalo real após carregar os itens
-  useEffect(() => {
-    if (itens.length > 0) {
-      const precos = itens.map((i) => i.preco || 0);
-      const minPreco = Math.min(...precos);
-      const maxPreco = Math.max(...precos);
-      setPrecoMin(minPreco);
-      setPrecoMax(maxPreco);
-      setFiltroPreco([minPreco, maxPreco]);
-
-      const qtds = itens.map((i) => i.qtdEstoque || 0);
-      const minQtd = Math.min(...qtds);
-      const maxQtd = Math.max(...qtds);
-      setQtdMin(minQtd);
-      setQtdMax(maxQtd);
-      setFiltroQtd([minQtd, maxQtd]);
+  const abrirConfirmacaoExclusao = async (item) => {
+    if (!item) { setErro('Erro: Item inválido para exclusão.'); console.error('item inválido', item); return; }
+    let target = item;
+    if (!target.id && !target.codigo) {
+      const encontrado = itens.find((it) => (it.codigo && item.codigo && String(it.codigo) === String(item.codigo)) || (it.nome && item.nome && String(it.nome) === String(item.nome)));
+      if (encontrado) target = encontrado;
     }
-  }, [itens]);
-
-  // Filtragem combinada
-  const itensFiltrados = itens.filter((item) => {
-    const matchNome = item.nome.toLowerCase().includes(busca.toLowerCase());
-    const matchTamanho =
-      filtroTamanhos.length === 0 || filtroTamanhos.includes(item.tamanho?.nome);
-    const matchFornecedor =
-      filtroFornecedores.length === 0 || filtroFornecedores.includes(item.fornecedor?.nome);
-    const matchPreco =
-      item.preco >= filtroPreco[0] && item.preco <= filtroPreco[1];
-    const matchQtd =
-      item.qtdEstoque >= filtroQtd[0] && item.qtdEstoque <= filtroQtd[1];
-
-    return matchNome && matchTamanho && matchFornecedor && matchPreco && matchQtd;
-  });
-
-  // Filtra apenas os campos desejados para exibição
-  const camposExibidos = ["codigo", "nome", "tamanho", "qtdEstoque", "preco"];
-  const itensFiltradosParaTabela = itensFiltrados.map((item) => {
-    const novoItem = { id: item.id };
-    camposExibidos.forEach((campo) => {
-      if (campo === "tamanho") {
-        novoItem[campo] = item.tamanho?.nome || "";
-      } else if (campo === "qtd_estoque") {
-        novoItem[campo] = item.qtdEstoque;
-      } else {
-        novoItem[campo] = item[campo];
-      }
-    });
-    return novoItem;
-  });
-
-  const indexInicio = (paginaAtual - 1) * itensPorPagina;
-  const indexFim = indexInicio + itensPorPagina;
-  const itensPagina = itensFiltradosParaTabela.slice(indexInicio, indexFim);
-  const totalPaginas = Math.ceil(itensFiltradosParaTabela.length / itensPorPagina);
-
-  const handleSelecionar = (id) => {
-    if (selecionados.includes(id)) {
-      setSelecionados(selecionados.filter((itemId) => itemId !== id));
-    } else {
-      setSelecionados([...selecionados, id]);
-    }
+    if (!target.id && !target.codigo) { setErro('Erro: Item não encontrado para exclusão.'); console.error('sem correspondência', item); return; }
+    setMostrarModalConfirmacao(true); setItemParaExcluir(target);
   };
 
-  const itensParaRemover = itens.filter((item) => selecionados.includes(item.id));
-
-  const abrirPopup = () => setMostrarPopup(true);
-  const fecharPopup = () => setMostrarPopup(false);
-
-  const handleConfirmarRemocao = async () => {
+  const confirmarExclusao = async () => {
+    if (!itemParaExcluir) { setErro('Erro: Item não encontrado para exclusão.'); return; }
+    if (!itemParaExcluir.codigo || itemParaExcluir.codigo === 'N/A') { setErro('Erro: Este item não possui um código válido para exclusão.'); return; }
+    setCarregando(true); setErro('');
     try {
-      await API.delete("/itens/deletarVestuario", {
-        data: { ids: selecionados },
-      });
-      await buscarEstoque();
-      setSelecionados([]);
-      setModoDelecao(false);
-      setMostrarPopup(false);
-    } catch (err) {
-      console.error("Erro ao deletar itens:", err);
-    }
+      let response;
+      try { response = await API.delete(`/itens/item/${encodeURIComponent(itemParaExcluir.codigo)}`); }
+      catch (codigoError) {
+        if (codigoError.response?.status === 404 && itemParaExcluir.id) { response = await API.delete(`/itens/${itemParaExcluir.id}`); }
+        else throw codigoError;
+      }
+      setMensagem(`Item "${itemParaExcluir.nome}" excluído com sucesso!`);
+      setTimeout(() => setMensagem(''), 3000);
+      await buscarEstoque(); setMostrarModalConfirmacao(false); setItemParaExcluir(null);
+    } catch (error) { console.error('Erro excluir', error); setErro('Erro ao excluir item. Veja console.'); } finally { setCarregando(false); }
   };
 
-  // Resetar todos filtros para o estado inicial (incluindo busca e página)
-  const resetarFiltros = () => {
-    setBusca("");
-    setFiltroTamanhos([]);
-    setFiltroFornecedores([]);
-    setFiltroPreco([precoMin, precoMax]);
-    setFiltroQtd([qtdMin, qtdMax]);
-    setPaginaAtual(1);
+  const abrirRepor = (item) => { const original = itens.find(x => x.id === item.id) || item; setItemParaRepor(original); setQuantidadeRepor(''); setMostrarModalRepor(true); };
+
+  const confirmarRepor = async () => {
+    setErro('');
+    if (!itemParaRepor || quantidadeRepor === '' || Number(quantidadeRepor) <= 0) { setErro('Informe uma quantidade válida para repor.'); return; }
+    setCarregando(true);
+    try {
+      await API.post('/estoque/repor', { id: itemParaRepor.id, quantidade: Number(quantidadeRepor) });
+      setItens(prev => prev.map(it => it.id === itemParaRepor.id ? { ...it, qtdEstoque: (Number(it.qtdEstoque || 0) + Number(quantidadeRepor)) } : it));
+      setMensagem(`Reposto ${quantidadeRepor} unidade(s) de "${itemParaRepor.nome}" com sucesso!`);
+      setTimeout(() => setMensagem(''), 3000);
+      setMostrarModalRepor(false); setItemParaRepor(null); setQuantidadeRepor('');
+    } catch (e) { console.error('Erro ao repor:', e.response || e); setErro('Erro ao repor item. Verifique o console.'); } finally { setCarregando(false); }
   };
 
-  // Utilitários para montar opções de filtro únicas
-  const tamanhosDisponiveis = [
-    ...new Set(itens.map((i) => i.tamanho).filter(Boolean)),
-  ];
-  const fornecedoresDisponiveis = [
-    ...new Set(itens.map((i) => i.fornecedor?.nome).filter(Boolean)),
-  ];
+  const itensFiltrados = itens.filter(it => (it.nome || '').toLowerCase().includes((busca || '').toLowerCase()) || String(it.id || '').includes(busca));
+  const dadosTabela = itensFiltrados.map(i => ({ id: i.id, nome: i.nome, qtdEstoque: i.qtdEstoque ?? (i.qtdEstoque === 0 ? 0 : '-'), preco: i.preco ? Number(i.preco).toFixed(2) : '-', }));
 
   return (
-     <>
-         <Navbar />
-          <FaixaVoltar aoClicar={voltarAoMenu} />
-    <Box className={`${styles["container"]} ${styles["page-container"]}`} sx={{ padding: "0 0 32px 0" }}>
-      <div className={styles["estoque-title"]}>Estoque</div>
-      <div className={styles["estoque-content-center"]}>
-        <Box className={styles["estoque-filtros-bar"]}>
-          <TextField
-            label="Pesquisar por termo"
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-            variant="outlined"
-            size="small"
-          />
-          <Button
-            variant="outlined"
-            onClick={() => setFiltrosAbertos(true)}
-          >
-            Filtros
-          </Button>
-          <Button
-            className={styles["estoque-delete-btn"]}
-            variant="contained"
-            color={modoDelecao ? "error" : "primary"}
-            onClick={() => (modoDelecao ? abrirPopup() : setModoDelecao(true))}
-            disabled={modoDelecao && selecionados.length === 0}
-          >
-            {modoDelecao ? "Confirmar remoção" : "Deletar peças"}
-          </Button>
-        </Box>
+    <div>
+      <Navbar />
+      <FaixaVoltar aoClicar={voltarAoMenu} />
 
-        <Tabela
-          itens={itensPagina}
-          modoDelecao={modoDelecao}
-          selecionados={selecionados}
-          aoSelecionar={handleSelecionar}
-        />
+      <div className={styles['container-gestao']}>
+        <div className={styles['header-gestao']}>
+          <h1 className={styles['titulo-gestao']}>Visualizar Estoque</h1>
+          <div className={styles['barra-acoes']}>
+            <div className={styles['busca-container']}>
+              <input type="text" placeholder="Buscar por nome ou id..." value={busca} onChange={(e) => setBusca(e.target.value)} className={styles['input-busca']} />
+            </div>
+          </div>
+        </div>
 
-        <Box className={styles["estoque-pagination"]}>
-          <button
-            onClick={() => setPaginaAtual((prev) => Math.max(prev - 1, 1))}
-            disabled={paginaAtual === 1}
-          >
-            &lt; Página anterior
-          </button>
-          <span>
-            {/* Página {paginaAtual} de {totalPaginas} */}
-          </span>
-          <button
-            onClick={() => setPaginaAtual((prev) => Math.min(prev + 1, totalPaginas))}
-            disabled={paginaAtual === totalPaginas}
-          >
-            Próxima página &gt;
-          </button>
-        </Box>
+        {carregando && (<div className={styles['loading']}><p>Carregando...</p></div>)}
+
+        {mensagem && (<div className={styles['mensagem-sucesso']}>✅ {mensagem}</div>)}
+
+        <MensagemErro mensagem={erro} />
+
+        <div className={styles['tabela-container']}>
+          <div className={styles['info-total']}><span>Total: {itensFiltrados.length} itens</span></div>
+          <div className={styles['tabela-wrapper']}>
+            <Tabela itens={dadosTabela} botaoEditar={true} onEditar={(item) => abrirRepor(item)} botaoRemover={true} onRemover={(item) => abrirConfirmacaoExclusao(item)} />
+          </div>
+        </div>
       </div>
 
-      {/* Pop-up de confirmação */}
-      <EstoquePopUp
-        mostrar={mostrarPopup}
-        itens={itensParaRemover}
-        onConfirmar={handleConfirmarRemocao}
-        onCancelar={fecharPopup}
-      />
+      {mostrarModalRepor && itemParaRepor && (
+        <div className={styles['modal-overlay']}>
+          <div className={styles['modal-content']}>
+            <div className={styles['modal-header']}>
+              <h3>Repor: {itemParaRepor.nome}</h3>
+              <button onClick={() => setMostrarModalRepor(false)} className={styles['btn-fechar']}>✖</button>
+            </div>
+            <div className={styles['modal-body']}>
+              <div className={styles['form-group']}>
+                <label>Quantidade atual</label>
+                <input type="number" value={itemParaRepor.qtdEstoque ?? 0} disabled />
+              </div>
+              <div className={styles['form-group']}>
+                <label>Quantidade para repor</label>
+                <input type="number" value={quantidadeRepor} onChange={e => setQuantidadeRepor(e.target.value)} />
+              </div>
+              <MensagemErro mensagem={erro} />
+            </div>
+            <div className={styles['modal-footer']}>
+              <button onClick={() => setMostrarModalRepor(false)} className={styles['btn-cancelar']}>Cancelar</button>
+              <button onClick={confirmarRepor} className={styles['btn-salvar']} disabled={carregando}>{carregando ? 'Repondo...' : 'Repor'}</button>
+            </div>
+          </div>
+        </div>
+      )}
 
-      <Drawer
-        anchor="right"
-        open={filtrosAbertos}
-        onClose={() => setFiltrosAbertos(false)}
-      >
-        <Box sx={{ width: 240, padding: 2 }}>
-          <Typography variant="h6" sx={{ fontSize: 16, mb: 1 }}>Filtros</Typography>
-
-          <Typography variant="subtitle1" sx={{ fontSize: 14, mt: 1 }}>Tamanhos</Typography>
-          {tamanhosDisponiveis.map((tamanho) => (
-            <FormControlLabel
-              key={tamanho}
-              control={
-                <Checkbox
-                  checked={filtroTamanhos.includes(tamanho)}
-                  onChange={(e) => {
-                    setFiltroTamanhos((prev) =>
-                      e.target.checked
-                        ? [...prev, tamanho]
-                        : prev.filter((t) => t !== tamanho)
-                    );
-                  }}
-                  size="small"
-                />
-              }
-              label={<span style={{ fontSize: 13 }}>{tamanho}</span>}
-            />
-          ))}
-
-          <Typography variant="subtitle1" sx={{ fontSize: 14, mt: 2 }}>Fornecedores</Typography>
-          {fornecedoresDisponiveis.map((fornecedor) => (
-            <FormControlLabel
-              key={fornecedor}
-              control={
-                <Checkbox
-                  checked={filtroFornecedores.includes(fornecedor)}
-                  onChange={(e) => {
-                    setFiltroFornecedores((prev) =>
-                      e.target.checked
-                        ? [...prev, fornecedor]
-                        : prev.filter((f) => f !== fornecedor)
-                    );
-                  }}
-                  size="small"
-                />
-              }
-              label={<span style={{ fontSize: 13 }}>{fornecedor}</span>}
-            />
-          ))}
-
-          <Typography variant="subtitle1" sx={{ fontSize: 14, mt: 2 }}>Preço</Typography>
-          <Slider
-            value={filtroPreco}
-            onChange={(e, novoValor) => setFiltroPreco(novoValor)}
-            valueLabelDisplay="auto"
-            min={precoMin}
-            max={precoMax}
-            size="small"
-            sx={{ mt: 1 }}
-          />
-
-          <Typography variant="subtitle1" sx={{ fontSize: 14, mt: 2 }}>Quantidade em Estoque</Typography>
-          <Slider
-            value={filtroQtd}
-            onChange={(e, novoValor) => setFiltroQtd(novoValor)}
-            valueLabelDisplay="auto"
-            min={qtdMin}
-            max={qtdMax}
-            size="small"
-            sx={{ mt: 1 }}
-          />
-
-          <Button
-            variant="outlined"
-            fullWidth
-            sx={{ mt: 2, mb: 1, fontSize: 13, height: 30 }}
-            onClick={resetarFiltros}
-          >
-            Resetar filtros
-          </Button>
-          <Button
-            variant="outlined"
-            fullWidth
-            sx={{ mt: 0, fontSize: 13, height: 30 }}
-            onClick={() => setFiltrosAbertos(false)}
-          >
-            Fechar
-          </Button>
-        </Box>
-      </Drawer>
-    </Box>
-    </>
+      {mostrarModalConfirmacao && itemParaExcluir && (
+        <div className={styles['modal-overlay']}>
+          <div className={styles['modal-content']}>
+            <div className={styles['modal-header']}>
+              <h3>Confirmar Exclusão</h3>
+              <button onClick={() => { setMostrarModalConfirmacao(false); setItemParaExcluir(null); }} className={styles['btn-fechar']}>✖</button>
+            </div>
+            <div className={styles['modal-body']}>
+              <p style={{ marginBottom: '20px', fontSize: '1.1rem' }}>Tem certeza que deseja excluir o item?</p>
+              <div style={{ background: '#f8f9fa', padding: '15px', borderRadius: '8px', border: '1px solid #dee2e6' }}>
+                <p><strong>Nome:</strong> {itemParaExcluir.nome}</p>
+                {itemParaExcluir.codigo && (<p><strong>Código:</strong> {itemParaExcluir.codigo}</p>)}
+                {itemParaExcluir.preco !== undefined && (<p><strong>Preço:</strong> {Number(itemParaExcluir.preco).toFixed(2)}</p>)}
+                {itemParaExcluir.qtdEstoque !== undefined && (<p><strong>Quantidade:</strong> {itemParaExcluir.qtdEstoque}</p>)}
+              </div>
+              <p style={{ marginTop: '20px', color: '#dc3545', fontWeight: '600', fontSize: '0.9rem' }}>⚠️ Esta ação não pode ser desfeita!</p>
+            </div>
+            <div className={styles['modal-footer']}>
+              <button onClick={() => { setMostrarModalConfirmacao(false); setItemParaExcluir(null); }} className={styles['btn-cancelar']}>Cancelar</button>
+              <button onClick={confirmarExclusao} className={styles['btn-excluir']} disabled={carregando}>{carregando ? 'Excluindo...' : 'Confirmar Exclusão'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
