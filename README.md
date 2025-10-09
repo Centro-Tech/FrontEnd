@@ -1,2 +1,3 @@
 # FrontEnd
-Repositório principal para o gerenciamento do FrontEnd
+
+Repositório principal para o gerenciamento do FrontEnd em React.js
