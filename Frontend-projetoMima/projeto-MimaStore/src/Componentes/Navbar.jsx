@@ -6,6 +6,20 @@ import iconCardapio from './assets/icons8-cardápio.svg';
 import fotoId from './assets/fotoIconExemplo.jpg';
 import { Perfil } from '../Telas/Perfil.jsx';
 import { useLocation } from 'react-router-dom';
+// MUI Icons
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+import CachedIcon from '@mui/icons-material/Cached';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import TuneIcon from '@mui/icons-material/Tune';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import HistoryIcon from '@mui/icons-material/History';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import BusinessIcon from '@mui/icons-material/Business';
+import GroupIcon from '@mui/icons-material/Group';
+import PeopleIcon from '@mui/icons-material/People';
+import LockIcon from '@mui/icons-material/Lock';
 
 export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil: mostrarPerfilProp }) {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -57,10 +71,12 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
                             <li className={styles["item-left"]}>
                                 <img
                                     src={iconCardapio}
-                                    alt="Menu"
-                                    className={styles['iconCardapio']}
+                                    alt={menuOpen ? "Fechar menu" : "Abrir menu"}
+                                    className={`${styles['iconCardapio']} ${menuOpen ? styles.iconCardapioOpen : ''}`}
                                     onClick={handleMenuClick}
-                                    style={{ cursor: 'pointer' }}
+                                    role="button"
+                                    aria-expanded={menuOpen}
+                                    aria-label={menuOpen ? 'Fechar menu lateral' : 'Abrir menu lateral'}
                                 />
                             </li>
                         )}
@@ -105,26 +121,44 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
                     className={`${styles.sidebar} ${menuOpen ? styles.open : ''}`}
                     onClick={e => e.stopPropagation()}
                 >
-                    <button className={styles.closeBtn} onClick={handleCloseSidebar}>×</button>
-                    <nav>
-                        <h2>Estoque</h2>
-                        <ul>
-                            <li><Link to="/estoque" className={styles.sidebarItem}>Visualizar Estoque</Link></li>
-                            <li><Link to="/cadastrar-vestuario-existente" className={styles.sidebarItem}>Repor Estoque</Link></li>
-                            <li><Link to="/cadastrar-vestuario" className={styles.sidebarItem}>Cadastrar Novas Peças</Link></li>
-                            <li><Link to="/cadastrar-atributos" className={styles.sidebarItem}>Cadastrar Atributos</Link></li>
-                        </ul>
-                        <h2>Vendas</h2>
-                        <ul>
-                            <li><Link to="/realizar-venda" className={styles.sidebarItem}>Realizar Venda</Link></li>
-                            <li><Link to="/historico-vendas" className={styles.sidebarItem}>Histórico de Vendas</Link></li>
-                            <li><Link to="/dashboard" className={styles.sidebarItem}>Dashboard</Link></li>
-                        </ul>
-                        <h2>Pessoas</h2>
-                        <ul>
-                            <li><Link to="/cadastrar-funcionario" className={styles.sidebarItem}>Cadastrar Funcionário</Link></li>
-                            <li><Link to="/cadastrar-fornecedor" className={styles.sidebarItem}>Cadastrar Fornecedor</Link></li>
-                        </ul>
+                    <button className={styles.closeBtn} onClick={handleCloseSidebar} aria-label="Fechar menu">×</button>
+                    <nav className={styles.sidebarContent}>
+                        <div className={styles.menuGroup}>
+                            <h2 className={styles.menuTitle}>Estoque</h2>
+                            <ul className={styles.menuList}>
+                                <li><Link to="/estoque" className={styles.menuItem}><span className={styles.menuIcon}><Inventory2Icon /></span><span className={styles.menuText}>Visualizar Estoque</span></Link></li>
+                                <li><Link to="/cadastrar-vestuario-existente" className={styles.menuItem}><span className={styles.menuIcon}><CachedIcon /></span><span className={styles.menuText}>Repor Estoque</span></Link></li>
+                                <li><Link to="/cadastrar-vestuario" className={styles.menuItem}><span className={styles.menuIcon}><AddBoxIcon /></span><span className={styles.menuText}>Cadastrar Novas Peças</span></Link></li>
+                                <li><Link to="/cadastrar-atributos" className={styles.menuItem}><span className={styles.menuIcon}><TuneIcon /></span><span className={styles.menuText}>Cadastrar Atributos</span></Link></li>
+                            </ul>
+                        </div>
+
+                        <div className={styles.menuGroup}>
+                            <h2 className={styles.menuTitle}>Vendas</h2>
+                            <ul className={styles.menuList}>
+                                <li><Link to="/realizar-venda" className={styles.menuItem}><span className={styles.menuIcon}><ShoppingCartIcon /></span><span className={styles.menuText}>Realizar Venda</span></Link></li>
+                                <li><Link to="/historico-vendas" className={styles.menuItem}><span className={styles.menuIcon}><HistoryIcon /></span><span className={styles.menuText}>Histórico de Vendas</span></Link></li>
+                                <li><Link to="/dashboard" className={styles.menuItem}><span className={styles.menuIcon}><DashboardIcon /></span><span className={styles.menuText}>Dashboard</span></Link></li>
+                            </ul>
+                        </div>
+
+                        <div className={styles.menuGroup}>
+                            <h2 className={styles.menuTitle}>Pessoas</h2>
+                            <ul className={styles.menuList}>
+                                <li><Link to="/gestao-fornecedores" className={styles.menuItem}><span className={styles.menuIcon}><BusinessIcon /></span><span className={styles.menuText}>Gestão de Fornecedores</span></Link></li>
+                                <li><Link to="/gestao-funcionarios" className={styles.menuItem}><span className={styles.menuIcon}><GroupIcon /></span><span className={styles.menuText}>Gestão de Funcionários</span></Link></li>
+                                <li><Link to="/gestao-clientes" className={styles.menuItem}><span className={styles.menuIcon}><PeopleIcon /></span><span className={styles.menuText}>Gestão de Clientes</span></Link></li>
+                                <li><Link to="/mudar-senha" className={styles.menuItem}><span className={styles.menuIcon}><LockIcon /></span><span className={styles.menuText}>Alterar Senha</span></Link></li>
+                            </ul>
+                        </div>
+
+                        <div className={styles.sidebarFooter}>
+                            <Link to="/perfil" className={styles.profilePill} onClick={handleCloseSidebar}>
+                                <img src={fotoId} alt="Avatar" className={styles.profileAvatar} />
+                                <span className={styles.profileName}>Perfil</span>
+                                <span className={styles.badge}>12</span>
+                            </Link>
+                        </div>
                     </nav>
                 </div>
             </div>

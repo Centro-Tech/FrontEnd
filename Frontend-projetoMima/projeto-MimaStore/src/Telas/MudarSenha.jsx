@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
@@ -15,6 +15,7 @@ export default function MudarSenha() {
     const [confirmarSenha, setConfirmarSenha] = useState('');
     const [erro, setErro] = useState('');
     const [carregando, setCarregando] = useState(false);
+    const [mensagemSucesso, setMensagemSucesso] = useState('');
 
     const handleVoltar = () => {
         if (etapa === 1) {
@@ -27,6 +28,7 @@ export default function MudarSenha() {
     const enviarCodigo = async (e) => {
         e.preventDefault();
         setErro('');
+        setMensagemSucesso('');
 
         if (!email) {
             setErro('Digite seu email.');
@@ -35,12 +37,34 @@ export default function MudarSenha() {
 
         setCarregando(true);
         try {
-            // Simular envio do código (substituir pela API real)
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            // await API.post('/auth/forgot-password', { email });
+            // Chamada real ao backend para solicitar recuperação de senha
+            await API.post('/usuarios/recuperar-senha', { email });
             setEtapa(2);
+            setMensagemSucesso('Se o email existir, você receberá instruções em breve.');
         } catch (error) {
-            setErro('Erro ao enviar código. Verifique o email.');
+            // Tenta extrair uma mensagem do backend
+            const mensagem = error?.response?.data || error?.response?.data?.message || error?.message;
+            setErro(mensagem || 'Erro ao enviar código. Verifique o email.');
+        } finally {
+            setCarregando(false);
+        }
+    };
+
+    // Reenviar código (usado na etapa de confirmação)
+    const reenviarCodigo = async () => {
+        setErro('');
+        setMensagemSucesso('');
+        if (!email) {
+            setErro('Email não informado para reenvio. Volte à tela anterior e informe o e-mail.');
+            return;
+        }
+        setCarregando(true);
+        try {
+            await API.post('/usuarios/recuperar-senha', { email });
+            setMensagemSucesso('E-mail reenviado (se existir). Verifique sua caixa de entrada e spam.');
+        } catch (error) {
+            const mensagem = error?.response?.data || error?.response?.data?.message || error?.message;
+            setErro(mensagem || 'Erro ao reenviar código. Tente novamente mais tarde.');
         } finally {
             setCarregando(false);
         }
@@ -50,6 +74,20 @@ export default function MudarSenha() {
         setErro('');
         setEtapa(3);
     };
+
+    // Se a página for aberta com ?token=XXX, auto-preencher e ir para etapa 3
+    useEffect(() => {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const tokenParam = params.get('token');
+            if (tokenParam) {
+                setCodigo(tokenParam);
+                setEtapa(3);
+            }
+        } catch (e) {
+            // não faz nada se URLSearchParams falhar
+        }
+    }, []);
 
     const redefinirSenha = async (e) => {
         e.preventDefault();
@@ -72,17 +110,18 @@ export default function MudarSenha() {
 
         setCarregando(true);
         try {
-            // Simular redefinição (substituir pela API real)
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            // await API.post('/auth/reset-password', { email, codigo, novaSenha });
+            // Chamada real ao endpoint de redefinição de senha
+            // O backend aceita { token, novaSenha } onde token pode ser UUID de recuperação ou JWT
+            await API.post('/usuarios/redefinir-senha', { token: codigo, novaSenha });
             setEtapa(4);
-            
+
             // Redirecionar após 3 segundos
             setTimeout(() => {
                 navigate('/login');
             }, 3000);
         } catch (error) {
-            setErro('Erro ao redefinir senha. Verifique o código.');
+            const mensagem = error?.response?.data || error?.response?.data?.message || error?.message;
+            setErro(mensagem || 'Erro ao redefinir senha. Verifique o código.');
         } finally {
             setCarregando(false);
         }
@@ -160,6 +199,14 @@ export default function MudarSenha() {
                                 RECEBI O CÓDIGO
                             </button>
                             
+                            <button
+                                onClick={reenviarCodigo}
+                                className={styles.buttonSecondary}
+                                disabled={carregando || !email}
+                            >
+                                {carregando ? 'REENVIANDO...' : 'REENVIAR E-MAIL'}
+                            </button>
+                            
                             <button 
                                 onClick={voltarParaInicio}
                                 className={styles.buttonSecondary}
@@ -167,6 +214,7 @@ export default function MudarSenha() {
                                 IR PARA A PÁGINA INICIAL
                             </button>
                         </div>
+                        {mensagemSucesso && <MensagemErro mensagem={mensagemSucesso} />}
                     </div>
                 </div>
             </div>

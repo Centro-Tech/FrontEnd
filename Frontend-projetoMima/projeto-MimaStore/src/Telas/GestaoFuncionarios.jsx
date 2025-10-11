@@ -25,7 +25,8 @@ export function GestaoFuncionarios() {
         telefone: '',
         endereco: '',
         cargo: '',
-        senha: ''
+        senha: '',
+        imagemFile: null
     });
 
     const voltarAoMenu = () => {
@@ -55,11 +56,17 @@ export function GestaoFuncionarios() {
             }
         } catch (error) {
             console.error('Erro ao carregar funcionários:', error);
-            if (error.response?.status === 404) {
-                setFuncionarios([]);
+            // Mostrar erro detalhado para ajudar diagnóstico (401, 403, CORS, etc.)
+            setFuncionarios([]);
+            const status = error.response?.status;
+            const data = error.response?.data;
+            if (status === 404) {
                 setErro('Nenhum funcionário encontrado.');
+            } else if (status) {
+                const detail = typeof data === 'string' ? data : JSON.stringify(data);
+                setErro(`Erro ${status}: ${detail}`);
             } else {
-                setErro('Erro ao carregar funcionários.');
+                setErro(error.message || 'Erro ao carregar funcionários.');
             }
         } finally {
             setCarregando(false);
@@ -106,7 +113,8 @@ export function GestaoFuncionarios() {
     // Função para abrir modal de edição
     const abrirEdicao = (funcionario) => {
         setErro('');
-        setFuncionarioEditando({...funcionario});
+        // incluir campo imagemFile para possível upload
+        setFuncionarioEditando({...funcionario, imagemFile: null});
         setMostrarModal(true);
     };
 
@@ -153,19 +161,24 @@ export function GestaoFuncionarios() {
 
         setCarregando(true);
         try {
-            const response = await API.put(`/usuarios/${funcionarioEditando.id}`, {
-                nome: funcionarioEditando.nome,
-                email: funcionarioEditando.email,
-                telefone: funcionarioEditando.telefone || '',
-                endereco: funcionarioEditando.endereco || '',
-                cargo: funcionarioEditando.cargo
+            // Atualização: o endpoint PUT /usuarios/{id} espera multipart/form-data
+            const formData = new FormData();
+            formData.append('nome', funcionarioEditando.nome);
+            formData.append('email', funcionarioEditando.email);
+            formData.append('telefone', funcionarioEditando.telefone || '');
+            formData.append('cargo', funcionarioEditando.cargo);
+            formData.append('endereco', funcionarioEditando.endereco || '');
+            if (funcionarioEditando.imagemFile) {
+                formData.append('imagem', funcionarioEditando.imagemFile);
+            }
+
+            const response = await API.put(`/usuarios/${funcionarioEditando.id}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
-            
-            // Atualizar na lista
-            setFuncionarios(prev => prev.map(f => 
-                f.id === funcionarioEditando.id ? response.data : f
-            ));
-            
+
+            // Recarregar lista a partir do servidor para garantir consistência
+            await carregarFuncionarios();
+
             setMostrarModal(false);
             setFuncionarioEditando(null);
             setMensagem('Funcionário atualizado com sucesso!');
@@ -188,19 +201,36 @@ export function GestaoFuncionarios() {
 
         setCarregando(true);
         try {
-            console.log('Dados sendo enviados:', novoFuncionario);
-            const response = await API.post('/usuarios/funcionarios', novoFuncionario);
-            console.log('Resposta do cadastro:', response);
-            setFuncionarios(prev => [...prev, response.data]);
+            // Se existe imagemFile, enviar como multipart para o endpoint /funcionarios/com-imagem
+            if (novoFuncionario.imagemFile) {
+                const fd = new FormData();
+                fd.append('nome', novoFuncionario.nome);
+                fd.append('email', novoFuncionario.email);
+                fd.append('telefone', novoFuncionario.telefone);
+                fd.append('cargo', novoFuncionario.cargo);
+                fd.append('endereco', novoFuncionario.endereco);
+                fd.append('imagem', novoFuncionario.imagemFile);
+
+                const response = await API.post('/usuarios/funcionarios/com-imagem', fd, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+                // Recarregar lista
+                await carregarFuncionarios();
+            } else {
+                const payload = {
+                    nome: novoFuncionario.nome,
+                    email: novoFuncionario.email,
+                    telefone: novoFuncionario.telefone,
+                    cargo: novoFuncionario.cargo,
+                    endereco: novoFuncionario.endereco,
+                    imagem: null
+                };
+                await API.post('/usuarios/funcionarios', payload);
+                await carregarFuncionarios();
+            }
+
             setMostrarModalCadastro(false);
-            setNovoFuncionario({
-                nome: '',
-                email: '',
-                telefone: '',
-                endereco: '',
-                cargo: '',
-                senha: ''
-            });
+            setNovoFuncionario({ nome: '', email: '', telefone: '', endereco: '', cargo: '', senha: '', imagemFile: null });
             setMensagem('Funcionário cadastrado com sucesso!');
             setTimeout(() => setMensagem(''), 3000);
         } catch (error) {
@@ -394,6 +424,14 @@ export function GestaoFuncionarios() {
                                 />
                             </div>
                             <div className={styles['form-group']}>
+                                <label>Imagem (opcional)</label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => setNovoFuncionario({...novoFuncionario, imagemFile: e.target.files?.[0] || null})}
+                                />
+                            </div>
+                            <div className={styles['form-group']}>
                                 <label>Endereço *</label>
                                 <input 
                                     type="text"
@@ -408,6 +446,14 @@ export function GestaoFuncionarios() {
                                     value={novoFuncionario.cargo}
                                     onChange={(e) => setNovoFuncionario({...novoFuncionario, cargo: e.target.value})}
                                 />
+                                <div className={styles['form-group']}>
+                                    <label>Imagem (opcional)</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => setFuncionarioEditando({...funcionarioEditando, imagemFile: e.target.files?.[0] || null})}
+                                    />
+                                </div>
                             </div>
                             <div className={styles['form-group']}>
                                 <label>Senha *</label>

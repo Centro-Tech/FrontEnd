@@ -10,6 +10,7 @@ import { Tabela } from '../Componentes/Tabela';
 export function GestaoFornecedor() {
     const navigate = useNavigate();
     const [fornecedores, setFornecedores] = useState([]);
+    const [totalFornecedores, setTotalFornecedores] = useState(0);
     const [carregando, setCarregando] = useState(false);
     const [erro, setErro] = useState('');
     const [mensagem, setMensagem] = useState('');
@@ -40,9 +41,21 @@ export function GestaoFornecedor() {
         setCarregando(true);
         setErro('');
         try {
-            const response = await API.get('/fornecedores');
+            // Backend retorna um Page<FornecedorResponseDto>
+            const response = await API.get('/fornecedores', { params: { page: 0, size: 100 } });
             if (response.status === 200 && response.data) {
-                setFornecedores(response.data);
+                const data = response.data;
+                // Compatível com Page (content) ou lista direta
+                if (Array.isArray(data)) {
+                    setFornecedores(data);
+                    setTotalFornecedores(data.length);
+                } else if (data.content) {
+                    setFornecedores(data.content);
+                    setTotalFornecedores(typeof data.totalElements === 'number' ? data.totalElements : data.content.length);
+                } else {
+                    setFornecedores([]);
+                    setTotalFornecedores(0);
+                }
             }
         } catch (error) {
             console.error('Erro ao carregar fornecedores:', error);
@@ -111,36 +124,12 @@ export function GestaoFornecedor() {
 
     // Função para salvar edição
     const salvarEdicao = async () => {
-        if (!fornecedorEditando.nome || !fornecedorEditando.email) {
-            setErro('Nome e email são obrigatórios.');
-            return;
-        }
-
-        setCarregando(true);
-        try {
-            const response = await API.put(`/fornecedores/${fornecedorEditando.id}`, {
-                nome: fornecedorEditando.nome,
-                email: fornecedorEditando.email,
-                telefone: fornecedorEditando.telefone || '',
-                cnpj: fornecedorEditando.cnpj || '',
-                endereco: fornecedorEditando.endereco || ''
-            });
-            
-            // Atualizar na lista
-            setFornecedores(prev => prev.map(f => 
-                f.id === fornecedorEditando.id ? response.data : f
-            ));
-            
-            setMostrarModal(false);
-            setFornecedorEditando(null);
-            setMensagem('Fornecedor atualizado com sucesso!');
-            setTimeout(() => setMensagem(''), 3000);
-        } catch (error) {
-            console.error('Erro ao atualizar fornecedor:', error);
-            setErro('Erro ao atualizar fornecedor.');
-        } finally {
-            setCarregando(false);
-        }
+        // Observação: o backend fornecido não expõe um endpoint PUT/atualizar no controlador
+        // portanto a edição não está disponível aqui. Fechamos o modal e mostramos uma mensagem.
+        setErro('Edição não suportada pelo backend.');
+        setTimeout(() => setErro(''), 3000);
+        setMostrarModal(false);
+        setFornecedorEditando(null);
     };
 
     // Função para cadastrar novo fornecedor
@@ -152,16 +141,17 @@ export function GestaoFornecedor() {
 
         setCarregando(true);
         try {
-            const response = await API.post('/fornecedores', novoFornecedor);
-            setFornecedores(prev => [...prev, response.data]);
+            // Enviar apenas os campos que o backend espera (nome, telefone, email)
+            const payload = {
+                nome: novoFornecedor.nome,
+                telefone: novoFornecedor.telefone || '',
+                email: novoFornecedor.email
+            };
+            const response = await API.post('/fornecedores', payload);
+            // Recarregar lista a partir do backend para manter consistência com paginação
+            await carregarFornecedores();
             setMostrarModalCadastro(false);
-            setNovoFornecedor({
-                nome: '',
-                email: '',
-                telefone: '',
-                cnpj: '',
-                endereco: ''
-            });
+            setNovoFornecedor({ nome: '', email: '', telefone: '', cnpj: '', endereco: '' });
             setMensagem('Fornecedor cadastrado com sucesso!');
             setTimeout(() => setMensagem(''), 3000);
         } catch (error) {

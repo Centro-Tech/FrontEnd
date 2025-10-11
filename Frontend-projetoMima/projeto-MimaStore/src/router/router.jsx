@@ -13,9 +13,6 @@ import { ReporVestuario } from '../Telas/ReporVestuario.jsx';
 import PrimeiroAcesso from '../Telas/PrimeiroAcesso.jsx';
 import  Login  from '../Telas/Login.jsx';
 import MudarSenha from '../Telas/MudarSenha.jsx';
-import { DeletarFuncionario } from '../Telas/DeletarFuncionario.jsx';
-import { DeletarFornecedor } from '../Telas/DeletarFornecedor.jsx';
-import { DeletarCliente } from '../Telas/DeletarCliente.jsx';
 import { GestaoFornecedor } from '../Telas/GestaoFornecedor.jsx';
 import { GestaoFuncionarios } from '../Telas/GestaoFuncionarios.jsx';
 import { GestaoClientes } from '../Telas/GestaoClientes.jsx';
@@ -50,10 +47,7 @@ export function AppRouter() {
       <Route path="/cadastrar-funcionarios" element={<CadastroFuncionario />} />
       <Route path="/cadastrar-fornecedor" element={<CadastrarFornecedor />} />
       
-      {/* Rotas de Pessoas - Exclusão */}
-      <Route path="/deletar-funcionario" element={<DeletarFuncionario />} />
-      <Route path="/deletar-fornecedor" element={<DeletarFornecedor />} />
-      <Route path="/deletar-cliente" element={<DeletarCliente />} />
+
 
       {/* Rotas de Gestão */}
       <Route path="/gestao-fornecedores" element={<GestaoFornecedor />} />
