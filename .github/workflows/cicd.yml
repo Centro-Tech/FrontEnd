@@ -3,7 +3,7 @@ name: CI/CD para EC2 pública e privada
 on:
   push:
     branches:
-      - main # O branch que acionará o deploy
+      - main # Branch principal para deploy
 
 jobs:
   build_and_deploy:
@@ -14,64 +14,67 @@ jobs:
       - name: Checkout do Repositório
         uses: actions/checkout@v4
 
-      # 2️⃣ Configuração do ambiente Node.js
+      # 2️⃣ Configuração do Node.js (para o frontend)
       - name: FE - Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # 3️⃣ Apenas para debug (mostra o diretório atual)
+      # 3️⃣ Debug inicial (confere diretórios)
       - name: Verificar diretório atual
         run: |
           pwd
           ls -R
 
-      # 4️⃣ Build da aplicação (caso seja um app React/Vite)
+      # 4️⃣ Build da aplicação (React/Vite)
       - name: FE - Instalar Dependências e Fazer Build
         run: |
           npm install
           npm run build --if-present
         working-directory: Frontend-projetoMima/projeto-MimaStore
 
-      # 5️⃣ Copiar arquivos para o EC2 (deploy com rsync via SSH)
+      # 5️⃣ Esperar a instância subir completamente
+      - name: Aguardar inicialização da EC2
+        run: sleep 40
+
+      # 6️⃣ Copiar arquivos do frontend via SSH (rsync)
       - name: FE - Copiar arquivos e Deploy (Usando SSH com rsync)
         uses: easingthemes/ssh-deploy@main
         with:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: /home/${{ secrets.REMOTE_USER }}
+          TARGET: /home/${{ secrets.REMOTE_USER }}/app
           ARGS: "-rltgoDzvO --delete"
           SOURCE: "Frontend-projetoMima/projeto-MimaStore/"
 
-      # 6️⃣ Pós-deploy — configurar Docker e rodar o container automaticamente
-      - name: FE - Configurar Docker e rodar container no EC2
+      # 7️⃣ Configurar Docker e rodar container na EC2
+      - name: FE - Configurar Docker e rodar container
         uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            echo "🚀 Iniciando configuração do Docker..."
+            echo "🚀 Configurando Docker e subindo container..."
 
-            # Garante que o Docker está instalado e ativo
-            sudo systemctl enable docker
-            sudo systemctl start docker
+            # Garante que o Docker está ativo (caso user_data falhe)
+            if ! command -v docker &> /dev/null; then
+              echo "⚙️ Instalando Docker..."
+              sudo dnf install -y docker || sudo yum install -y docker
+              sudo systemctl enable docker
+              sudo systemctl start docker
+              sudo usermod -aG docker $USER
+            fi
 
-            # Adiciona o usuário ec2-user ao grupo docker (permite rodar docker sem sudo)
-            sudo usermod -aG docker ec2-user
+            cd /home/${{ secrets.REMOTE_USER }}/app
 
-            # Recarrega permissões (só é efetivo em login, mas previne erros futuros)
-            newgrp docker <<EONG
-            cd /home/${{ secrets.REMOTE_USER }}
-
-            # Para e remove o container antigo, se existir
+            # Para containers antigos, se existirem
             docker stop mimastore || true
             docker rm mimastore || true
 
-            # Faz build da imagem e sobe o container
+            # Build e run do novo container
             docker build -t mimastore-frontend .
             docker run -d -p 80:80 --name mimastore mimastore-frontend
-            EONG
 
             echo "✅ Deploy finalizado e container em execução!"
