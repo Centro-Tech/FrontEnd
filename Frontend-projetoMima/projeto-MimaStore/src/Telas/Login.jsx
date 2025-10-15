@@ -72,7 +72,7 @@ export default function Login() {
             </p>
           </div>
           <div className={styles.right}>
-            <h2>Acesse sua conta!</h2>
+            <h2>Acesse sua conta!!</h2>
             <form onSubmit={handleSubmit}>
               <input
                 type="email"
