@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        host: ${{ secrets.REMOTE_HOST }}, ${{ secrets.REMOTE_HOST_B }}]
+        host: ${{ secrets.REMOTE_HOST }}, ${{ secrets.REMOTE_HOST_B }}
 
     steps:
       # 1️⃣ Checkout do código
