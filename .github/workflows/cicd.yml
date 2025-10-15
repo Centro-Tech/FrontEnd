@@ -19,6 +19,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Verificar diretório atual
+        run: |
+          pwd
+          ls -R
+
           
       # 3. Build da aplicação (Se for uma aplicação que precisa ser construída, ex: React, Angular, Vue)
       - name: FE - Instalar Dependências e Fazer Build
