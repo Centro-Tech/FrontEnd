@@ -10,8 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        host: ${{ secrets.REMOTE_HOST }}, ${{ secrets.REMOTE_HOST_B }}
-
+        host:
+         - ${{ secrets.REMOTE_HOST   }}
+         - ${{ secrets.REMOTE_HOST_B }}
     steps:
       # 1️⃣ Checkout do código
       - name: Checkout do Repositório
@@ -36,7 +37,7 @@ jobs:
           npm run build --if-present
         working-directory: Frontend-projetoMima/projeto-MimaStore
 
-      # 5️⃣ Esperar a instância subir completamente
+      # 5️⃣ Aguardar inicialização da EC2
       - name: Aguardar inicialização da EC2
         run: sleep 40
 
@@ -48,23 +49,23 @@ jobs:
           REMOTE_HOST: ${{ matrix.host }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: /home/${{ secrets.REMOTE_USER }}/app
-          ARGS: "-rltgoDzvO --delete"
           SOURCE: "Frontend-projetoMima/projeto-MimaStore/"
+          ARGS: "-rltgoDzvO --delete"
 
       # 7️⃣ Configurar Docker e rodar container na EC2
       - name: FE - Configurar Docker e rodar container
         uses: appleboy/ssh-action@v1.1.0
         with:
-          host: ${{ secrets.REMOTE_HOST }}
+          host: ${{ matrix.host }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             echo "🚀 Configurando Docker e subindo container..."
 
-            # Garante que o Docker está ativo (caso user_data falhe)
+            # Instala Docker se não existir
             if ! command -v docker &> /dev/null; then
               echo "⚙️ Instalando Docker..."
-              sudo dnf install -y docker || sudo yum install -y docker
+              sudo yum install -y docker || sudo dnf install -y docker
               sudo systemctl enable docker
               sudo systemctl start docker
               sudo usermod -aG docker $USER
@@ -72,7 +73,7 @@ jobs:
 
             cd /home/${{ secrets.REMOTE_USER }}/app
 
-            # Para containers antigos, se existirem
+            # Para containers antigos
             docker stop mimastore || true
             docker rm mimastore || true
 
