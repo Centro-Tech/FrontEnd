@@ -3,16 +3,15 @@ name: CI/CD para EC2 pública e privada
 on:
   push:
     branches:
-      - main # Branch principal para deploy
+      - main
 
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        host:
-         - ${{ secrets.REMOTE_HOST   }}
-         - ${{ secrets.REMOTE_HOST_B }}
+        host: ["host_a", "host_b"]  # nomes literais para a matrix
+
     steps:
       # 1️⃣ Checkout do código
       - name: Checkout do Repositório
@@ -24,7 +23,7 @@ jobs:
         with:
           node-version: '20'
 
-      # 3️⃣ Debug inicial (confere diretórios)
+      # 3️⃣ Debug inicial
       - name: Verificar diretório atual
         run: |
           pwd
@@ -37,26 +36,36 @@ jobs:
           npm run build --if-present
         working-directory: Frontend-projetoMima/projeto-MimaStore
 
-      # 5️⃣ Aguardar inicialização da EC2
+      # 5️⃣ Esperar a instância subir
       - name: Aguardar inicialização da EC2
         run: sleep 40
 
-      # 6️⃣ Copiar arquivos do frontend via SSH (rsync)
-      - name: FE - Copiar arquivos e Deploy (Usando SSH com rsync)
+      # 6️⃣ Mapear host literal para o secret real
+      - name: Definir host real
+        id: set_host
+        run: |
+          if [ "${{ matrix.host }}" = "host_a" ]; then
+            echo "HOST_REAL=${{ secrets.REMOTE_HOST }}" >> $GITHUB_ENV
+          else
+            echo "HOST_REAL=${{ secrets.REMOTE_HOST_B }}" >> $GITHUB_ENV
+          fi
+
+      # 7️⃣ Copiar arquivos do frontend via SSH (rsync)
+      - name: FE - Copiar arquivos e Deploy
         uses: easingthemes/ssh-deploy@main
         with:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          REMOTE_HOST: ${{ matrix.host }}
+          REMOTE_HOST: ${{ env.HOST_REAL }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: /home/${{ secrets.REMOTE_USER }}/app
           SOURCE: "Frontend-projetoMima/projeto-MimaStore/"
           ARGS: "-rltgoDzvO --delete"
 
-      # 7️⃣ Configurar Docker e rodar container na EC2
+      # 8️⃣ Configurar Docker e rodar container
       - name: FE - Configurar Docker e rodar container
         uses: appleboy/ssh-action@v1.1.0
         with:
-          host: ${{ matrix.host }}
+          host: ${{ env.HOST_REAL }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
