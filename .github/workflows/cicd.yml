@@ -45,7 +45,7 @@ jobs:
           # ARGS para rsync: -rltgoDzvO para cópia recursiva, compressão e outros
           ARGS: "-rltgoDzvO --delete" 
           # SOURCE: O que será copiado. Pode ser o diretório de build (ex: ./dist)
-          SOURCE: "Frontend-projetoMima/projeto-MimaStore/dist/"
+          SOURCE: "Frontend-projetoMima/projeto-MimaStore/"
  # O Comando ou Script a ser Executado no EC2
         
 
