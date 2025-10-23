@@ -624,3 +624,80 @@
     transform: scale(1.1) !important;
     box-shadow: 0 3px 8px rgba(220, 53, 69, 0.4) !important;
 }
+
+/* ---------- PAGINAÇÃO ---------- */
+.paginacao-container {
+    padding: 12px 20px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    top: -8px; /* levantar um pouco a paginação */
+}
+
+.paginacao-numeros {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-paginacao {
+    background: white;
+    color: #864176;
+    border: 1px solid #e9ecef;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Average Sans', sans-serif;
+    font-weight: 600;
+    transition: all 0.18s ease;
+    min-width: 40px;
+}
+
+.btn-paginacao:hover {
+    background: linear-gradient(135deg, #875C6A, #864176);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(135, 92, 106, 0.25);
+}
+
+.btn-paginacao:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-paginacao-ativa {
+    background: linear-gradient(135deg, #875C6A, #864176);
+    color: white;
+}
+
+@media (max-width: 480px) {
+    .paginacao-container { top: -4px; padding: 8px 10px; }
+    .btn-paginacao { padding: 6px 8px; min-width: 34px; }
+}
+/* ---------- BOTOES DE PESQUISA ---------- */
+.btn-pesquisar {
+    background: linear-gradient(135deg, #875C6A, #864176);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Average Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.btn-pesquisar:hover:not(:disabled) { background: linear-gradient(135deg, #6f4e5a, #6d3560); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(135, 92, 106, 0.3); }
+
+.btn-pesquisar:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-limpar { background: #6c757d; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: 600; font-family: 'Average Sans', sans-serif; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; }
+
+.btn-limpar:hover { background: #5a6268; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3); }
