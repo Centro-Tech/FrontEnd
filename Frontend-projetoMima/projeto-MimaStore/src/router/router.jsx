@@ -9,7 +9,6 @@ import { CadastroFuncionario } from '../Telas/Cadastro.jsx';
 import { CadastrarAtributo } from '../Telas/CadastrarAtributos.jsx';
 import { CadastrarFornecedor } from '../Telas/CadastrarFornecedor.jsx';
 import { CadastroNovoVestuario } from '../Telas/CadastrarNovoVestuario.jsx';
-import { ReporVestuario } from '../Telas/ReporVestuario.jsx';
 import PrimeiroAcesso from '../Telas/PrimeiroAcesso.jsx';
 import  Login  from '../Telas/Login.jsx';
 import MudarSenha from '../Telas/MudarSenha.jsx';
@@ -40,7 +39,6 @@ export function AppRouter() {
       {/* Rotas de Estoque */}
       <Route path="/estoque" element={<Estoque />} />
       <Route path="/cadastrar-vestuario" element={<CadastroNovoVestuario />} />
-      <Route path="/cadastrar-vestuario-existente" element={<ReporVestuario />} />
       <Route path="/cadastrar-atributos" element={<CadastrarAtributo />} />
 
       {/* Rotas de Pessoas - Cadastro */}

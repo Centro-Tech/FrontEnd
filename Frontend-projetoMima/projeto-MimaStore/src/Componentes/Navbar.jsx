@@ -127,7 +127,6 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
                             <h2 className={styles.menuTitle}>Estoque</h2>
                             <ul className={styles.menuList}>
                                 <li><Link to="/estoque" className={styles.menuItem}><span className={styles.menuIcon}><Inventory2Icon /></span><span className={styles.menuText}>Visualizar Estoque</span></Link></li>
-                                <li><Link to="/cadastrar-vestuario-existente" className={styles.menuItem}><span className={styles.menuIcon}><CachedIcon /></span><span className={styles.menuText}>Repor Estoque</span></Link></li>
                                 <li><Link to="/cadastrar-vestuario" className={styles.menuItem}><span className={styles.menuIcon}><AddBoxIcon /></span><span className={styles.menuText}>Cadastrar Novas Peças</span></Link></li>
                                 <li><Link to="/cadastrar-atributos" className={styles.menuItem}><span className={styles.menuIcon}><TuneIcon /></span><span className={styles.menuText}>Cadastrar Atributos</span></Link></li>
                             </ul>
