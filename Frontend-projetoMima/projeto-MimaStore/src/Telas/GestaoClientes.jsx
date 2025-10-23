@@ -31,6 +31,30 @@ export function GestaoClientes() {
         navigate('/menu-inicial');
     };
 
+    // Normaliza diferentes formatos de cliente retornados pelo backend
+    const normalizeCliente = (c) => {
+        if (!c || typeof c !== 'object') return { id: null, nome: '', email: '', telefone: '', cpf: '', endereco: '' };
+        // suportar camelCase, snake_case e outras variações
+        const id = c.idCliente ?? c.id ?? c.id_cliente ?? c.codigo ?? c.uuid ?? null;
+        const nome = c.nome ?? c.nomeCompleto ?? c.nomeCliente ?? c.nome_cliente ?? '';
+        const telefone = c.telefone ?? c.telefoneContato ?? c.contato?.telefone ?? c.telefone_contato ?? '';
+
+        // Tentativas comuns para encontrar email em várias estruturas
+        const email =
+            c.email ??
+            c.emailCliente ??
+            c.email_cliente ??
+            c.usuario?.email ??
+            c.contato?.email ??
+            (Array.isArray(c.emails) && (c.emails[0]?.email || c.emails[0]?.value)) ??
+            '';
+
+        const cpf = c.cpf ?? c.cpfCliente ?? c.cpf_cliente ?? '';
+        const endereco = c.endereco ?? c.enderecoResidencial ?? c.endereco_residencial ?? c.endereco ?? '';
+
+        return { ...c, id, nome, email, telefone, cpf, endereco };
+    };
+
     // Carregar clientes na inicialização
     useEffect(() => {
         carregarClientes();
@@ -40,15 +64,18 @@ export function GestaoClientes() {
         setCarregando(true);
         setErro('');
         try {
-            const response = await API.get('/clientes');
-            console.log('Resposta da API /clientes:', response);
-            console.log('Dados retornados:', response.data);
-            
-            if (response.status === 200 && response.data) {
-                const todosClientes = Array.isArray(response.data) ? response.data : [];
-                console.log('Clientes encontrados:', todosClientes);
-                setClientes(todosClientes);
-            }
+            // Chama API; backend retorna Page<ClienteListagemDto> com campo `content`
+            const response = await API.get('/clientes', { params: { page: 0, size: 1000 } });
+                        const body = response.data || {};
+                        // Se for Page, usar content; se for array, usar diretamente
+                        const todosClientes = Array.isArray(body.content)
+                                ? body.content
+                                : Array.isArray(body)
+                                    ? body
+                                    : [];
+                        // Normaliza os clientes para garantir campos consistentes (id, nome, email...)
+                        const clientesNormalizados = todosClientes.map(normalizeCliente);
+                        setClientes(clientesNormalizados);
         } catch (error) {
             console.error('Erro ao carregar clientes:', error);
             if (error.response?.status === 404) {
@@ -65,8 +92,8 @@ export function GestaoClientes() {
     // Filtrar clientes pela busca
     const clientesFiltrados = clientes.filter(cliente => 
         cliente.nome?.toLowerCase().includes(busca.toLowerCase()) ||
-        cliente.email?.toLowerCase().includes(busca.toLowerCase()) ||
-        cliente.cpf?.includes(busca)
+        (cliente.email || '').toLowerCase().includes(busca.toLowerCase()) ||
+        (cliente.cpf || '').includes(busca)
     );
 
     // Função para abrir confirmação de exclusão
@@ -82,9 +109,9 @@ export function GestaoClientes() {
 
         setCarregando(true);
         try {
-            const clienteId = clienteParaExcluir.idCliente || clienteParaExcluir.id;
+            const clienteId = clienteParaExcluir.id;
             await API.delete(`/clientes/${clienteId}`);
-            setClientes(prev => prev.filter(c => (c.idCliente || c.id) !== clienteId));
+            setClientes(prev => prev.filter(c => c.id !== clienteId));
             setMensagem(`Cliente "${clienteParaExcluir.nome}" excluído com sucesso!`);
             setTimeout(() => setMensagem(''), 3000);
             setMostrarModalConfirmacao(false);
@@ -125,22 +152,12 @@ export function GestaoClientes() {
     };
 
     // Preparar dados para a tabela
-    const dadosTabela = clientesFiltrados.map(cliente => {
-        console.log('Cliente individual completo:', cliente);
-        console.log('Campos disponíveis:', Object.keys(cliente));
-        
-        const dadosCliente = {
-            id: cliente.idCliente || cliente.id,
-            nome: cliente.nome || '',
-            email: cliente.email || '',
-            telefone: cliente.telefone || ''
-        };
-        
-        console.log('Dados processados para este cliente:', dadosCliente);
-        return dadosCliente;
-    });
-    
-    console.log('Dados finais preparados para tabela:', dadosTabela);
+    const dadosTabela = clientesFiltrados.map(cliente => ({
+        id: cliente.id,
+        nome: cliente.nome || '',
+        email: cliente.email || '',
+        telefone: cliente.telefone || ''
+    }));
 
     // Função para salvar edição
     const salvarEdicao = async () => {
@@ -151,7 +168,7 @@ export function GestaoClientes() {
 
         setCarregando(true);
         try {
-            const clienteId = clienteEditando.idCliente || clienteEditando.id;
+            const clienteId = clienteEditando.id;
             const response = await API.put(`/clientes/${clienteId}`, {
                 nome: clienteEditando.nome,
                 email: clienteEditando.email,
@@ -159,11 +176,10 @@ export function GestaoClientes() {
                 cpf: clienteEditando.cpf || '',
                 endereco: clienteEditando.endereco || ''
             });
-            
-            // Atualizar na lista
-            setClientes(prev => prev.map(c => 
-                (c.idCliente || c.id) === clienteId ? response.data : c
-            ));
+
+            // Normalizar o cliente retornado e atualizar na lista
+            const clienteAtualizado = normalizeCliente(response.data || {});
+            setClientes(prev => prev.map(c => (c.id === clienteId ? clienteAtualizado : c)));
             
             setMostrarModal(false);
             setClienteEditando(null);
@@ -188,8 +204,8 @@ export function GestaoClientes() {
         try {
             console.log('Dados sendo enviados:', novoCliente);
             const response = await API.post('/clientes', novoCliente);
-            console.log('Resposta do cadastro:', response);
-            setClientes(prev => [...prev, response.data]);
+            const novo = normalizeCliente(response.data || {});
+            setClientes(prev => [...prev, novo]);
             setMostrarModalCadastro(false);
             setNovoCliente({
                 nome: '',
@@ -262,15 +278,15 @@ export function GestaoClientes() {
                         <Tabela 
                             itens={dadosTabela}
                             botaoEditar={true}
-                            onEditar={(item) => {
-                                const cliente = clientesFiltrados.find(c => (c.idCliente || c.id) === item.id);
-                                abrirEdicao(cliente);
-                            }}
+                                onEditar={(item) => {
+                                    const cliente = clientesFiltrados.find(c => c.id === item.id);
+                                    abrirEdicao(cliente);
+                                }}
                             botaoRemover={true}
-                            onRemover={(item) => {
-                                const cliente = clientesFiltrados.find(c => (c.idCliente || c.id) === item.id);
-                                abrirConfirmacaoExclusao(cliente);
-                            }}
+                                onRemover={(item) => {
+                                    const cliente = clientesFiltrados.find(c => c.id === item.id);
+                                    abrirConfirmacaoExclusao(cliente);
+                                }}
                         />
                     </div>
                 </div>

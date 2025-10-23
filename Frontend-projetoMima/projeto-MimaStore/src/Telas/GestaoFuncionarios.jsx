@@ -35,6 +35,26 @@ export function GestaoFuncionarios() {
         navigate('/menu-inicial');
     };
 
+    // Normaliza diferentes formatos de usuário retornados pelo backend
+    const normalizeUsuario = (u) => {
+        if (!u || typeof u !== 'object') return { id: null, nome: '', email: '', telefone: '', cargo: '', cpf: '', endereco: '' };
+        const id = u.id ?? u.idUsuario ?? u.id_usuario ?? u.usuarioId ?? null;
+        const nome = u.nome ?? u.nomeCompleto ?? u.nome_usuario ?? u.nomeUsuario ?? '';
+        const telefone = u.telefone ?? u.telefoneContato ?? u.contato?.telefone ?? u.telefone_contato ?? '';
+        const email =
+            u.email ??
+            u.emailUsuario ??
+            u.email_usuario ??
+            u.usuario?.email ??
+            u.contato?.email ??
+            (Array.isArray(u.emails) && (u.emails[0]?.email || u.emails[0]?.value)) ??
+            '';
+        const cargo = u.cargo ?? u.role ?? u.perfil ?? '';
+        const cpf = u.cpf ?? u.cpf_usuario ?? u.cpfUsuario ?? '';
+        const endereco = u.endereco ?? u.endereco_residencial ?? u.enderecoResidencial ?? '';
+        return { ...u, id, nome, email, telefone, cargo, cpf, endereco };
+    };
+
 
 
     // Carregar funcionários na inicialização
@@ -47,15 +67,10 @@ export function GestaoFuncionarios() {
         setErro('');
         try {
             const response = await API.get('/usuarios');
-            console.log('Resposta da API /usuarios:', response);
-            console.log('Dados retornados:', response.data);
-            
-            if (response.status === 200 && response.data) {
-                // Filtrar apenas funcionários se houver um campo que os identifique
-                const todosFuncionarios = Array.isArray(response.data) ? response.data : [];
-                console.log('Funcionários encontrados:', todosFuncionarios);
-                setFuncionarios(todosFuncionarios);
-            }
+            const body = response.data || {};
+            const todos = Array.isArray(body.content) ? body.content : Array.isArray(body) ? body : [];
+            const normalizados = todos.map(normalizeUsuario);
+            setFuncionarios(normalizados);
         } catch (error) {
             console.error('Erro ao carregar funcionários:', error);
             // Mostrar erro detalhado para ajudar diagnóstico (401, 403, CORS, etc.)
@@ -77,9 +92,9 @@ export function GestaoFuncionarios() {
 
     // Filtrar funcionários pela busca
     const funcionariosFiltrados = funcionarios.filter(func => 
-        func.nome?.toLowerCase().includes(busca.toLowerCase()) ||
-        func.email?.toLowerCase().includes(busca.toLowerCase()) ||
-        func.cpf?.includes(busca)
+        (func.nome || '').toLowerCase().includes(busca.toLowerCase()) ||
+        (func.email || '').toLowerCase().includes(busca.toLowerCase()) ||
+        (func.cpf || '').includes(busca)
     );
 
     // Função para abrir confirmação de exclusão
@@ -94,8 +109,9 @@ export function GestaoFuncionarios() {
 
         setCarregando(true);
         try {
-            await API.delete(`/usuarios/${funcionarioParaExcluir.id}`);
-            setFuncionarios(prev => prev.filter(f => f.id !== funcionarioParaExcluir.id));
+            const id = funcionarioParaExcluir.id;
+            await API.delete(`/usuarios/${id}`);
+            setFuncionarios(prev => prev.filter(f => f.id !== id));
             setMensagem(`Funcionário "${funcionarioParaExcluir.nome}" excluído com sucesso!`);
             setTimeout(() => setMensagem(''), 3000);
             setMostrarModalConfirmacao(false);
@@ -136,23 +152,13 @@ export function GestaoFuncionarios() {
         setMostrarModalCadastro(true);
     };
 
-    // Preparar dados para a tabela
-    const dadosTabela = funcionariosFiltrados.map(usuario => {
-        console.log('Usuário individual completo:', usuario);
-        console.log('Campos disponíveis:', Object.keys(usuario));
-        
-        const dadosUsuario = {
-            id: usuario.id,
-            nome: usuario.nome || '',
-            email: usuario.email || '',
-            cargo: usuario.cargo || ''
-        };
-        
-        console.log('Dados processados para este usuário:', dadosUsuario);
-        return dadosUsuario;
-    });
-    
-    console.log('Dados finais preparados para tabela:', dadosTabela);
+    // Preparar dados para a tabela (usando campos normalizados)
+    const dadosTabela = funcionariosFiltrados.map(usuario => ({
+        id: usuario.id,
+        nome: usuario.nome || '',
+        email: usuario.email || '',
+        cargo: usuario.cargo || ''
+    }));
 
     // Função para salvar edição
     const salvarEdicao = async () => {

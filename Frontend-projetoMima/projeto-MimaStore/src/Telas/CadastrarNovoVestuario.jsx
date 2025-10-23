@@ -39,7 +39,23 @@ export function CadastroNovoVestuario() {
 
                 for (let ep of endpoints) {
                     const res = await API.get(ep.url);
-                    const listaNormalizada = res.data.map(item => ({
+                    // debug rápido para inspecionar a resposta do backend
+                    console.log('debug buscarListas', ep.url, res.data);
+
+                    // normaliza vários formatos comuns de retorno do backend
+                    let items = [];
+                    if (Array.isArray(res.data)) {
+                        items = res.data;
+                    } else if (Array.isArray(res.data?.data)) {
+                        items = res.data.data;
+                    } else {
+                        // tenta encontrar a primeira propriedade que seja um array (caso o backend use envelope)
+                        const values = Object.values(res.data || {});
+                        const found = values.find(v => Array.isArray(v));
+                        items = found || [];
+                    }
+
+                    const listaNormalizada = items.map(item => ({
                         id: item[ep.keyId],
                         nome: item[ep.keyNome]
                     }));

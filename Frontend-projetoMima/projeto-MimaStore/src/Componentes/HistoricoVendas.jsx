@@ -18,66 +18,76 @@ import {
 } from "@mui/material";
 import styles from "./Componentes - CSS/estiloTabelas.module.css";
 
-const MOCK_CLIENTES = [
-  {
-    vendaId: 1,
-    data: "2025-08-01T17:41:13.000Z",
-    cliente: "Maria Oliveira",
-    valor_total: 189.7,
-    quantidade: "3",
-    id: 1,
-  },
-  {
-    vendaId: 2,
-    data: "2025-08-01T17:41:13.000Z",
-    cliente: "João Pereira",
-    valor_total: 129.9,
-    quantidade: "1",
-    id: 2,
-  },
-  {
-    vendaId: 4,
-    data: "2025-07-25T03:00:00.000Z",
-    cliente: "João Pereira",
-    valor_total: 0,
-    quantidade: "0",
-    id: 4,
-  },
-  {
-    vendaId: 3,
-    data: "2025-07-24T03:00:00.000Z",
-    cliente: "Maria Oliveira",
-    valor_total: 0,
-    quantidade: "0",
-    id: 3,
-  },
-];
+// const MOCK_CLIENTES = [
+//   {
+//     vendaId: 1,
+//     data: "2025-08-01T17:41:13.000Z",
+//     cliente: "Maria Oliveira",
+//     valor_total: 189.7,
+//     quantidade: "3",
+//     id: 1,
+//   },
+//   {
+//     vendaId: 2,
+//     data: "2025-08-01T17:41:13.000Z",
+//     cliente: "João Pereira",
+//     valor_total: 129.9,
+//     quantidade: "1",
+//     id: 2,
+//   },
+//   {
+//     vendaId: 4,
+//     data: "2025-07-25T03:00:00.000Z",
+//     cliente: "João Pereira",
+//     valor_total: 0,
+//     quantidade: "0",
+//     id: 4,
+//   },
+//   {
+//     vendaId: 3,
+//     data: "2025-07-24T03:00:00.000Z",
+//     cliente: "Maria Oliveira",
+//     valor_total: 0,
+//     quantidade: "0",
+//     id: 3,
+//   },
+// ];
 
-// Mock de itens caso falhe a chamada de /venda/:id/itens
-const MOCK_ITENS = [
-  {
-    id: 1,
-    nome: "Vestido Floral",
-    preco: 120.0,
-    quantidade: 1,
-    fornecedor: "Fornecedor A",
-    cor: "Rosa",
-  },
-  {
-    id: 2,
-    nome: "Blusa de Linho",
-    preco: 69.9,
-    quantidade: 2,
-    fornecedor: "Fornecedor B",
-    cor: "Branco",
-  },
-];
+// // Mock de itens caso falhe a chamada de /venda/:id/itens
+// const MOCK_ITENS = [
+//   {
+//     id: 1,
+//     nome: "Vestido Floral",
+//     preco: 120.0,
+//     quantidade: 1,
+//     fornecedor: "Fornecedor A",
+//     cor: "Rosa",
+//   },
+//   {
+//     id: 2,
+//     nome: "Blusa de Linho",
+//     preco: 69.9,
+//     quantidade: 2,
+//     fornecedor: "Fornecedor B",
+//     cor: "Branco",
+//   },
+// ];
 
 export default function HistoricoVendas() {
   const navigate = useNavigate();
+  // Base URL do backend: utiliza Vite env (VITE_API_URL) quando disponível;
+  // evita referenciar `process` diretamente no browser (causa ReferenceError).
+  const API_BASE =
+    (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_API_URL) ||
+    (typeof process !== "undefined" && process.env && process.env.REACT_APP_API_URL) ||
+    "http://localhost:8080";
   const [clientes, setClientes] = useState([]);
   const [buscaClientes, setBuscaClientes] = useState("");
   const [clientesFiltrados, setClientesFiltrados] = useState([]);
+
+  // paginação das vendas (backend)
+  const [vendasPage, setVendasPage] = useState(0);
+  const [totalPaginasVendas, setTotalPaginasVendas] = useState(1);
 
   const [clienteSelecionado, setClienteSelecionado] = useState(null);
 
@@ -112,18 +122,30 @@ export default function HistoricoVendas() {
   const [itemParaRemover, setItemParaRemover] = useState(null);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/vendas-clientes")
+    // chamar backend para listar vendas com paginação
+    // Assumption: backend está em http://localhost:8080 e o endpoint é GET /vendas
+    const vendasSize = 10; // tamanho da página usado para chamadas ao backend
+    axios.get(`${API_BASE}/vendas`, { params: { page: vendasPage, size: vendasSize } })
       .then((res) => {
-        let clientesComId = [];
-        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
-          clientesComId = res.data.map((c) => ({ ...c, id: c.vendaId }));
-        } else {
-          // fallback para mock se vier vazio
-          clientesComId = MOCK_CLIENTES;
-        }
+        // Suporta diferentes formatos de nome de campo (flexível)
+        const pageBody = res.data || {};
+        const content = Array.isArray(pageBody.content) ? pageBody.content : [];
+
+        const clientesComId = content.map((c, idx) => ({
+          // normaliza campos que podem variar entre API e DTO
+          vendaId: c.vendaId ?? c.id ?? c.idVenda ?? c.codigo ?? idx,
+          cliente: c.cliente ?? c.nomeCliente ?? c.clienteNome ?? c.nome ?? "",
+          valor_total: c.valor_total ?? c.valorTotal ?? c.total ?? 0,
+          quantidade: c.quantidade ?? c.qtd ?? 0,
+          data: c.data ?? c.dataVenda ?? c.dataHora ?? c.createdAt ?? null,
+          id: c.vendaId ?? c.id ?? c.idVenda ?? idx,
+        }));
+
         setClientes(clientesComId);
         setClientesFiltrados(clientesComId);
+
+  // meta dados de paginação (se disponíveis)
+  setTotalPaginasVendas(pageBody.totalPages ?? pageBody.total_pages ?? 1);
 
         if (clientesComId.length > 0) {
           const valores = clientesComId.map((c) => Number(c.valor_total) || 0);
@@ -136,19 +158,21 @@ export default function HistoricoVendas() {
       })
       .catch((err) => {
         console.error("Erro ao buscar vendas:", err);
-        // fallback em caso de erro de conexão
-        setClientes(MOCK_CLIENTES);
-        setClientesFiltrados(MOCK_CLIENTES);
-        if (MOCK_CLIENTES.length > 0) {
-          const valores = MOCK_CLIENTES.map((c) => Number(c.valor_total) || 0);
-          const min = Math.min(...valores);
-          const max = Math.max(...valores);
-          setValorMin(min);
-          setValorMax(max);
-          setFiltroValor([min, max]);
+        // fallback em caso de erro de conexão: mantém comportamento anterior se houver MOCK_CLIENTES
+        if (typeof MOCK_CLIENTES !== "undefined") {
+          setClientes(MOCK_CLIENTES);
+          setClientesFiltrados(MOCK_CLIENTES);
+          if (MOCK_CLIENTES.length > 0) {
+            const valores = MOCK_CLIENTES.map((c) => Number(c.valor_total) || 0);
+            const min = Math.min(...valores);
+            const max = Math.max(...valores);
+            setValorMin(min);
+            setValorMax(max);
+            setFiltroValor([min, max]);
+          }
         }
       });
-  }, []);
+  }, [vendasPage]);
 
   useEffect(() => {
     let filtrados = clientes;
@@ -180,27 +204,41 @@ export default function HistoricoVendas() {
 
   const handleEditar = (cliente) => {
     setCarregandoItens(true);
+    // Tenta buscar a venda completa (com itens) em /vendas/{idVenda}
     axios
-      .get(`http://localhost:3001/venda/${cliente.vendaId}/itens`)
+      .get(`${API_BASE}/vendas/${cliente.vendaId}`)
       .then((res) => {
+        const venda = res.data || {};
         let itensComId = [];
-        if (res.data && Array.isArray(res.data) && res.data.length > 0) {
-          itensComId = res.data.map((item, index) => ({
+
+        if (Array.isArray(venda.itens) && venda.itens.length > 0) {
+          itensComId = venda.itens.map((item, index) => ({
             ...item,
             id: item.id ?? index,
             cor: item.cor || null,
             fornecedor: item.fornecedor || null,
-            preco: item.preco ?? 0,
-            quantidade: item.quantidade ?? item.qtdParaVender ?? 0,
-          }));
-        } else {
-          // fallback se vazio
-          itensComId = MOCK_ITENS.map((i) => ({
-            ...i,
-            fornecedor: { nome: i.fornecedor },
-            cor: i.cor,
+            preco: item.preco ?? item.valor ?? 0,
+            quantidade: item.quantidade ?? item.qtdParaVender ?? item.qtd ?? 0,
           }));
         }
+
+        // Se não vier itens na rota /vendas/{id}, tenta rota legacy /vendas/{id}/itens
+        if (itensComId.length === 0) {
+          return axios.get(`${API_BASE}/vendas/${cliente.vendaId}/itens`).then((r) => r.data || []);
+        }
+
+        return itensComId;
+      })
+      .then((itensRes) => {
+        const itensArr = Array.isArray(itensRes) ? itensRes : [];
+        const itensComId = itensArr.map((item, index) => ({
+          ...item,
+          id: item.id ?? index,
+          cor: item.cor || null,
+          fornecedor: item.fornecedor || null,
+          preco: item.preco ?? item.valor ?? 0,
+          quantidade: item.quantidade ?? item.qtdParaVender ?? item.qtd ?? 0,
+        }));
 
         const clienteComItens = { ...cliente, itens: itensComId };
         setClienteSelecionado(clienteComItens);
@@ -247,48 +285,48 @@ export default function HistoricoVendas() {
       .catch((err) => {
         console.error("Erro ao buscar itens da venda:", err);
         // fallback para mock caso falhe
-        const itensComId = MOCK_ITENS.map((i) => ({
-          ...i,
-          fornecedor: { nome: i.fornecedor },
-          cor: i.cor,
-        }));
+        const itensComId = typeof MOCK_ITENS !== "undefined"
+          ? MOCK_ITENS.map((i) => ({ ...i, fornecedor: { nome: i.fornecedor }, cor: i.cor }))
+          : [];
         const clienteComItens = { ...cliente, itens: itensComId };
         setClienteSelecionado(clienteComItens);
         setItensFiltrados(itensComId);
         setBuscaItens("");
 
-        const precos = itensComId.map((i) => Number(i.preco) || 0);
-        const min = Math.min(...precos);
-        const max = Math.max(...precos);
-        setPrecoMinItens(min);
-        setPrecoMaxItens(max);
-        setFiltroPrecoItens([min, max]);
+        if (itensComId.length > 0) {
+          const precos = itensComId.map((i) => Number(i.preco) || 0);
+          const min = Math.min(...precos);
+          const max = Math.max(...precos);
+          setPrecoMinItens(min);
+          setPrecoMaxItens(max);
+          setFiltroPrecoItens([min, max]);
 
-        const coresUnicas = [
-          ...new Set(
-            itensComId
-              .map((i) => (typeof i.cor === "string" ? i.cor.toLowerCase() : null))
-              .filter(Boolean)
-          ),
-        ];
-        setOpcoesCoresItens(coresUnicas);
-        setFiltroCoresItens([]);
+          const coresUnicas = [
+            ...new Set(
+              itensComId
+                .map((i) => (typeof i.cor === "string" ? i.cor.toLowerCase() : null))
+                .filter(Boolean)
+            ),
+          ];
+          setOpcoesCoresItens(coresUnicas);
+          setFiltroCoresItens([]);
 
-        const fornecedoresUnicos = [
-          ...new Set(
-            itensComId
-              .map((i) =>
-                i.fornecedor
-                  ? typeof i.fornecedor === "string"
-                    ? i.fornecedor
-                    : i.fornecedor.nome
-                  : null
-              )
-              .filter(Boolean)
-          ),
-        ];
-        setOpcoesFornecedoresItens(fornecedoresUnicos);
-        setFiltroFornecedoresItens([]);
+          const fornecedoresUnicos = [
+            ...new Set(
+              itensComId
+                .map((i) =>
+                  i.fornecedor
+                    ? typeof i.fornecedor === "string"
+                      ? i.fornecedor
+                      : i.fornecedor.nome
+                    : null
+                )
+                .filter(Boolean)
+            ),
+          ];
+          setOpcoesFornecedoresItens(fornecedoresUnicos);
+          setFiltroFornecedoresItens([]);
+        }
 
         setPaginaAtualItens(1);
       })
@@ -325,11 +363,43 @@ export default function HistoricoVendas() {
   };
 
   const confirmarExclusao = (item) => {
+    // Usar DELETE /vendas/{idVenda}/itens/{idItemVenda} conforme controller recebido
+    const idVenda = clienteSelecionado?.vendaId ?? clienteSelecionado?.id ?? clienteSelecionado?.idVenda;
     axios
-      .delete(`http://localhost:3001/itemvenda/${item.id}`)
-      .then(() => {
-        const novosItens = clienteSelecionado.itens.filter((i) => i.id !== item.id);
-        setClienteSelecionado((prev) => ({ ...prev, itens: novosItens }));
+      .delete(`${API_BASE}/vendas/${idVenda}/itens/${item.id}`)
+      .then((res) => {
+        // O controller retorna a VendaResponseDto atualizada; sincronizamos o estado com ela quando disponível
+        const vendaAtualizada = res.data;
+        if (vendaAtualizada) {
+          // mapear itens para formato esperado
+          const itens = Array.isArray(vendaAtualizada.itens)
+            ? vendaAtualizada.itens.map((it, idx) => ({
+                ...it,
+                id: it.id ?? idx,
+                cor: it.cor || null,
+                fornecedor: it.fornecedor || null,
+                preco: it.preco ?? it.valor ?? 0,
+                quantidade: it.quantidade ?? it.qtd ?? 0,
+              }))
+            : [];
+          const clienteAtualizado = {
+            vendaId: vendaAtualizada.id ?? idVenda,
+            cliente: vendaAtualizada.cliente ?? vendaAtualizada.clienteNome ?? clienteSelecionado?.cliente,
+            valor_total: vendaAtualizada.valorTotal ?? vendaAtualizada.total ?? vendaAtualizada.valor_total,
+            quantidade: itens.reduce((s, it) => s + (Number(it.quantidade) || 0), 0),
+            data: vendaAtualizada.data ?? clienteSelecionado?.data,
+            itens,
+          };
+
+          setClienteSelecionado(clienteAtualizado);
+          setItensFiltrados(itens);
+        } else {
+          // fallback: remover localmente
+          const novosItens = (clienteSelecionado.itens || []).filter((i) => i.id !== item.id);
+          setClienteSelecionado((prev) => ({ ...prev, itens: novosItens }));
+          setItensFiltrados(novosItens);
+        }
+
         setMostrarPopUp(false);
         setItemParaRemover(null);
       })
@@ -492,6 +562,36 @@ export default function HistoricoVendas() {
               }}
               renderBotaoEditar={renderBotaoEditar}
             />
+            <Box
+              className={styles["estoque-pagination"]}
+              sx={{
+                fontSize: 15,
+                marginTop: 8,
+                maxWidth: 900,
+                marginLeft: "auto",
+                marginRight: "auto",
+                display: "flex",
+                gap: 12,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <button
+                onClick={() => setVendasPage((p) => Math.max(p - 1, 0))}
+                disabled={vendasPage === 0}
+              >
+                &lt; Página anterior
+              </button>
+              <span>
+                Página {vendasPage + 1} de {totalPaginasVendas || 1}
+              </span>
+              <button
+                onClick={() => setVendasPage((p) => Math.min(p + 1, Math.max(totalPaginasVendas - 1, 0)))}
+                disabled={vendasPage + 1 === totalPaginasVendas || totalPaginasVendas === 0}
+              >
+                Próxima página &gt;
+              </button>
+            </Box>
             <Drawer
               anchor="right"
               open={filtrosAbertosVendas}

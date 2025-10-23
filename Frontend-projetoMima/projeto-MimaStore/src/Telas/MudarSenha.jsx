@@ -5,6 +5,7 @@ import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import API from '../Provider/API';
 import { MensagemErro } from '../Componentes/MensagemErro';
 import styles from '../Componentes/Componentes - CSS/MudarSenha.module.css';
+import ilustracao from '../Componentes/assets/Mudar-Senha.png';
 
 export default function MudarSenha() {
     const navigate = useNavigate();
@@ -178,10 +179,12 @@ export default function MudarSenha() {
                 <div className={styles.centerContainer}>
                     <div className={styles.cardConfirmacao}>
                         <div className={styles.ilustracao}>
-                            <div className={styles.phoneIcon}>
-                                <div className={styles.emailIcon}>📧</div>
+                            <img src={ilustracao} alt="Ilustração de mudança de senha" />
+                            {/* <div className={styles.phoneIcon}>
+                                <div className={styles.emailIcon}>
+                                    <img src="" alt="" /></div>
                             </div>
-                            <div className={styles.personIcon}>👤</div>
+                            <div className={styles.personIcon}>👤</div> */}
                         </div>
                         
                         <h1 className={styles.titleConfirmacao}>Confira sua caixa de entrada para redefinir sua senha</h1>
@@ -214,7 +217,7 @@ export default function MudarSenha() {
                                 IR PARA A PÁGINA INICIAL
                             </button>
                         </div>
-                        {mensagemSucesso && <MensagemErro mensagem={mensagemSucesso} />}
+                        {/* {mensagemSucesso && <MensagemErro mensagem={mensagemSucesso} />} */}
                     </div>
                 </div>
             </div>
