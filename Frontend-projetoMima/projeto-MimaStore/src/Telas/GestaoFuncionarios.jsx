@@ -28,6 +28,8 @@ export function GestaoFuncionarios() {
         senha: '',
         imagemFile: null
     });
+    const [mostrarModalSenhaProvisoria, setMostrarModalSenhaProvisoria] = useState(false);
+    const [senhaProvisoria, setSenhaProvisoria] = useState('');
 
     const voltarAoMenu = () => {
         navigate('/menu-inicial');
@@ -191,17 +193,17 @@ export function GestaoFuncionarios() {
         }
     };
 
-    // Função para cadastrar novo funcionário
+    // Função para cadastrar novo funcionário (senha opcional)
     const cadastrarFuncionario = async () => {
         if (!novoFuncionario.nome || !novoFuncionario.email || !novoFuncionario.telefone || 
-            !novoFuncionario.cargo || !novoFuncionario.endereco || !novoFuncionario.senha) {
+            !novoFuncionario.cargo || !novoFuncionario.endereco) {
             setErro('Todos os campos são obrigatórios.');
             return;
         }
 
         setCarregando(true);
         try {
-            // Se existe imagemFile, enviar como multipart para o endpoint /funcionarios/com-imagem
+            // Se existe imagemFile, enviar como multipart para o endpoint /usuarios/funcionarios/com-imagem
             if (novoFuncionario.imagemFile) {
                 const fd = new FormData();
                 fd.append('nome', novoFuncionario.nome);
@@ -210,12 +212,19 @@ export function GestaoFuncionarios() {
                 fd.append('cargo', novoFuncionario.cargo);
                 fd.append('endereco', novoFuncionario.endereco);
                 fd.append('imagem', novoFuncionario.imagemFile);
+                // anexar senha somente se fornecida
+                if (novoFuncionario.senha) fd.append('senha', novoFuncionario.senha);
 
                 const response = await API.post('/usuarios/funcionarios/com-imagem', fd, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
-                // Recarregar lista
                 await carregarFuncionarios();
+                // capturar senha provisória se backend retornar
+                const respData = response?.data;
+                const possiblePwd = respData?.senha || respData?.password || respData?.tempPassword || respData?.temporaryPassword || respData?.senhaProvisoria || respData?.temporary_password;
+                console.log('create (with image) response:', respData, 'detectedPwd:', possiblePwd);
+                setSenhaProvisoria(possiblePwd || '');
+                setMostrarModalSenhaProvisoria(true);
             } else {
                 const payload = {
                     nome: novoFuncionario.nome,
@@ -223,10 +232,17 @@ export function GestaoFuncionarios() {
                     telefone: novoFuncionario.telefone,
                     cargo: novoFuncionario.cargo,
                     endereco: novoFuncionario.endereco,
-                    imagem: null
+                    imagem: null,
+                    senha: novoFuncionario.senha ? novoFuncionario.senha : null
                 };
-                await API.post('/usuarios/funcionarios', payload);
+
+                const response = await API.post('/usuarios/funcionarios', payload);
                 await carregarFuncionarios();
+                const respData = response?.data;
+                const possiblePwd = respData?.senha || respData?.password || respData?.tempPassword || respData?.temporaryPassword || respData?.senhaProvisoria || respData?.temporary_password;
+                console.log('create (json) response:', respData, 'detectedPwd:', possiblePwd);
+                setSenhaProvisoria(possiblePwd || '');
+                setMostrarModalSenhaProvisoria(true);
             }
 
             setMostrarModalCadastro(false);
@@ -384,6 +400,52 @@ export function GestaoFuncionarios() {
                 </div>
             )}
 
+            {/* Modal de Senha Provisória (aparece se backend retornar a senha) */}
+            {mostrarModalSenhaProvisoria && (
+                <div className={styles['modal-senha-overlay']}>
+                    <div className={styles['modal-senha-content']}>
+                        <div className={styles['modal-header']}>
+                            <h3>Senha provisória</h3>
+                            <button 
+                                onClick={() => { setMostrarModalSenhaProvisoria(false); setSenhaProvisoria(''); }}
+                                className={styles['btn-fechar']}
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        <div className={styles['modal-senha-body']}>
+                            {senhaProvisoria ? (
+                                <>
+                                    <p>Usuário criado com sucesso. A senha provisória é:</p>
+                                    <div className={styles['senha-box']}>{senhaProvisoria}</div>
+                                </>
+                            ) : (
+                                <>
+                                    <p>Usuário criado com sucesso.</p>
+                                    <p style={{ marginTop: 8 }}><em>O backend não retornou a senha provisória no corpo da resposta.</em></p>
+                                    {/* <p style={{ marginTop: 12 }}>Verifique o e-mail do usuário (ou confira os logs do servidor para a senha provisória).</p> */}
+                                </>
+                            )}
+                        </div>
+                        <div className={styles['modal-senha-footer']}>
+                            <button 
+                                onClick={() => { navigator.clipboard?.writeText(senhaProvisoria); }}
+                                className={styles['btn-copy']}
+                                disabled={!senhaProvisoria}
+                            >
+                                Copiar senha
+                            </button>
+                            <button 
+                                onClick={() => { setMostrarModalSenhaProvisoria(false); setSenhaProvisoria(''); }}
+                                className={styles['btn-cancelar']}
+                            >
+                                Fechar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Modal de Cadastro */}
             {mostrarModalCadastro && (
                 <div className={styles['modal-overlay']}>
@@ -423,14 +485,14 @@ export function GestaoFuncionarios() {
                                     onChange={(e) => setNovoFuncionario({...novoFuncionario, telefone: e.target.value})}
                                 />
                             </div>
-                            <div className={styles['form-group']}>
+                            {/* <div className={styles['form-group']}>
                                 <label>Imagem (opcional)</label>
                                 <input
                                     type="file"
                                     accept="image/*"
                                     onChange={(e) => setNovoFuncionario({...novoFuncionario, imagemFile: e.target.files?.[0] || null})}
                                 />
-                            </div>
+                            </div> */}
                             <div className={styles['form-group']}>
                                 <label>Endereço *</label>
                                 <input 
@@ -446,22 +508,23 @@ export function GestaoFuncionarios() {
                                     value={novoFuncionario.cargo}
                                     onChange={(e) => setNovoFuncionario({...novoFuncionario, cargo: e.target.value})}
                                 />
-                                <div className={styles['form-group']}>
+                                {/* <div className={styles['form-group']}>
                                     <label>Imagem (opcional)</label>
                                     <input
                                         type="file"
                                         accept="image/*"
                                         onChange={(e) => setFuncionarioEditando({...funcionarioEditando, imagemFile: e.target.files?.[0] || null})}
                                     />
-                                </div>
+                                </div> */}
                             </div>
                             <div className={styles['form-group']}>
-                                <label>Senha *</label>
+                                {/* <label>Senha (opcional)</label>
                                 <input 
                                     type="password"
                                     value={novoFuncionario.senha}
                                     onChange={(e) => setNovoFuncionario({...novoFuncionario, senha: e.target.value})}
-                                />
+                                    placeholder="Deixe em branco para gerar senha provisória"
+                                /> */}
                             </div>
                         </div>
                         <div className={styles['modal-footer']}>

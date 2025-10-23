@@ -91,14 +91,15 @@ export default function Login() {
                 autoComplete="current-password"
               />
               {erro && <div className={styles.erro}>{erro}</div>}
+              <div className={styles.link}>
+              Esqueceu sua senha? <span onClick={() => navigate("/mudar-senha")}>Clique aqui!</span>
+            </div>
               <button type="submit" className={styles.btn}>Entrar</button>
             </form>
             <div className={styles.link}>
               Primeiro acesso? <span onClick={handlePrimeiroAcesso}>Clique aqui!</span>
             </div>
-            <div className={styles.link}>
-              Esqueceu sua senha? <span onClick={() => navigate("/mudar-senha")}>Clique aqui!</span>
-            </div>
+           
           </div>
         </div>
       </div>
