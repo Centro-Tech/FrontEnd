@@ -17,9 +17,6 @@ export default function Estoque() {
   const [erro, setErro] = useState('');
   const [mensagem, setMensagem] = useState('');
   const [busca, setBusca] = useState('');
-  const [mostrarModalRepor, setMostrarModalRepor] = useState(false);
-  const [itemParaRepor, setItemParaRepor] = useState(null);
-  const [quantidadeRepor, setQuantidadeRepor] = useState('');
   const [mostrarModalConfirmacao, setMostrarModalConfirmacao] = useState(false);
   const [itemParaExcluir, setItemParaExcluir] = useState(null);
 
@@ -40,11 +37,6 @@ export default function Estoque() {
         } 
       });
       
-      console.log('🌐 Resposta do backend:', res.data);
-      console.log('📦 Tipo da resposta:', typeof res.data);
-      console.log('🔍 É array?', Array.isArray(res.data));
-      console.log('🔍 Tem content?', res.data?.content);
-      
       if (res.status === 204 || !res.data) { 
         setItens([]); 
         setTotalItems(0);
@@ -54,12 +46,10 @@ export default function Estoque() {
 
       // Spring Boot Page response
       if (res.data.content && Array.isArray(res.data.content)) {
-        console.log('✅ Usando res.data.content, total de itens:', res.data.content.length);
         setItens(res.data.content);
         setTotalItems(res.data.totalElements || 0);
         setTotalPages(res.data.totalPages || 0);
       } else {
-        console.warn('⚠️ Formato inesperado de resposta');
         setItens([]);
         setTotalItems(0);
         setTotalPages(0);
@@ -139,9 +129,6 @@ export default function Estoque() {
   const goToNext = () => { if (totalPages === null || currentPage < totalPages - 1) setCurrentPage(p => p + 1); };
 
   const abrirConfirmacaoExclusao = async (item) => {
-    console.log('🔍 abrirConfirmacaoExclusao chamado com:', item);
-    console.log('📋 Lista de itens atual:', itens);
-    
     if (!item) { 
       setErro('Erro: Item inválido para exclusão.'); 
       return; 
@@ -149,15 +136,12 @@ export default function Estoque() {
     
     // Tentar encontrar o item completo na lista (caso venha apenas com id da tabela)
     const itemCompleto = itens.find(it => it.id === item.id) || item;
-    console.log('✅ Item completo encontrado:', itemCompleto);
     
     if (!itemCompleto.codigo) { 
-      console.error('❌ Item sem código:', itemCompleto);
       setErro('Erro: Item não possui código válido para exclusão.'); 
       return; 
     }
     
-    console.log('🚀 Abrindo modal com item:', itemCompleto);
     setMostrarModalConfirmacao(true); 
     setItemParaExcluir(itemCompleto);
   };
@@ -189,77 +173,13 @@ export default function Estoque() {
     }
   };
 
-  const abrirRepor = (item) => { 
-    const original = itens.find(x => x.id === item.id) || item; 
-    setItemParaRepor(original); 
-    setQuantidadeRepor(''); 
-    setMostrarModalRepor(true); 
-  };
-
-  const confirmarRepor = async () => {
-    setErro('');
-    if (!itemParaRepor || quantidadeRepor === '' || Number(quantidadeRepor) <= 0) { 
-      setErro('Informe uma quantidade válida para repor.'); 
-      return; 
-    }
-    
-    if (!itemParaRepor.id) {
-      console.error('❌ Item sem ID:', itemParaRepor);
-      setErro('Erro: Item não possui ID válido para atualização.');
-      return;
-    }
-    
-    setCarregando(true);
-    try {
-      console.log('🚀 Reposição iniciada:', {
-        itemId: itemParaRepor.id,
-        qtdAtual: itemParaRepor.qtdEstoque,
-        qtdRepor: quantidadeRepor
-      });
-      
-      // Calcular nova quantidade (quantidade atual + quantidade a repor)
-      const novaQuantidade = Number(itemParaRepor.qtdEstoque || 0) + Number(quantidadeRepor);
-      
-      // Preparar o objeto no formato do Swagger (sem o id no body)
-      const itemAtualizado = {
-        nome: itemParaRepor.nome,
-        qtdEstoque: novaQuantidade,
-        preco: itemParaRepor.preco,
-        idTamanho: itemParaRepor.tamanho?.id || itemParaRepor.idTamanho,
-        idCor: itemParaRepor.cor?.id || itemParaRepor.idCor,
-        idMaterial: itemParaRepor.material?.id || itemParaRepor.idMaterial,
-        idCategoria: itemParaRepor.categoria?.id || itemParaRepor.idCategoria,
-        idFornecedor: itemParaRepor.fornecedor?.id || itemParaRepor.idFornecedor || 0
-      };
-      
-      console.log('📤 Enviando PUT /itens/' + itemParaRepor.id, itemAtualizado);
-      
-      // Fazer PUT para atualizar o item
-      await API.put(`/itens/${itemParaRepor.id}`, itemAtualizado);
-      
-      setMensagem(`Reposto ${quantidadeRepor} unidade(s) de "${itemParaRepor.nome}" com sucesso!`);
-      setTimeout(() => setMensagem(''), 3000);
-      await buscarEstoque(currentPage);
-      setMostrarModalRepor(false); 
-      setItemParaRepor(null); 
-      setQuantidadeRepor('');
-    } catch (e) { 
-      console.error('❌ Erro ao repor:', e.response?.data || e); 
-      setErro(e.response?.data?.message || 'Erro ao repor item. Verifique o console.'); 
-    } finally { 
-      setCarregando(false); 
-    }
-  };
-
   const dadosTabela = itens.map(i => ({ 
     id: i.id, 
     nome: i.nome, 
     qtdEstoque: i.qtdEstoque ?? (i.qtdEstoque === 0 ? 0 : '-'), 
     preco: i.preco ? Number(i.preco).toFixed(2) : '-',
-    codigo: i.codigo // Preservar código também
+    codigo: i.codigo
   }));
-
-  console.log('Debug - Primeiro item da tabela:', dadosTabela[0]);
 
   return (
     <div>
@@ -309,7 +229,7 @@ export default function Estoque() {
             <span>Total: {totalItems !== null ? `${totalItems} itens` : `${itens.length} itens no total`}</span>
           </div>
           <div className={styles['tabela-wrapper']}>
-            <Tabela itens={dadosTabela} botaoEditar={true} onEditar={(item) => abrirRepor(item)} botaoRemover={true} onRemover={(item) => abrirConfirmacaoExclusao(item)} />
+            <Tabela itens={dadosTabela} botaoRemover={true} onRemover={(item) => abrirConfirmacaoExclusao(item)} />
           </div>
 
           {/* Paginação só aparece quando NÃO está em modo de busca */}
@@ -368,32 +288,6 @@ export default function Estoque() {
           )}
         </div>
       </div>
-
-      {mostrarModalRepor && itemParaRepor && (
-        <div className={styles['modal-overlay']}>
-          <div className={styles['modal-content']}>
-            <div className={styles['modal-header']}>
-              <h3>Repor: {itemParaRepor.nome}</h3>
-              <button onClick={() => setMostrarModalRepor(false)} className={styles['btn-fechar']}>✖</button>
-            </div>
-            <div className={styles['modal-body']}>
-              <div className={styles['form-group']}>
-                <label>Quantidade atual</label>
-                <input type="number" value={itemParaRepor.qtdEstoque ?? 0} disabled />
-              </div>
-              <div className={styles['form-group']}>
-                <label>Quantidade para repor</label>
-                <input type="number" value={quantidadeRepor} onChange={e => setQuantidadeRepor(e.target.value)} />
-              </div>
-              <MensagemErro mensagem={erro} />
-            </div>
-            <div className={styles['modal-footer']}>
-              <button onClick={() => setMostrarModalRepor(false)} className={styles['btn-cancelar']}>Cancelar</button>
-              <button onClick={confirmarRepor} className={styles['btn-salvar']} disabled={carregando}>{carregando ? 'Repondo...' : 'Repor'}</button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {mostrarModalConfirmacao && itemParaExcluir && (
         <div className={styles['modal-overlay']}>

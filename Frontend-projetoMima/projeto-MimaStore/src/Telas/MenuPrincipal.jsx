@@ -34,10 +34,6 @@ export function MenuPrincipal() {
         navigate('/cadastrar-vestuario');
     };
 
-     const handleReporVestuario = () => {
-        navigate('/cadastrar-vestuario-existente');
-    };
-
     const handleDeletarFuncionario = () => {
         navigate('/deletar-funcionario');
     };
@@ -72,7 +68,6 @@ export function MenuPrincipal() {
                     <div className={styles.coluna}>
                         <BotaoEscuro texto="Estoque" />
                         <BotaoClaro texto="Visualizar Estoque" onClick={handleVisualizarEstoque} />
-                        <BotaoClaro texto="Repor Estoque" onClick={handleReporVestuario}/>
                         <BotaoClaro texto="Cadastrar Novas Peças" onClick={handleCadastrarNovoVestuario}/>
                         <BotaoClaro texto="Cadastrar Atributos" onClick={handleCadastrarAtributos}/>
                     </div>
