@@ -1,0 +1,91 @@
+/* Basic dashboard layout matching prototype spacing and purple theme */
+.dashboard-container {
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.titulo {
+  font-size: 1.8rem;
+  color: #864176;
+  margin-bottom: 20px;
+  font-family: 'Petrona', serif;
+}
+
+.kpis-row {
+  display: flex;
+  gap: 20px;
+  width: 90%;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: white;
+  border-radius: 12px;
+  padding: 22px;
+  flex: 1 1 0;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.kpi-label {
+  color: #495057;
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.kpi-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #864176;
+}
+
+.cards-row {
+  display: flex;
+  gap: 20px;
+  width: 90%;
+  margin-top: 12px;
+  justify-content: space-between;
+}
+
+.placeholder-card {
+  background: white;
+  border-radius: 12px;
+  padding: 18px;
+  flex: 1 1 0;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+}
+
+.placeholder-title {
+  font-weight: 700;
+  color: #495057;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.placeholder-box {
+  height: 300px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #f7f3f6, #faf8fb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b0a0b0;
+}
+
+.loading-inline {
+  margin-top: 16px;
+  color: #6c757d;
+}
+
+@media (max-width: 900px) {
+  .kpis-row, .cards-row { flex-direction: column; align-items: stretch; }
+}

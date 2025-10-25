@@ -13,6 +13,7 @@ import PrimeiroAcesso from '../Telas/PrimeiroAcesso.jsx';
 import  Login  from '../Telas/Login.jsx';
 import MudarSenha from '../Telas/MudarSenha.jsx';
 import { GestaoFornecedor } from '../Telas/GestaoFornecedor.jsx';
+import Dashboard from '../Telas/Dashboard.jsx';
 import { GestaoFuncionarios } from '../Telas/GestaoFuncionarios.jsx';
 import { GestaoClientes } from '../Telas/GestaoClientes.jsx';
 // import { Configuracao } from '../Telas/Configuracao.jsx';
@@ -48,7 +49,8 @@ export function AppRouter() {
 
 
       {/* Rotas de Gestão */}
-      <Route path="/gestao-fornecedores" element={<GestaoFornecedor />} />
+  <Route path="/gestao-fornecedores" element={<GestaoFornecedor />} />
+  <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/gestao-funcionarios" element={<GestaoFuncionarios />} />
       <Route path="/gestao-clientes" element={<GestaoClientes />} />
 

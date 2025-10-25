@@ -50,6 +50,10 @@ export function MenuPrincipal() {
         navigate('/gestao-fornecedores');
     };
 
+    const handleDashboard = () => {
+        navigate('/dashboard');
+    };
+
     const handleGestaoFuncionarios = () => {
         navigate('/gestao-funcionarios');
     };
@@ -76,20 +80,14 @@ export function MenuPrincipal() {
                         <BotaoEscuro texto="Vendas" />
                         <BotaoClaro texto="Realizar Venda" onClick={handleRealizarVenda} />
                         <BotaoClaro texto="Histórico de vendas" onClick={handleHistoricoVendas} />
-                        <BotaoClaro texto="Dashboard" />
+                        <BotaoClaro texto="Dashboard" onClick={handleDashboard} />
                     </div>
                
                     <div className={styles.coluna}>
                         <BotaoEscuro texto="Pessoas" />
-                        {/* <BotaoClaro texto="Cadastrar Funcionário" onClick={handleCadastrarFuncionarios}/> */}
-                        {/* <BotaoClaro texto="Cadastrar Fornecedor" onClick={handleCadastrarFornecedor}/> */}
                         <BotaoClaro texto="Gestão de Fornecedores" onClick={handleGestaoFornecedores}/>
                         <BotaoClaro texto="Gestão de Funcionários" onClick={handleGestaoFuncionarios}/>
                         <BotaoClaro texto="Gestão de Clientes" onClick={handleGestaoClientes}/>
-                        {/* <BotaoClaro texto="Deletar Funcionário" onClick={handleDeletarFuncionario}/> */}
-                        {/* <BotaoClaro texto="Deletar Fornecedor" onClick={handleDeletarFornecedor}/> */}
-                        {/* <BotaoClaro texto="Deletar Cliente" onClick={handleDeletarCliente}/> */}
-                        
                        
                     </div>
                 </div>
