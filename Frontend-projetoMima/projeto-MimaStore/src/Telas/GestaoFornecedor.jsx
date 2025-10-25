@@ -12,6 +12,9 @@ export function GestaoFornecedor() {
     const [fornecedores, setFornecedores] = useState([]);
     const [totalFornecedores, setTotalFornecedores] = useState(0);
     const [carregando, setCarregando] = useState(false);
+    const [mostrarLoading, setMostrarLoading] = useState(false);
+    const [paginaAtual, setPaginaAtual] = useState(0);
+    const [totalPaginas, setTotalPaginas] = useState(null);
     const [erro, setErro] = useState('');
     const [mensagem, setMensagem] = useState('');
     const [busca, setBusca] = useState('');
@@ -34,24 +37,28 @@ export function GestaoFornecedor() {
 
     // Carregar fornecedores na inicialização
     useEffect(() => {
-        carregarFornecedores();
-    }, []);
+        carregarFornecedores(paginaAtual);
+    }, [paginaAtual]);
 
-    const carregarFornecedores = async () => {
+    const carregarFornecedores = async (page = 0) => {
         setCarregando(true);
+        setMostrarLoading(page === 0);
         setErro('');
         try {
             // Backend retorna um Page<FornecedorResponseDto>
-            const response = await API.get('/fornecedores', { params: { page: 0, size: 100 } });
+            const tamanho = 10;
+            const response = await API.get('/fornecedores', { params: { page, size: tamanho } });
             if (response.status === 200 && response.data) {
                 const data = response.data;
                 // Compatível com Page (content) ou lista direta
                 if (Array.isArray(data)) {
                     setFornecedores(data);
                     setTotalFornecedores(data.length);
+                    setTotalPaginas(null);
                 } else if (data.content) {
                     setFornecedores(data.content);
                     setTotalFornecedores(typeof data.totalElements === 'number' ? data.totalElements : data.content.length);
+                    setTotalPaginas(typeof data.totalPages === 'number' ? data.totalPages : null);
                 } else {
                     setFornecedores([]);
                     setTotalFornecedores(0);
@@ -67,8 +74,18 @@ export function GestaoFornecedor() {
             }
         } finally {
             setCarregando(false);
+            setMostrarLoading(false);
         }
     };
+
+    const irParaPagina = (p) => {
+        if (p < 0) p = 0;
+        if (totalPaginas && p >= totalPaginas) p = totalPaginas - 1;
+        setPaginaAtual(p);
+    };
+
+    const paginaAnterior = () => irParaPagina(paginaAtual - 1);
+    const proximaPagina = () => irParaPagina(paginaAtual + 1);
 
     // Filtrar fornecedores pela busca
     const fornecedoresFiltrados = fornecedores.filter(forn => 
@@ -203,7 +220,7 @@ export function GestaoFornecedor() {
                     </div>
                 </div>
 
-                {carregando && (
+                {mostrarLoading && (
                     <div className={styles['loading']}>
                         <p>Carregando...</p>
                     </div>
@@ -237,6 +254,54 @@ export function GestaoFornecedor() {
                             }}
                         />
                     </div>
+                    {/* Paginação (igual ao Estoque) - aparece quando NÃO está em modo de busca */}
+                    {totalPaginas !== null && totalPaginas > 0 && (
+                        <div className={styles['paginacao-container']} style={{ marginTop: '12px' }}>
+                            <div className={styles['paginacao-numeros']}>
+                                <button
+                                    onClick={paginaAnterior}
+                                    disabled={paginaAtual <= 0 || carregando}
+                                    className={styles['btn-paginacao']}
+                                >
+                                    Anterior
+                                </button>
+
+                                {totalPaginas && totalPaginas > 0 && Array.from({ length: Math.min(5, totalPaginas) }, (_, i) => {
+                                    let pagina;
+                                    if (totalPaginas <= 5) {
+                                        pagina = i;
+                                    } else {
+                                        const start = Math.max(0, Math.min(paginaAtual - 2, totalPaginas - 5));
+                                        pagina = start + i;
+                                    }
+
+                                    return (
+                                        <button
+                                            key={`page-${pagina}`}
+                                            onClick={() => setPaginaAtual(pagina)}
+                                            disabled={carregando || paginaAtual === pagina}
+                                            className={`${styles['btn-paginacao']} ${paginaAtual === pagina ? styles['btn-paginacao-ativa'] : ''}`}
+                                            style={{ minWidth: '40px' }}
+                                        >
+                                            {pagina + 1}
+                                        </button>
+                                    );
+                                })}
+
+                                <button
+                                    onClick={proximaPagina}
+                                    disabled={carregando || (totalPaginas !== null && paginaAtual >= totalPaginas - 1)}
+                                    className={styles['btn-paginacao']}
+                                >
+                                    Próxima
+                                </button>
+                            </div>
+
+                            <div style={{ fontSize: '0.95rem', marginLeft: '16px' }}>
+                                Página {paginaAtual + 1}{totalPaginas ? ` de ${totalPaginas}` : ''}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 

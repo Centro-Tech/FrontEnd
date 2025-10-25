@@ -12,9 +12,102 @@ export function RealizarVenda() {
     const [produtosPesquisa, setProdutosPesquisa] = useState([]);
     const [carrinho, setCarrinho] = useState([]);
     const [valorTotal, setValorTotal] = useState(0);
+    const [mostrarModalItens, setMostrarModalItens] = useState(false);
+    const [todosItens, setTodosItens] = useState([]);
+    const [carregandoItens, setCarregandoItens] = useState(false);
 
     const voltarAoMenu = () => {
         navigate('/menu-inicial');
+    };
+
+    // Função para buscar todos os itens
+    const buscarTodosItens = async () => {
+        setCarregandoItens(true);
+        try {
+            const response = await API.get('/itens');
+            // Se retornar Page do Spring Boot
+            if (response.data.content && Array.isArray(response.data.content)) {
+                setTodosItens(response.data.content);
+            } else if (Array.isArray(response.data)) {
+                setTodosItens(response.data);
+            } else {
+                setTodosItens([]);
+            }
+        } catch (error) {
+            console.error('Erro ao buscar itens:', error);
+            alert('Erro ao carregar lista de itens.');
+            setTodosItens([]);
+        } finally {
+            setCarregandoItens(false);
+        }
+    };
+
+    // Função para abrir modal
+    const abrirModalItens = () => {
+        setMostrarModalItens(true);
+        buscarTodosItens();
+    };
+
+    // Função para adicionar item do modal ao carrinho
+    // Agora: resolve itemId no front-end (usando cache `todosItens` quando necessário)
+    // e chama o endpoint POST /carrinho com o formato esperado pelo backend.
+    const adicionarItemDoModal = async (item) => {
+        try {
+            // Tentar pegar id direto do objeto
+            let itemId = item.id;
+
+            // Se não tiver id, tentar resolver pelo cache (ou carregá-lo)
+            if (!itemId && item.codigo) {
+                if (!todosItens || todosItens.length === 0) {
+                    await buscarTodosItens();
+                }
+
+                const encontrado = (todosItens || []).find(it => String(it.codigo) === String(item.codigo));
+                if (encontrado) itemId = encontrado.id;
+            }
+
+            if (!itemId) {
+                alert('Não foi possível resolver o ID do item.');
+                return;
+            }
+
+            const payload = {
+                itemId: itemId,
+                clienteId: null,
+                funcionarioId: null,
+                qtdParaVender: quantidadeProduto || 1
+            };
+
+            await API.post('/carrinho', payload);
+
+            // Atualizar carrinho local para refletir na UI
+            const produto = {
+                codigo: item.codigo,
+                nome: item.nome,
+                tamanho: item.tamanho?.nome || item.tamanho || '-',
+                disponivel: item.qtdEstoque,
+                valor: item.preco,
+                quantidade: quantidadeProduto || 1,
+                valorTotal: (item.preco || 0) * (quantidadeProduto || 1)
+            };
+
+            const produtoExistente = carrinho.find(i => i.codigo === produto.codigo);
+            if (produtoExistente) {
+                setCarrinho(carrinho.map(i => 
+                    i.codigo === produto.codigo 
+                        ? { ...i, quantidade: i.quantidade + produto.quantidade, valorTotal: (i.quantidade + produto.quantidade) * i.valor }
+                        : i
+                ));
+            } else {
+                setCarrinho([...carrinho, produto]);
+            }
+
+            setValorTotal(prev => prev + produto.valorTotal);
+            setMostrarModalItens(false);
+        } catch (error) {
+            console.error('Erro ao adicionar item ao carrinho:', error);
+            alert('Erro ao adicionar item ao carrinho.');
+        }
     };
 
     // Função para pesquisar produto por código
@@ -123,6 +216,15 @@ export function RealizarVenda() {
             <div className={styles.conteudo}>
                 <h1 className={styles.titulo}>Realizar Venda</h1>
                 
+                <div style={{ marginBottom: '20px', textAlign: 'right' }}>
+                    <button 
+                        className={styles.botaoListarItens}
+                        onClick={abrirModalItens}
+                    >
+                        📋 Ver Todos os Itens
+                    </button>
+                </div>
+
                 <div className={styles.paineis}>
                     {/* Painel de Pesquisa */}
                     <div className={styles.painelEsquerdo}>
@@ -242,6 +344,64 @@ export function RealizarVenda() {
                     </div>
                 </div>
             </div>
+
+            {/* Modal de Todos os Itens */}
+            {mostrarModalItens && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modalContent}>
+                        <div className={styles.modalHeader}>
+                            <h2>Todos os Itens Cadastrados</h2>
+                            <button 
+                                className={styles.btnFechar}
+                                onClick={() => setMostrarModalItens(false)}
+                            >
+                                ✖
+                            </button>
+                        </div>
+                        
+                        <div className={styles.modalBody}>
+                            {carregandoItens ? (
+                                <p>Carregando itens...</p>
+                            ) : todosItens.length === 0 ? (
+                                <p>Nenhum item cadastrado.</p>
+                            ) : (
+                                <table className={styles.tabelaModal}>
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Nome</th>
+                                            <th>Tamanho</th>
+                                            <th>Estoque</th>
+                                            <th>Preço</th>
+                                            <th>Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {todosItens.map((item, index) => (
+                                            <tr key={index}>
+                                                <td>{item.codigo}</td>
+                                                <td>{item.nome}</td>
+                                                <td>{item.tamanho?.nome || item.tamanho || '-'}</td>
+                                                <td>{item.qtdEstoque}</td>
+                                                <td>R$ {Number(item.preco).toFixed(2)}</td>
+                                                <td>
+                                                    <button
+                                                        className={styles.btnAdicionarModal}
+                                                        onClick={() => adicionarItemDoModal(item)}
+                                                        disabled={item.qtdEstoque <= 0}
+                                                    >
+                                                        Adicionar
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

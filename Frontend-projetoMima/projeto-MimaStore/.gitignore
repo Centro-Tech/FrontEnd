@@ -58,3 +58,8 @@ temp/
 .parcel-cache
 .npm
 .yarn-integrity
+
+node_modules
+package-lock.json
+
+.github

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../Componentes/Componentes - CSS/GestaoClientes.module.css';
+import fornecedorStyles from '../Componentes/Componentes - CSS/GestaoFornecedor.module.css';
 import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import API from '../Provider/API';
@@ -10,7 +11,11 @@ import { Tabela } from '../Componentes/Tabela';
 export function GestaoClientes() {
     const navigate = useNavigate();
     const [clientes, setClientes] = useState([]);
+    const [paginaAtual, setPaginaAtual] = useState(0);
+    const [totalPaginas, setTotalPaginas] = useState(0);
+    const [totalElementos, setTotalElementos] = useState(0);
     const [carregando, setCarregando] = useState(false);
+    const [mostrarLoading, setMostrarLoading] = useState(false);
     const [erro, setErro] = useState('');
     const [mensagem, setMensagem] = useState('');
     const [busca, setBusca] = useState('');
@@ -57,25 +62,34 @@ export function GestaoClientes() {
 
     // Carregar clientes na inicialização
     useEffect(() => {
-        carregarClientes();
-    }, []);
+        carregarClientes(paginaAtual);
+    }, [paginaAtual]);
 
-    const carregarClientes = async () => {
+    const carregarClientes = async (page = 0) => {
+        // mostrar loading grande apenas na primeira página (evita piscar ao navegar entre páginas)
         setCarregando(true);
+        setMostrarLoading(page === 0);
         setErro('');
         try {
-            // Chama API; backend retorna Page<ClienteListagemDto> com campo `content`
-            const response = await API.get('/clientes', { params: { page: 0, size: 1000 } });
-                        const body = response.data || {};
-                        // Se for Page, usar content; se for array, usar diretamente
-                        const todosClientes = Array.isArray(body.content)
-                                ? body.content
-                                : Array.isArray(body)
-                                    ? body
-                                    : [];
-                        // Normaliza os clientes para garantir campos consistentes (id, nome, email...)
-                        const clientesNormalizados = todosClientes.map(normalizeCliente);
-                        setClientes(clientesNormalizados);
+            // Chama API paginada; tamanho fixo em 10
+            const tamanho = 10;
+            const response = await API.get('/clientes', { params: { page, size: tamanho } });
+            const body = response.data || {};
+
+            // Se backend usar Page<T>, espera campos: content, totalPages, totalElements
+            const todosClientes = Array.isArray(body.content)
+                ? body.content
+                : Array.isArray(body)
+                    ? body
+                    : [];
+
+            const clientesNormalizados = todosClientes.map(normalizeCliente);
+            setClientes(clientesNormalizados);
+
+            // Atualiza info de paginação quando disponível
+            if (typeof body.totalPages === 'number') setTotalPaginas(body.totalPages);
+            if (typeof body.totalElements === 'number') setTotalElementos(body.totalElements);
+            setPaginaAtual(Number(page));
         } catch (error) {
             console.error('Erro ao carregar clientes:', error);
             if (error.response?.status === 404) {
@@ -86,8 +100,18 @@ export function GestaoClientes() {
             }
         } finally {
             setCarregando(false);
+            setMostrarLoading(false);
         }
     };
+
+    const irParaPagina = (p) => {
+        if (p < 0) p = 0;
+        if (totalPaginas && p >= totalPaginas) p = totalPaginas - 1;
+        setPaginaAtual(p);
+    };
+
+    const paginaAnterior = () => irParaPagina(paginaAtual - 1);
+    const proximaPagina = () => irParaPagina(paginaAtual + 1);
 
     // Filtrar clientes pela busca
     const clientesFiltrados = clientes.filter(cliente => 
@@ -257,7 +281,7 @@ export function GestaoClientes() {
                     </div>
                 </div>
 
-                {carregando && (
+                {mostrarLoading && (
                     <div className={styles['loading']}>
                         <p>Carregando...</p>
                     </div>
@@ -271,7 +295,7 @@ export function GestaoClientes() {
 
                 <div className={styles['tabela-container']}>
                     <div className={styles['info-total']}>
-                        <span>Total: {clientesFiltrados.length} clientes</span>
+                        <span>Total: {totalElementos > 0 ? totalElementos : clientesFiltrados.length} clientes</span>
                     </div>
                     
                     <div className={styles['tabela-wrapper']}>
@@ -289,6 +313,54 @@ export function GestaoClientes() {
                                 }}
                         />
                     </div>
+                    {/* Paginação (igual ao Estoque) - aparece quando NÃO está em modo de busca */}
+                    {totalPaginas !== null && totalPaginas > 0 && (
+                        <div className={fornecedorStyles['paginacao-container']} style={{ marginTop: '12px' }}>
+                            <div className={fornecedorStyles['paginacao-numeros']}>
+                                <button
+                                    onClick={paginaAnterior}
+                                    disabled={paginaAtual <= 0 || carregando}
+                                    className={fornecedorStyles['btn-paginacao']}
+                                >
+                                    Anterior
+                                </button>
+
+                                {totalPaginas && totalPaginas > 0 && Array.from({ length: Math.min(5, totalPaginas) }, (_, i) => {
+                                    let pagina;
+                                    if (totalPaginas <= 5) {
+                                        pagina = i;
+                                    } else {
+                                        const start = Math.max(0, Math.min(paginaAtual - 2, totalPaginas - 5));
+                                        pagina = start + i;
+                                    }
+
+                                    return (
+                                        <button
+                                            key={`page-${pagina}`}
+                                            onClick={() => setPaginaAtual(pagina)}
+                                            disabled={carregando || paginaAtual === pagina}
+                                            className={`${fornecedorStyles['btn-paginacao']} ${paginaAtual === pagina ? fornecedorStyles['btn-paginacao-ativa'] : ''}`}
+                                            style={{ minWidth: '40px' }}
+                                        >
+                                            {pagina + 1}
+                                        </button>
+                                    );
+                                })}
+
+                                <button
+                                    onClick={proximaPagina}
+                                    disabled={carregando || (totalPaginas !== null && paginaAtual >= totalPaginas - 1)}
+                                    className={fornecedorStyles['btn-paginacao']}
+                                >
+                                    Próxima
+                                </button>
+                            </div>
+
+                            <div style={{ fontSize: '0.95rem', marginLeft: '16px' }}>
+                                Página {paginaAtual + 1}{totalPaginas ? ` de ${totalPaginas}` : ''}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
