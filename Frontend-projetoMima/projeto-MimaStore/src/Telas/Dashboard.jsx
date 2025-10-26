@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../Componentes/Componentes - CSS/Dashboard.module.css';
 import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import API from '../Provider/API';
+import Chart from 'chart.js/auto';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -11,6 +12,8 @@ export default function Dashboard() {
   const [quantidadeVendasHoje, setQuantidadeVendasHoje] = useState(0);
   const [clientesQueCompraram, setClientesQueCompraram] = useState(0);
   const [loading, setLoading] = useState(false);
+  const vendasTrendCanvas = useRef(null);
+  const vendasChartRef = useRef(null);
 
   const voltarAoMenu = () => navigate('/menu-inicial');
 
@@ -65,6 +68,128 @@ export default function Dashboard() {
 
   useEffect(() => {
     acionarDashboardRouter();
+
+    // Função para buscar dados de vendas dos últimos 12 meses e renderizar Chart.js
+    const fetchVendas12Meses = async () => {
+      try {
+        const res = await API.get('/api/vendas/vendas-ultimos-12-meses');
+        const payload = res?.data;
+
+        // Possíveis formatos: { labels: [...], data: [...] } ou array [{month: '2025-01', total: 123}, ...]
+        let labels = [];
+        let data = [];
+
+        if (payload) {
+          if (Array.isArray(payload)) {
+            // array of objects
+            payload.forEach((item) => {
+              // aceita várias chaves possíveis do backend (ex.: 'mes' / 'month' e 'totalVendas' / 'total')
+              const label = item.month ?? item.mes ?? item.label ?? item.name ?? item.monthName;
+              const value =
+                item.totalVendas ??
+                item.total_vendas ??
+                item.total ??
+                item.value ??
+                item.vendas ??
+                item.totalVendasCount ??
+                0;
+              labels.push(label);
+              data.push(Number(value) || 0);
+            });
+          } else if (payload.labels && payload.data) {
+            labels = payload.labels;
+            data = payload.data.map((v) => Number(v) || 0);
+          } else {
+            // try to extract object with months keys
+            const possible = payload;
+            // if payload has month->value map
+            if (typeof possible === 'object') {
+              const keys = Object.keys(possible);
+              // filter out metadata keys
+              if (keys.length > 0) {
+                keys.forEach((k) => {
+                  labels.push(k);
+                  data.push(Number(possible[k]) || 0);
+                });
+              }
+            }
+          }
+        }
+
+        // Destroy previous chart if exists
+        if (vendasChartRef.current) {
+          vendasChartRef.current.destroy();
+          vendasChartRef.current = null;
+        }
+
+        const ctx = vendasTrendCanvas.current?.getContext('2d');
+        if (!ctx) return;
+
+        // try to register datalabels plugin dynamically (optional)
+        try {
+          const ChartDataLabels = (await import('chartjs-plugin-datalabels')).default;
+          Chart.register(ChartDataLabels);
+        } catch (e) {
+          // plugin not installed; proceed without data labels
+        }
+
+        vendasChartRef.current = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [
+              {
+                label: 'Vendas (últimos 12 meses)',
+                data,
+                borderColor: '#875C6A',
+                backgroundColor: 'rgba(135,92,106,0.35)',
+                pointBackgroundColor: '#875C6A',
+                pointBorderColor: '#ffffff',
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                borderWidth: 2,
+                tension: 0.3,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: {
+                  // show filled color box
+                  usePointStyle: false,
+                },
+              },
+              datalabels: {
+                display: true,
+                align: 'top',
+                anchor: 'end',
+                formatter: (value) => value,
+                color: '#3b3b3b',
+                font: { size: 10 },
+              },
+            },
+            scales: {
+              x: { display: true },
+              y: { display: true, beginAtZero: true },
+            },
+          },
+        });
+      } catch (e) {
+        // silently ignore; chart will not render
+      }
+    };
+
+    fetchVendas12Meses();
+
+    return () => {
+      if (vendasChartRef.current) {
+        vendasChartRef.current.destroy();
+      }
+    };
   }, []);
 
   return (
@@ -96,7 +221,7 @@ export default function Dashboard() {
 
         <div className={styles['cards-row']}>
           <div className={styles['placeholder-card']}>
-            <div className={styles['placeholder-title']}>Aumento ou redução das vendas do mês</div>
+            <div className={styles['placeholder-title']}>Itens mais vendidos do mês</div>
             <div className={styles['placeholder-box']}>[Gráfico aqui]</div>
           </div>
 
@@ -106,8 +231,10 @@ export default function Dashboard() {
           </div>
 
           <div className={styles['placeholder-card']}>
-            <div className={styles['placeholder-title']}>Tendência de vendas ao longo dos meses</div>
-            <div className={styles['placeholder-box']}>[Gráfico aqui]</div>
+            <div className={styles['placeholder-title']}>Histórico de vendas ao longo dos meses</div>
+            <div className={styles['placeholder-box']} style={{ height: '260px' }}>
+              <canvas ref={vendasTrendCanvas} />
+            </div>
           </div>
         </div>
 
