@@ -5,7 +5,7 @@ import Logo from './assets/Group 2.png';
 import iconCardapio from './assets/icons8-cardápio.svg';
 import fotoId from './assets/fotoIconExemplo.jpg';
 import { Perfil } from '../Telas/Perfil.jsx';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 // MUI Icons
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import CachedIcon from '@mui/icons-material/Cached';
@@ -24,6 +24,7 @@ import LockIcon from '@mui/icons-material/Lock';
 export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil: mostrarPerfilProp }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [perfilMenuOpen, setPerfilMenuOpen] = useState(false);
+    const navigate = useNavigate();
     const location = useLocation();
 
     const rotasSemHamburguer = ['/login', '/cadastro'];
@@ -59,7 +60,8 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
 
     const handleConfig = () => {
         setPerfilMenuOpen(false);
-        // Exemplo: navigate('/configuracoes');
+        // Navega para a tela de Configurações criada em src/Telas/Configuracao.jsx
+        navigate('/configuracao');
     };
 
     return (

@@ -16,7 +16,7 @@ import { GestaoFornecedor } from '../Telas/GestaoFornecedor.jsx';
 import Dashboard from '../Telas/Dashboard.jsx';
 import { GestaoFuncionarios } from '../Telas/GestaoFuncionarios.jsx';
 import { GestaoClientes } from '../Telas/GestaoClientes.jsx';
-// import { Configuracao } from '../Telas/Configuracao.jsx';
+import Configuracao from '../Telas/Configuracao.jsx';
 
 export function AppRouter() {
   return (
@@ -51,6 +51,7 @@ export function AppRouter() {
       {/* Rotas de Gestão */}
   <Route path="/gestao-fornecedores" element={<GestaoFornecedor />} />
   <Route path="/dashboard" element={<Dashboard />} />
+    <Route path="/configuracao" element={<Configuracao />} />
       <Route path="/gestao-funcionarios" element={<GestaoFuncionarios />} />
       <Route path="/gestao-clientes" element={<GestaoClientes />} />
 
