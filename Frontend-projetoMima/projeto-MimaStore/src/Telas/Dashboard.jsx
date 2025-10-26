@@ -4,7 +4,7 @@ import styles from '../Componentes/Componentes - CSS/Dashboard.module.css';
 import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import API from '../Provider/API';
-import Chart from 'chart.js/auto';
+// import Chart from 'chart.js/auto';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -127,7 +127,7 @@ export default function Dashboard() {
 
         // try to register datalabels plugin dynamically (optional)
         try {
-          const ChartDataLabels = (await import('chartjs-plugin-datalabels')).default;
+          // const ChartDataLabels = (await import('chartjs-plugin-datalabels')).default;
           Chart.register(ChartDataLabels);
         } catch (e) {
           // plugin not installed; proceed without data labels
