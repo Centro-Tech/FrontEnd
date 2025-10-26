@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from '../Componentes/Componentes - CSS/GestaoFornecedor.module.css';
+import styles from '../Componentes/Componentes - CSS/Configuracao.module.css';
+import API from '../Provider/API';
 import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 
@@ -8,73 +9,253 @@ export function Configuracao() {
     const navigate = useNavigate();
     const voltarAoMenu = () => navigate('/menu-inicial');
 
-    // Opções de exemplo — seguem a estrutura visual da imagem enviada
     const opcoes = [
-        { key: 'info', titulo: 'Suas informações', descricao: 'Foto do perfil' },
-        { key: 'entrada', titulo: 'Opções de entrada', descricao: 'Windows Hello, senha, bloqueio dinâmico' },
-        { key: 'dispositivos', titulo: 'Dispositivos vinculados', descricao: 'Gerencie dispositivos conectados' },
-        { key: 'email', titulo: 'Email & accounts', descricao: 'Contas usadas por e-mail, calendário e contatos' },
-        { key: 'familia', titulo: 'Família', descricao: 'Gerencie o grupo da família' },
-        { key: 'backup', titulo: 'Backup do Windows', descricao: 'Backup de arquivos, aplicativos e preferências' },
-        { key: 'outros', titulo: 'Outros usuários', descricao: 'Acesso a dispositivos e contas de convidado' },
-        { key: 'trabalho', titulo: 'Acessar o trabalho ou a escola', descricao: 'Recursos da organização' },
-        { key: 'chaves', titulo: 'Chaves de acesso', descricao: 'Use rosto, impressão digital ou PIN' }
+        { key: 'Nome', titulo: 'Nome' },
+        { key: 'E-mail', titulo: 'E-mail' },
+        { key: 'Telefone', titulo: 'Telefone' },
+        { key: 'Endereço', titulo: 'Endereço' },
+        { key: 'Cargo', titulo: 'Cargo' },
+        { key: 'Senha', titulo: 'Senha' },
     ];
+
+    const [usuario, setUsuario] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [erro, setErro] = useState('');
+    // editMain controla edição no painel principal
+    const [editMain, setEditMain] = useState(false);
+    const [form, setForm] = useState({
+        nome: '',
+        email: '',
+        telefone: '',
+        cargo: '',
+        endereco: '',
+        imagemFile: null
+    });
+
+    function getEmailFromToken(token) {
+        try {
+            const parts = token.split('.');
+            if (parts.length < 2) return null;
+            const payload = parts[1];
+            const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            const obj = JSON.parse(jsonPayload);
+            return obj.sub || obj.user_name || obj.email || null;
+        } catch (e) {
+            console.error('Erro ao decodificar token:', e);
+            return null;
+        }
+    }
+
+    useEffect(() => {
+        async function carregarUsuario() {
+            setLoading(true);
+            setErro('');
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            const email = getEmailFromToken(token);
+            try {
+                const res = await API.get('/usuarios');
+                const lista = res.data;
+                const encontrado = lista.find(u => (u.email || '').toLowerCase() === (email || '').toLowerCase());
+                if (encontrado) {
+                    setUsuario(encontrado);
+                    setForm({
+                        nome: encontrado.nome || '',
+                        email: encontrado.email || '',
+                        telefone: encontrado.telefone || '',
+                        cargo: encontrado.cargo || '',
+                        endereco: encontrado.endereco || '',
+                        imagemFile: null
+                    });
+                } else {
+                    setErro('Usuário autenticado não encontrado no servidor');
+                }
+            } catch (e) {
+                console.error('Erro ao carregar usuário:', e);
+                setErro('Erro ao carregar informações do usuário');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        carregarUsuario();
+    }, [navigate]);
+
+    const handleSaveMain = async (e) => {
+        e.preventDefault();
+        if (!usuario) return;
+        try {
+            const fd = new FormData();
+            fd.append('nome', form.nome);
+            fd.append('email', form.email);
+            fd.append('telefone', form.telefone);
+            fd.append('cargo', form.cargo);
+            fd.append('endereco', form.endereco);
+            if (form.imagemFile) fd.append('imagem', form.imagemFile);
+
+            const res = await API.put(`/usuarios/${usuario.id}`, fd, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            setUsuario(res.data);
+            setEditMain(false);
+        } catch (err) {
+            console.error('Erro ao atualizar usuário', err);
+            setErro('Erro ao salvar alterações');
+        }
+    };
+
+    const handleCancelMain = () => {
+        // reset form to current usuario
+        if (usuario) {
+            setForm({
+                nome: usuario.nome || '',
+                email: usuario.email || '',
+                telefone: usuario.telefone || '',
+                cargo: usuario.cargo || '',
+                endereco: usuario.endereco || '',
+                imagemFile: null
+            });
+        }
+        setEditMain(false);
+    };
 
     return (
         <div>
             <Navbar />
             <FaixaVoltar aoClicar={voltarAoMenu} />
-
             <div className={styles['container-gestao']}>
-                <div className={styles['header-gestao']}>
-                    <h1 className={styles['titulo-gestao']}>Configurações</h1>
-                </div>
-
-                <div style={{ display: 'flex', gap: '20px', marginTop: '14px' }}>
-                    {/* Coluna lateral (perfil + atalhos) */}
-                    <aside style={{ width: 320 }}>
-                        <div style={{ background: '#fff', padding: 16, borderRadius: 8, boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                                <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#e6e6e6' }} aria-hidden />
-                                <div>
-                                    <div style={{ fontWeight: 700 }}>Seu nome</div>
-                                    <div style={{ fontSize: '0.9rem', color: '#666' }}>seu.email@exemplo.com</div>
+                <div className={styles['layout']}>
+                    <aside className={styles['sidebar']}>
+                        <div className={styles['profile-card']}>
+                            <div className={styles['profile-row']}>
+                                <div className={styles['avatar']} aria-hidden>
+                                    {usuario?.imagem ? (
+                                        <img src={usuario.imagem} alt="Avatar" />
+                                    ) : null}
+                                </div>
+                                <div className={styles['profile-text']}>
+                                    <div className={styles['profile-name']}>{usuario?.nome || 'Seu nome'}</div>
+                                    <div className={styles['profile-email']}>{usuario?.email || 'seu.email@exemplo.com'}</div>
                                 </div>
                             </div>
 
-                            <div style={{ marginTop: 14 }}>
-                                <button className={styles['btn-novo']} style={{ width: '100%' }}>Editar perfil</button>
+                            <div className={styles['profile-actions']}>
+                                {/* Apenas opção de subir/imagem no lado esquerdo */}
+                                <label className={styles['upload-label']}>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={async (ev) => {
+                                            const file = ev.target.files?.[0];
+                                            if (!file || !usuario) return;
+                                            setLoading(true);
+                                            setErro('');
+                                            try {
+                                                const fd = new FormData();
+                                                fd.append('nome', usuario.nome || '');
+                                                fd.append('email', usuario.email || '');
+                                                fd.append('telefone', usuario.telefone || '');
+                                                fd.append('cargo', usuario.cargo || '');
+                                                fd.append('endereco', usuario.endereco || '');
+                                                fd.append('imagem', file);
+
+                                                const res = await API.put(`/usuarios/${usuario.id}`, fd, {
+                                                    headers: { 'Content-Type': 'multipart/form-data' }
+                                                });
+                                                setUsuario(res.data);
+                                            } catch (err) {
+                                                console.error('Erro ao enviar imagem', err);
+                                                setErro('Erro ao enviar imagem');
+                                            } finally {
+                                                setLoading(false);
+                                            }
+                                        }}
+                                    />
+                                    <span className={styles['upload-text']}>Enviar imagem</span>
+                                </label>
                             </div>
+
+                            {loading && <div style={{ marginTop: 8 }}>Carregando...</div>}
+                            {erro && <div style={{ marginTop: 8, color: 'crimson' }}>{erro}</div>}
                         </div>
 
-                        <div style={{ marginTop: 12 }}>
-                            <div className={styles['tabela-container'] || ''} style={{ padding: 8 }}>
-                                {opcoes.slice(0, 4).map(o => (
-                                    <div key={o.key} style={{ padding: '10px 6px', borderBottom: '1px solid #f1f1f1' }}>
-                                        <div style={{ fontWeight: 600 }}>{o.titulo}</div>
-                                        <div style={{ fontSize: '0.9rem', color: '#666', marginTop: 4 }}>{o.descricao}</div>
-                                    </div>
-                                ))}
-                                <div style={{ padding: '10px 6px', color: '#0a66c2', cursor: 'pointer' }}>Mais configurações</div>
-                            </div>
-                        </div>
+                        {/* Lado esquerdo reduzido: somente upload de imagem (o resto removido conforme solicitado) */}
                     </aside>
 
-                    {/* Área principal — cartões/esqueleto de conteúdo */}
-                    <main style={{ flex: 1 }}>
-                        <div style={{ background: '#fff', borderRadius: 8, padding: 20, minHeight: 420, boxShadow: '0 1px 6px rgba(0,0,0,0.04)' }}>
-                            <h2 style={{ marginTop: 0 }}>Painel de configurações</h2>
-                            <p style={{ color: '#666' }}>Selecione uma opção na coluna à esquerda para visualizar ou editar seus ajustes.</p>
+                    <main className={styles['main']}>
+                        <div className={styles['main-card']}>
+                            <h2 className={styles['panel-title']}>Painel de configurações</h2>
+                            <p className={styles['muted']}>Selecione uma opção na coluna à esquerda para visualizar ou editar seus ajustes.</p>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12, marginTop: 18 }}>
-                                {opcoes.map(o => (
-                                    <div key={o.key} style={{ background: '#fafafa', borderRadius: 8, padding: 12, border: '1px solid #f0f0f0' }}>
-                                        <div style={{ fontWeight: 600 }}>{o.titulo}</div>
-                                        <div style={{ color: '#666', fontSize: '0.9rem', marginTop: 6 }}>{o.descricao}</div>
+                            {editMain ? (
+                                <form className={styles['edit-form']} onSubmit={handleSaveMain}>
+                                    <label className={styles['field']}>
+                                        <span>Nome</span>
+                                        <input name="nome" value={form.nome} onChange={(ev) => setForm({...form, nome: ev.target.value})} />
+                                    </label>
+                                    <label className={styles['field']}>
+                                        <span>E-mail</span>
+                                        <input name="email" value={form.email} onChange={(ev) => setForm({...form, email: ev.target.value})} />
+                                    </label>
+                                    <label className={styles['field']}>
+                                        <span>Telefone</span>
+                                        <input name="telefone" value={form.telefone} onChange={(ev) => setForm({...form, telefone: ev.target.value})} />
+                                    </label>
+                                    <label className={styles['field']}>
+                                        <span>Cargo</span>
+                                        <input name="cargo" value={form.cargo} onChange={(ev) => setForm({...form, cargo: ev.target.value})} />
+                                    </label>
+                                    <label className={styles['field']}>
+                                        <span>Endereço</span>
+                                        <input name="endereco" value={form.endereco} onChange={(ev) => setForm({...form, endereco: ev.target.value})} />
+                                    </label>
+                                    <label className={styles['field']}>
+                                        <span>Imagem (opcional)</span>
+                                        <input type="file" accept="image/*" onChange={(ev) => setForm({...form, imagemFile: ev.target.files?.[0] || null})} />
+                                    </label>
+                                    <div className={styles['form-actions']}>
+                                        <button type="submit" className={styles['btn-novo']}>Salvar</button>
+                                        <button type="button" className={styles['btn-secondary']} onClick={handleCancelMain}>Cancelar</button>
                                     </div>
-                                ))}
-                            </div>
+                                </form>
+                            ) : (
+                                <div className={styles['grid']}>
+                                    {opcoes.map(o => (
+                                        <div key={o.key} className={styles['option-card']}>
+                                            <div className={styles['card-title']}>{o.titulo}</div>
+                                            <div className={styles['card-desc']}>
+                                                {usuario ? (
+                                                    (() => {
+                                                        switch (o.key) {
+                                                            case 'Nome': return usuario.nome || '-';
+                                                            case 'E-mail': return usuario.email || '-';
+                                                            case 'Telefone': return usuario.telefone || '-';
+                                                            case 'Endereço': return usuario.endereco || '-';
+                                                            case 'Cargo': return usuario.cargo || '-';
+                                                            case 'Senha': return '********';
+                                                            default: return '-';
+                                                        }
+                                                    })()
+                                                ) : '-'}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Botão de editar agora no canto inferior direito do painel principal (visível quando não em edição) */}
+                            {!editMain && (
+                                <button className={styles['edit-button']} onClick={() => setEditMain(true)}>
+                                    Editar informações
+                                </button>
+                            )}
                         </div>
                     </main>
                 </div>
