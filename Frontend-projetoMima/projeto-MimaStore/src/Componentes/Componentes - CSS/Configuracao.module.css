@@ -64,7 +64,7 @@
 }
 
 .btn-novo {
-	background: #0a66c2;
+	background: #724165;
 	color: #fff;
 	border: none;
 	padding: 10px 12px;
@@ -103,7 +103,7 @@
 
 .more-link {
 	padding: 10px 6px;
-	color: #0a66c2;
+	color: #724165;
 	cursor: pointer;
 }
 
@@ -209,7 +209,7 @@
 }
 
 .upload-text {
-	color: #0a66c2;
+	color: #724165;
 	font-weight: 600;
 }
 
@@ -218,7 +218,7 @@
 	position: absolute;
 	right: 16px;
 	bottom: 16px;
-	background: #0a66c2;
+	background:#724165;
 	color: #fff;
 	border: none;
 	padding: 10px 14px;
@@ -228,7 +228,7 @@
 }
 
 .edit-button:hover {
-	background: #084a8a;
+	background: #724165;
 }
 
 .form-actions {

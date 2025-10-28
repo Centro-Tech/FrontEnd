@@ -20,9 +20,10 @@ export default function PrimeiroAcesso() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErro("");
+
     if (
       !form.email ||
       !form.senhaProvisoria ||
@@ -37,34 +38,48 @@ export default function PrimeiroAcesso() {
       return;
     }
 
-  //    async function cadastrar(event) {
-  //       event.preventDefault();
-  //       setErro('');
-  //       if (tipoAtributo === '' || nome === '') {
-  //           setErro('Preencha todos os campos.');
-  //           return;
-  //       }
-    
-  //       const atributo = { tipoAtributo, nome };
-    
-  //      try {
-  //       let endpoint = '';
-  //       if (tipoAtributo === 'cor') endpoint = '/cores';
-  //       else if (tipoAtributo === 'tamanho') endpoint = '/tamanhos';
-  //       else if (tipoAtributo === 'material') endpoint = '/materiais';
-    
-  //       await API.post(endpoint, atributo);
-  //       setMensagem('Atributo cadastrado com sucesso!');
-  //       setTipoAtributo('');
-  //       setNome('');
-  //       setTimeout(() => setMensagem(''), 2000);
-  //   } catch (error) {
-  //       setErro('Erro ao cadastrar atributo.');
-  //   }
-  //   }
+    try {
+      // 1) Autentica com email + senha provisória para obter JWT
+      const loginResp = await API.post("/usuarios/login", {
+        email: form.email,
+        senha: form.senhaProvisoria,
+      });
 
+      const loginData = loginResp?.data || {};
 
+      // tenta extrair o token por alguns nomes comuns
+      const token =
+        loginData.token ||
+        loginData.jwt ||
+        loginData.tokenJwt ||
+        (loginData.tokenDto && loginData.tokenDto.token) ||
+        (loginData.usuarioToken && loginData.usuarioToken.token);
 
+      if (!token) {
+        setErro(
+          "Não foi possível obter o token do servidor após autenticação. Verifique email e senha provisória."
+        );
+        return;
+      }
+
+      // 2) Chama endpoint de redefinir senha passando o JWT no corpo (fluxo suportado pelo backend)
+      await API.post("/usuarios/redefinir-senha", {
+        token: token,
+        novaSenha: form.novaSenha,
+      });
+
+      setSucesso(true);
+      // redireciona para login após curto delay
+      setTimeout(() => navigate("/login"), 2000);
+    } catch (error) {
+      const serverMessage =
+        error?.response?.data || error?.response?.data?.message || error?.message;
+      setErro(
+        typeof serverMessage === "string"
+          ? serverMessage
+          : JSON.stringify(serverMessage)
+      );
+    }
   };
 
   const handleSair = () => {

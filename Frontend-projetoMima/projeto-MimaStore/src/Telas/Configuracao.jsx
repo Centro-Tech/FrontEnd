@@ -100,9 +100,8 @@ export function Configuracao() {
             fd.append('endereco', form.endereco);
             if (form.imagemFile) fd.append('imagem', form.imagemFile);
 
-            const res = await API.put(`/usuarios/${usuario.id}`, fd, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
+            // Não setar Content-Type manualmente para que o browser inclua o boundary
+            const res = await API.put(`/usuarios/${usuario.id}`, fd);
             setUsuario(res.data);
             setEditMain(false);
         } catch (err) {
@@ -115,9 +114,9 @@ export function Configuracao() {
         // reset form to current usuario
         if (usuario) {
             setForm({
-                nome: usuario.nome || '',
+                nome: usuario.nome ,
                 email: usuario.email || '',
-                telefone: usuario.telefone || '',
+                telefone: usuario.telefone ,
                 cargo: usuario.cargo || '',
                 endereco: usuario.endereco || '',
                 imagemFile: null
@@ -166,9 +165,8 @@ export function Configuracao() {
                                                 fd.append('endereco', usuario.endereco || '');
                                                 fd.append('imagem', file);
 
-                                                const res = await API.put(`/usuarios/${usuario.id}`, fd, {
-                                                    headers: { 'Content-Type': 'multipart/form-data' }
-                                                });
+                                                // Não definir Content-Type manualmente; o browser adiciona o boundary
+                                                const res = await API.put(`/usuarios/${usuario.id}`, fd);
                                                 setUsuario(res.data);
                                             } catch (err) {
                                                 console.error('Erro ao enviar imagem', err);
@@ -236,11 +234,11 @@ export function Configuracao() {
                                                         switch (o.key) {
                                                             case 'Nome': return usuario.nome || '-';
                                                             case 'E-mail': return usuario.email || '-';
-                                                            case 'Telefone': return usuario.telefone || '-';
-                                                            case 'Endereço': return usuario.endereco || '-';
-                                                            case 'Cargo': return usuario.cargo || '-';
+                                                            case 'Telefone': return usuario.telefone ;
+                                                            case 'Endereço': return usuario.endereco ;
+                                                            case 'Cargo': return usuario.cargo ;
                                                             case 'Senha': return '********';
-                                                            default: return '-';
+                                                            // default: return '-';
                                                         }
                                                     })()
                                                 ) : '-'}
@@ -250,7 +248,7 @@ export function Configuracao() {
                                 </div>
                             )}
 
-                            {/* Botão de editar agora no canto inferior direito do painel principal (visível quando não em edição) */}
+                            
                             {!editMain && (
                                 <button className={styles['edit-button']} onClick={() => setEditMain(true)}>
                                     Editar informações

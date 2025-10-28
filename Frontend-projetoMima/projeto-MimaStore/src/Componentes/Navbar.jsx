@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Componentes - CSS/Navbar.module.css';
 import Logo from './assets/Group 2.png';
@@ -20,6 +20,7 @@ import BusinessIcon from '@mui/icons-material/Business';
 import GroupIcon from '@mui/icons-material/Group';
 import PeopleIcon from '@mui/icons-material/People';
 import LockIcon from '@mui/icons-material/Lock';
+import API from '../Provider/API';
 
 export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil: mostrarPerfilProp }) {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -64,6 +65,44 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
         navigate('/configuracao');
     };
 
+    function getEmailFromToken(token) {
+        try {
+            const parts = token.split('.');
+            if (parts.length < 2) return null;
+            const payload = parts[1];
+            const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            const obj = JSON.parse(jsonPayload);
+            return obj.sub || obj.user_name || obj.email || null;
+        } catch (e) {
+            console.error('Erro ao decodificar token no Navbar:', e);
+            return null;
+        }
+    }
+
+    const [usuario, setUsuario] = useState(null);
+
+    useEffect(() => {
+        async function carregarUsuario() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+            const email = getEmailFromToken(token);
+            if (!email) return;
+            try {
+                const res = await API.get('/usuarios');
+                const lista = res.data;
+                const encontrado = lista.find(u => (u.email || '').toLowerCase() === (email || '').toLowerCase());
+                if (encontrado) setUsuario(encontrado);
+            } catch (err) {
+                console.error('Erro ao carregar usuário no Navbar:', err);
+            }
+        }
+
+        carregarUsuario();
+    }, []);
+
     return (
         <>
             <div className={styles['header']}>
@@ -90,7 +129,7 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
                                         onClick={handlePerfilClick}
                                         style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
                                     >
-                                        <Perfil nome="Karin Miralha" fotoId={fotoId} />
+                                        <Perfil nome={usuario?.nome || 'Usuário'} fotoId={fotoId} />
                                         
                                     </div>
                                     {perfilMenuOpen && (
@@ -154,10 +193,9 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
                         </div>
 
                         <div className={styles.sidebarFooter}>
-                            <Link to="/perfil" className={styles.profilePill} onClick={handleCloseSidebar}>
+                            <Link to="/Configuracao" className={styles.profilePill} onClick={handleCloseSidebar}>
                                 <img src={fotoId} alt="Avatar" className={styles.profileAvatar} />
                                 <span className={styles.profileName}>Perfil</span>
-                                <span className={styles.badge}>12</span>
                             </Link>
                         </div>
                     </nav>
