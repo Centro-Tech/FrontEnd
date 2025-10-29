@@ -1,100 +1,148 @@
-@import url('https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Average+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,100..900;1,100..900&family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Average&family=Average+Sans&family=Petrona:ital,wght@0,100..900;1,100..900&display=swap');
 
-/* Container externo */
+/* ---------- CONTAINER PRINCIPAL (alinhado com GestaoFornecedor) ---------- */
 .cadastro-vestuario-container {
-  background-color: #f5f5f5; /* Fundo claro */
-  padding: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Caixa do formulário */
-.box-cadastro {
-  background-color: #d7bfd3;
-  padding: 2.5rem;
-  border-radius: 8px;
-  max-width: 900px;
+  margin-bottom: 0;
+  padding: 50px 20px 40px 20px;
   width: 100%;
+  min-height: 50vh;
+  font-family: 'Average Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f8f9fa;
 }
 
-/* Título */
+/* ---------- BOX PRINCIPAL ---------- */
+.box-cadastro {
+  width: 86%;
+  max-width: 1100px;
+  padding: 30px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* margin-bottom: 30px; */
+}
+
 .box-container-titulo {
   font-family: 'Petrona', serif;
-  font-size: 1.8rem;
-  font-weight: bold;
-  text-align: center;
+  font-size: 2rem;
   color: #864176;
-  margin-bottom: 2rem;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
-/* Grid de 2 colunas */
+/* ---------- FORM GRID ---------- */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem 2rem;
+  gap: 18px 24px;
+  width: 100%;
+  max-width: 980px;
 }
 
-/* Grupo de campos */
 .form-group {
   display: flex;
   flex-direction: column;
-  font-family: 'Average Sans', sans-serif;
-  font-size: 1rem;
 }
 
 .form-group label {
-  margin-bottom: 6px;
-  color: #333;
+  margin-bottom: 8px;
+  color: #495057;
+  font-weight: 600;
 }
 
-/* Inputs e selects */
 .form-group input,
 .form-group select {
-  padding: 10px;
-  border: 1px solid #D7BFD3;
-  border-radius: 6px;
-  font-size: 0.95rem;
+  padding: 12px 14px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
   font-family: 'Average Sans', sans-serif;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
 }
 
 .form-group input:focus,
 .form-group select:focus {
-  border-color: #864176;
+  border-color: #875C6A;
   outline: none;
+  box-shadow: 0 0 0 3px rgba(135,92,106,0.08);
 }
 
-/* Texto auxiliar */
-.form-group small {
-  font-size: 0.8rem;
-  color: #864176;
-  margin-top: 4px;
+.form-group small { color: #6c757d; margin-top: 6px; }
+
+/* ---------- BOTÕES e AÇÕES ---------- */
+.form-button { 
+  grid-column: span 2; 
+  display:flex; 
+  gap:12px; 
+  justify-content:center; 
+  align-items:center; 
 }
 
-.form-group small a {
-  color: #864176;
-  text-decoration: underline;
-}
-
-/* Botão */
-.form-button {
-  grid-column: span 2;
-}
-
-.form-button button {
-  width: 100%;
-  padding: 12px;
-  background-color: #864176;
-  color: #fff;
-  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-weight: bold;
-  font-size: 1rem;
+.form-button button,
+.btn-salvar { /* manter classes compatíveis */
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
   border: none;
-  border-radius: 6px;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.25s ease;
 }
 
-.form-button button:hover {
-  background-color: #724165;
+.form-button button:hover,
+.btn-salvar:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(40,167,69,0.18); }
+
+.btn-cancelar { background: #6c757d; color: white; padding: 12px 18px; border-radius:8px; border:none; }
+
+/* ---------- MENSAGENS ---------- */
+.mensagem-sucesso {
+  background: linear-gradient(135deg, #d4edda, #c3e6cb);
+  color: #155724;
+  padding: 12px 18px;
+  border-radius: 8px;
+  margin: 12px 0;
+  width: 100%;
+  max-width: 980px;
+  text-align: center;
+  font-weight: 600;
+  border-left: 4px solid #28a745;
+}
+
+.erro {
+  color: #b3003c;
+  background: #ffe6ee;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-top: 6px;
+  font-size: 0.95rem;
+  max-width: 980px;
+}
+
+/* ---------- MODAL (caso seja usado) ---------- */
+.modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:1000; padding:20px; }
+.modal-content { background:white; border-radius:16px; width:100%; max-width:500px; box-shadow:0 20px 60px rgba(0,0,0,0.2); overflow-y:auto; }
+.modal-header { padding:20px 24px; background: linear-gradient(135deg, #875C6A, #864176); color:white; border-radius:16px 16px 0 0; display:flex; justify-content:space-between; align-items:center; }
+.modal-header h3 { margin:0; font-family:'Petrona', serif; font-size:1.25rem; }
+.modal-body { padding:20px 24px; }
+.modal-footer { padding:16px 20px; display:flex; gap:12px; justify-content:flex-end; }
+
+/* ---------- RESPONSIVIDADE ---------- */
+@media (max-width: 768px) {
+  .box-cadastro { width: 95%; padding: 20px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-button { justify-content: center; }
+}
+
+@media (max-width: 480px) {
+  .box-container-titulo { font-size: 1.5rem; }
+  .modal-content { margin: 10px; }
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Adicione este import
+// import axios from 'axios'; // not used (we use API wrapper)
 import styles from '../Componentes/Componentes - CSS/Cadastro.module.css';
 import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
@@ -26,22 +26,35 @@ export function CadastrarAtributo() {
         return;
     }
 
-    const atributo = { tipoAtributo, nome };
+    try {
+        let endpoint = '';
+        let payload = {};
 
-   try {
-    let endpoint = '';
-    if (tipoAtributo === 'cor') endpoint = '/cores';
-    else if (tipoAtributo === 'tamanho') endpoint = '/tamanhos';
-    else if (tipoAtributo === 'material') endpoint = '/materiais';
+        if (tipoAtributo === 'cor') {
+            endpoint = '/cores';
+            payload = { tipoAtributo, nome };
+        } else if (tipoAtributo === 'tamanho') {
+            endpoint = '/tamanhos';
+            payload = { tipoAtributo, nome };
+        } else if (tipoAtributo === 'material') {
+            endpoint = '/materiais';
+            payload = { tipoAtributo, nome };
+        } else if (tipoAtributo === 'categoria') {
+            endpoint = '/categorias';
+            // backend expects a Categoria object, send only the nome
+            payload = { nome };
+        }
 
-    await API.post(endpoint, atributo);
-    setMensagem('Atributo cadastrado com sucesso!');
-    setTipoAtributo('');
-    setNome('');
-    setTimeout(() => setMensagem(''), 2000);
-} catch (error) {
-    setErro('Erro ao cadastrar atributo.');
-}
+        await API.post(endpoint, payload);
+        setMensagem('Cadastrado com sucesso!');
+        setTipoAtributo('');
+        setNome('');
+        setTimeout(() => setMensagem(''), 2000);
+    } catch (error) {
+        // try to show backend message if available
+        const backendMsg = error?.response?.data?.message;
+        setErro(backendMsg || 'Erro ao cadastrar atributo.');
+    }
 }
 
     // try {
@@ -72,6 +85,7 @@ export function CadastrarAtributo() {
                                 <option value="cor">Cor</option>
                                 <option value="tamanho">Tamanho</option>
                                 <option value="material">Material</option>
+                                <option value="categoria">Categoria</option>
                             </select>
                         </div>
                         <div className={styles['form-group']}>
@@ -83,10 +97,14 @@ export function CadastrarAtributo() {
                                 onChange={e => setNome(e.target.value)} 
                             />
                         </div>
-                        <MensagemErro mensagem={erro} className={styles.erro} />
-                        <button type="submit">Cadastrar</button>
+                        <MensagemErro mensagem={erro} />
+                        <button type="submit" className={styles['btn-salvar']}>Cadastrar</button>
                     </form>
-                    {mensagem && <h1>{mensagem}</h1>}
+                    {mensagem && (
+                        <div className={styles['mensagem-sucesso']}>
+                            ✅ {mensagem}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
