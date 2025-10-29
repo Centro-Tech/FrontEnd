@@ -3,7 +3,7 @@ import { MenuInicial } from '../Telas/MenuInicial.jsx';
 import { RealizarVenda } from '../Telas/RealizarVenda.jsx';
 import Splashscreen from "../Telas/Splashscreen.jsx";
 import Estoque from '../Componentes/Estoque.jsx';
-import HistoricoVendas from '../Componentes/HistoricoVendas.jsx';
+import HistoricoVendas from '../Componentes/HistoricoVendasFixed.jsx';
 
 import { CadastroFuncionario } from '../Telas/Cadastro.jsx';
 import { CadastrarAtributo } from '../Telas/CadastrarAtributos.jsx';
