@@ -19,6 +19,9 @@ export default function Estoque() {
   const [busca, setBusca] = useState('');
   const [mostrarModalConfirmacao, setMostrarModalConfirmacao] = useState(false);
   const [itemParaExcluir, setItemParaExcluir] = useState(null);
+  const [mostrarCardAdicionar, setMostrarCardAdicionar] = useState(false);
+  const [itemParaAdicionar, setItemParaAdicionar] = useState(null);
+  const [quantidadeAdicionar, setQuantidadeAdicionar] = useState(1);
 
   const voltarAoMenu = () => navigate('/menu-inicial');
 
@@ -128,6 +131,54 @@ export default function Estoque() {
   const goToPrev = () => { if (currentPage > 0) setCurrentPage(p => p - 1); };
   const goToNext = () => { if (totalPages === null || currentPage < totalPages - 1) setCurrentPage(p => p + 1); };
 
+  const abrirCardAdicionar = (item) => {
+    const itemCompleto = itens.find(it => it.id === item.id) || item;
+    console.log('Item selecionado para adicionar estoque:', itemCompleto);
+    setItemParaAdicionar(itemCompleto);
+    setQuantidadeAdicionar(1);
+    setMostrarCardAdicionar(true);
+  };
+
+  const fecharCardAdicionar = () => {
+    setMostrarCardAdicionar(false);
+    setItemParaAdicionar(null);
+    setQuantidadeAdicionar(1);
+  };
+
+  const confirmarAdicao = async () => {
+    if (!itemParaAdicionar || !itemParaAdicionar.id) {
+      setErro('Erro: Item inválido para adicionar estoque.');
+      return;
+    }
+
+    if (quantidadeAdicionar <= 0) {
+      setErro('A quantidade deve ser maior que zero.');
+      return;
+    }
+
+    setCarregando(true);
+    setErro('');
+    try {
+      // Chama o endpoint PATCH para adicionar estoque
+      const response = await API.patch(
+        `/itens/${itemParaAdicionar.id}/adicionar-estoque?quantidade=${quantidadeAdicionar}`
+      );
+
+      console.log('Resposta do servidor:', response.data);
+
+      setMensagem(`${quantidadeAdicionar} unidade(s) adicionada(s) ao estoque de "${itemParaAdicionar.nome}"!`);
+      setTimeout(() => setMensagem(''), 3000);
+      await buscarEstoque(currentPage);
+      fecharCardAdicionar();
+    } catch (error) {
+      console.error('Erro ao adicionar estoque:', error);
+      console.error('Detalhes do erro:', error.response?.data);
+      setErro(`Erro ao adicionar itens ao estoque: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setCarregando(false);
+    }
+  };
+
   const abrirConfirmacaoExclusao = async (item) => {
     if (!item) { 
       setErro('Erro: Item inválido para exclusão.'); 
@@ -229,7 +280,32 @@ export default function Estoque() {
             <span>Total: {totalItems !== null ? `${totalItems} itens` : `${itens.length} itens no total`}</span>
           </div>
           <div className={styles['tabela-wrapper']}>
-            <Tabela itens={dadosTabela} botaoRemover={true} onRemover={(item) => abrirConfirmacaoExclusao(item)} />
+            <Tabela 
+              itens={dadosTabela} 
+              botaoEditar={true}
+              onEditar={(item) => abrirCardAdicionar(item)}
+              botaoRemover={true} 
+              onRemover={(item) => abrirConfirmacaoExclusao(item)}
+              renderBotaoEditar={(item, onClick) => (
+                <button
+                  onClick={onClick}
+                  className={styles['btn-adicionar']}
+                  style={{
+                    backgroundColor: '#28a745',
+                    color: 'white',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: 'bold',
+                    marginRight: '8px'
+                  }}
+                >
+                  + Adicionar
+                </button>
+              )}
+            />
           </div>
 
           {/* Paginação só aparece quando NÃO está em modo de busca */}
@@ -288,6 +364,85 @@ export default function Estoque() {
           )}
         </div>
       </div>
+
+      {/* Modal para Adicionar Quantidade */}
+      {mostrarCardAdicionar && itemParaAdicionar && (
+        <div className={styles['modal-overlay']}>
+          <div className={styles['modal-content']} style={{ maxWidth: '500px' }}>
+            <div className={styles['modal-header']}>
+              <h3>Adicionar ao Estoque</h3>
+              <button onClick={fecharCardAdicionar} className={styles['btn-fechar']}>✖</button>
+            </div>
+            <div className={styles['modal-body']}>
+              <div style={{ background: '#f8f9fa', padding: '15px', borderRadius: '8px', border: '1px solid #dee2e6', marginBottom: '20px' }}>
+                <p><strong>Item:</strong> {itemParaAdicionar.nome}</p>
+                {itemParaAdicionar.codigo && (<p><strong>Código:</strong> {itemParaAdicionar.codigo}</p>)}
+                <p><strong>Estoque Atual:</strong> {itemParaAdicionar.qtdEstoque || 0} unidade(s)</p>
+              </div>
+              
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', fontSize: '1rem' }}>
+                  Quantidade a adicionar:
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={quantidadeAdicionar}
+                  onChange={(e) => setQuantidadeAdicionar(Math.max(1, parseInt(e.target.value) || 1))}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    fontSize: '1.1rem',
+                    borderRadius: '8px',
+                    border: '2px solid #dee2e6',
+                    textAlign: 'center'
+                  }}
+                  autoFocus
+                />
+              </div>
+
+              <div style={{ background: '#e7f3ff', padding: '12px', borderRadius: '8px', border: '1px solid #b3d9ff' }}>
+                <p style={{ margin: 0, fontSize: '1rem' }}>
+                  <strong>Novo Estoque:</strong> {(itemParaAdicionar.qtdEstoque || 0) + quantidadeAdicionar} unidade(s)
+                </p>
+              </div>
+            </div>
+            <div className={styles['modal-footer']}>
+              <button 
+                onClick={fecharCardAdicionar} 
+                className={styles['btn-cancelar']}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  border: '1px solid #ccc',
+                  background: 'white',
+                  cursor: 'pointer',
+                  fontSize: '1rem'
+                }}
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={confirmarAdicao} 
+                disabled={carregando}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: '#28a745',
+                  color: 'white',
+                  cursor: carregando ? 'not-allowed' : 'pointer',
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  opacity: carregando ? 0.6 : 1
+                }}
+              >
+                {carregando ? 'Adicionando...' : 'Confirmar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {mostrarModalConfirmacao && itemParaExcluir && (
         <div className={styles['modal-overlay']}>

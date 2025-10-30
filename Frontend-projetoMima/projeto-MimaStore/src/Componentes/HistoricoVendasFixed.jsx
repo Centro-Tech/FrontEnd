@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "./Componentes - CSS/GestaoFornecedor.module.css";
+import styles from "./Componentes - CSS/HistoricoVendas.module.css";
 import { Navbar } from "./Navbar";
 import { FaixaVoltar } from "./FaixaVoltar";
 import API from "../Provider/API";
@@ -15,7 +15,7 @@ export default function HistoricoVendasFixed() {
   const [totalPaginasVendas, setTotalPaginasVendas] = useState(null);
   const [carregando, setCarregando] = useState(false);
 
-  const voltarAoMenu = () => navigate('/menu-inicial');
+  const voltarAoMenu = () => navigate("/menu-inicial");
 
   useEffect(() => {
     const vendasSize = 10;
@@ -72,8 +72,8 @@ export default function HistoricoVendasFixed() {
   function mapClientesParaTabela(clientes) {
     return clientes.map((c) => ({
       id: c.vendaId,
-      idVenda: c.vendaId,
-      Nome: c.cliente,
+      "ID Venda": c.vendaId,
+      Cliente: c.cliente,
       "Data / Hora": formatarData(c.data),
       Quantidade: c.quantidade ?? 0,
       "Valor Total": Number(c.valor_total).toLocaleString("pt-BR", {
@@ -84,27 +84,29 @@ export default function HistoricoVendasFixed() {
   }
 
   return (
-    <div>
+    <div className={styles["pagina-container"]}>
       <Navbar />
       <FaixaVoltar aoClicar={voltarAoMenu} />
 
-      <div className={styles['container-gestao']}>
-        <div className={styles['header-gestao']}>
-          <h1 className={styles['titulo-gestao']}>Histórico de Vendas</h1>
-          <div className={styles['barra-acoes']}>
-            <div className={styles['busca-container']} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+      <div className={styles["container-gestao"]}>
+        <div className={styles["header-gestao"]}>
+          <h1 className={styles["titulo-gestao"]}>Histórico de Vendas</h1>
+          <div className={styles["barra-acoes"]}>
+            <div className={styles["busca-container"]}>
               <input
                 type="text"
                 placeholder="Pesquisar cliente, ID ou valor"
                 value={buscaClientes}
                 onChange={(e) => setBuscaClientes(e.target.value)}
-                onKeyPress={(e) => { if (e.key === 'Enter') setVendasPage(0); }}
-                className={styles['input-busca']}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") setVendasPage(0);
+                }}
+                className={styles["input-busca"]}
               />
               <button
                 onClick={() => setVendasPage(0)}
                 disabled={!buscaClientes.trim()}
-                className={styles['btn-pesquisar']}
+                className={styles["btn-pesquisar"]}
               >
                 Pesquisar
               </button>
@@ -112,25 +114,31 @@ export default function HistoricoVendasFixed() {
           </div>
         </div>
 
-        <div className={styles['tabela-container']}>
-          <div className={styles['info-total']}>
-            <span>Total: {clientes.length} itens</span>
+        <div className={styles["tabela-container"]}>
+          <div className={styles["info-total"]}>
+            <span>Total de vendas: {clientes.length}</span>
           </div>
-          <div className={styles['tabela-wrapper']} style={{ maxWidth: '100%', marginLeft: 0 }}>
+
+          <div className={styles["tabela-wrapper"]}>
             <Tabela
-              theme="fornecedor"
               itens={mapClientesParaTabela(clientesFiltrados)}
               botaoEditar
-              onEditar={(linha) => console.log('Editar', linha)}
+              onEditar={(linha) => console.log("Editar", linha)}
             />
           </div>
 
           {totalPaginasVendas !== null && totalPaginasVendas > 0 && (
-            <div className={styles['paginacao-container']} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <button onClick={() => setVendasPage((p) => Math.max(p - 1, 0))} disabled={vendasPage <= 0} className={styles['btn-paginacao']}>Anterior</button>
+            <div className={styles["paginacao-container"]}>
+              <div className={styles["botoes-paginacao"]}>
+                <button
+                  onClick={() => setVendasPage((p) => Math.max(p - 1, 0))}
+                  disabled={vendasPage <= 0}
+                  className={styles["btn-paginacao"]}
+                >
+                  Anterior
+                </button>
 
-                {totalPaginasVendas && totalPaginasVendas > 0 && Array.from({ length: Math.min(5, totalPaginasVendas) }, (_, i) => {
+                {Array.from({ length: Math.min(5, totalPaginasVendas) }, (_, i) => {
                   let pagina;
                   if (totalPaginasVendas <= 5) {
                     pagina = i;
@@ -144,17 +152,32 @@ export default function HistoricoVendasFixed() {
                       key={`page-${pagina}`}
                       onClick={() => setVendasPage(pagina)}
                       disabled={vendasPage === pagina}
-                      className={`${styles['btn-paginacao']} ${vendasPage === pagina ? styles['btn-paginacao-ativa'] : ''}`}
-                      style={{ minWidth: '40px', backgroundColor: vendasPage === pagina ? '#007bff' : undefined, color: vendasPage === pagina ? 'white' : undefined }}
+                      className={`${styles["btn-paginacao"]} ${
+                        vendasPage === pagina ? styles["btn-paginacao-ativa"] : ""
+                      }`}
                     >
                       {pagina + 1}
                     </button>
                   );
                 })}
 
-                <button onClick={() => setVendasPage((p) => Math.min(p + 1, Math.max((totalPaginasVendas || 1) - 1, 0)))} disabled={vendasPage + 1 >= (totalPaginasVendas || 1)} className={styles['btn-paginacao']}>Próxima</button>
+                <button
+                  onClick={() =>
+                    setVendasPage((p) =>
+                      Math.min(p + 1, Math.max((totalPaginasVendas || 1) - 1, 0))
+                    )
+                  }
+                  disabled={vendasPage + 1 >= (totalPaginasVendas || 1)}
+                  className={styles["btn-paginacao"]}
+                >
+                  Próxima
+                </button>
               </div>
-              <div style={{ fontSize: '0.95rem', marginLeft: '16px' }}>Página {vendasPage + 1}{totalPaginasVendas ? ` de ${totalPaginasVendas}` : ''}</div>
+
+              <div className={styles["pagina-info"]}>
+                Página {vendasPage + 1}
+                {totalPaginasVendas ? ` de ${totalPaginasVendas}` : ""}
+              </div>
             </div>
           )}
         </div>

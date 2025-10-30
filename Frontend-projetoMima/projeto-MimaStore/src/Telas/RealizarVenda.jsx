@@ -15,6 +15,9 @@ export function RealizarVenda() {
     const [mostrarModalItens, setMostrarModalItens] = useState(false);
     const [todosItens, setTodosItens] = useState([]);
     const [carregandoItens, setCarregandoItens] = useState(false);
+    const [mostrarCardQuantidade, setMostrarCardQuantidade] = useState(false);
+    const [itemSelecionado, setItemSelecionado] = useState(null);
+    const [quantidadeModal, setQuantidadeModal] = useState(1);
 
     const voltarAoMenu = () => {
         navigate('/menu-inicial');
@@ -48,10 +51,24 @@ export function RealizarVenda() {
         buscarTodosItens();
     };
 
+    // Função para abrir o card de quantidade
+    const abrirCardQuantidade = (item) => {
+        setItemSelecionado(item);
+        setQuantidadeModal(1);
+        setMostrarCardQuantidade(true);
+    };
+
+    // Função para fechar o card de quantidade
+    const fecharCardQuantidade = () => {
+        setMostrarCardQuantidade(false);
+        setItemSelecionado(null);
+        setQuantidadeModal(1);
+    };
+
     // Função para adicionar item do modal ao carrinho
     // Agora: resolve itemId no front-end (usando cache `todosItens` quando necessário)
     // e chama o endpoint POST /carrinho com o formato esperado pelo backend.
-    const adicionarItemDoModal = async (item) => {
+    const adicionarItemDoModal = async (item, quantidade) => {
         try {
             // Tentar pegar id direto do objeto
             let itemId = item.id;
@@ -75,7 +92,7 @@ export function RealizarVenda() {
                 itemId: itemId,
                 clienteId: null,
                 funcionarioId: null,
-                qtdParaVender: quantidadeProduto || 1
+                qtdParaVender: quantidade || 1
             };
 
             await API.post('/carrinho', payload);
@@ -87,8 +104,8 @@ export function RealizarVenda() {
                 tamanho: item.tamanho?.nome || item.tamanho || '-',
                 disponivel: item.qtdEstoque,
                 valor: item.preco,
-                quantidade: quantidadeProduto || 1,
-                valorTotal: (item.preco || 0) * (quantidadeProduto || 1)
+                quantidade: quantidade || 1,
+                valorTotal: (item.preco || 0) * (quantidade || 1)
             };
 
             const produtoExistente = carrinho.find(i => i.codigo === produto.codigo);
