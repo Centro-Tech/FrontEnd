@@ -133,7 +133,6 @@ export default function Estoque() {
 
   const abrirCardAdicionar = (item) => {
     const itemCompleto = itens.find(it => it.id === item.id) || item;
-    console.log('Item selecionado para adicionar estoque:', itemCompleto);
     setItemParaAdicionar(itemCompleto);
     setQuantidadeAdicionar(1);
     setMostrarCardAdicionar(true);
@@ -160,11 +159,11 @@ export default function Estoque() {
     setErro('');
     try {
       // Chama o endpoint PATCH para adicionar estoque
-      const response = await API.patch(
-        `/itens/${itemParaAdicionar.id}/adicionar-estoque?quantidade=${quantidadeAdicionar}`
-      );
-
-      console.log('Resposta do servidor:', response.data);
+      await API.patch(`/itens/${itemParaAdicionar.id}/adicionar-estoque`, null, {
+        params: {
+          quantidade: quantidadeAdicionar
+        }
+      });
 
       setMensagem(`${quantidadeAdicionar} unidade(s) adicionada(s) ao estoque de "${itemParaAdicionar.nome}"!`);
       setTimeout(() => setMensagem(''), 3000);
@@ -172,8 +171,7 @@ export default function Estoque() {
       fecharCardAdicionar();
     } catch (error) {
       console.error('Erro ao adicionar estoque:', error);
-      console.error('Detalhes do erro:', error.response?.data);
-      setErro(`Erro ao adicionar itens ao estoque: ${error.response?.data?.message || error.message}`);
+      setErro('Erro ao adicionar itens ao estoque. Verifique o console.');
     } finally {
       setCarregando(false);
     }

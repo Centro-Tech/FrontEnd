@@ -21,6 +21,7 @@ export function Configuracao() {
     const [usuario, setUsuario] = useState(null);
     const [loading, setLoading] = useState(true);
     const [erro, setErro] = useState('');
+    const [imagemErro, setImagemErro] = useState(false);
     // editMain controla edição no painel principal
     const [editMain, setEditMain] = useState(false);
     const [form, setForm] = useState({
@@ -65,7 +66,10 @@ export function Configuracao() {
                 const lista = res.data;
                 const encontrado = lista.find(u => (u.email || '').toLowerCase() === (email || '').toLowerCase());
                 if (encontrado) {
+                    console.log('Usuário encontrado:', encontrado);
+                    console.log('URL da imagem:', encontrado.imagem);
                     setUsuario(encontrado);
+                    setImagemErro(false); // reset erro de imagem
                     setForm({
                         nome: encontrado.nome || '',
                         email: encontrado.email || '',
@@ -136,8 +140,25 @@ export function Configuracao() {
                             <div className={styles['profile-row']}>
                                 <div className={styles['avatar']} aria-hidden>
                                     {usuario?.imagem ? (
-                                        <img src={usuario.imagem} alt="Avatar" />
+                                        <img 
+                                            src={usuario.imagem} 
+                                            alt="Avatar" 
+                                            onError={(e) => {
+                                                console.error('Erro ao carregar imagem:', usuario.imagem);
+                                                setImagemErro(true);
+                                                e.target.style.display = 'none';
+                                            }}
+                                            onLoad={() => {
+                                                console.log('Imagem carregada com sucesso:', usuario.imagem);
+                                                setImagemErro(false);
+                                            }}
+                                        />
                                     ) : null}
+                                    {imagemErro && (
+                                        <div style={{ padding: '10px', textAlign: 'center', fontSize: '12px', color: '#999' }}>
+                                            Erro ao carregar foto
+                                        </div>
+                                    )}
                                 </div>
                                 <div className={styles['profile-text']}>
                                     <div className={styles['profile-name']}>{usuario?.nome || 'Seu nome'}</div>
@@ -145,8 +166,7 @@ export function Configuracao() {
                                 </div>
                             </div>
 
-                            <div className={styles['profile-actions']}>
-                                {/* Apenas opção de subir/imagem no lado esquerdo */}
+                            {/* <div className={styles['profile-actions']}>
                                 <label className={styles['upload-label']}>
                                     <input
                                         type="file"
@@ -165,20 +185,22 @@ export function Configuracao() {
                                                 fd.append('endereco', usuario.endereco || '');
                                                 fd.append('imagem', file);
 
-                                                // Não definir Content-Type manualmente; o browser adiciona o boundary
                                                 const res = await API.put(`/usuarios/${usuario.id}`, fd);
+                                                console.log('Resposta após upload:', res.data);
+                                                console.log('Nova URL da imagem:', res.data.imagem);
                                                 setUsuario(res.data);
+                                                setImagemErro(false);
                                             } catch (err) {
                                                 console.error('Erro ao enviar imagem', err);
+                                                console.error('Detalhes do erro:', err.response?.data);
                                                 setErro('Erro ao enviar imagem');
                                             } finally {
                                                 setLoading(false);
                                             }
                                         }}
                                     />
-                                    <span className={styles['upload-text']}>Enviar imagem</span>
                                 </label>
-                            </div>
+                            </div> */}
 
                             {loading && <div style={{ marginTop: 8 }}>Carregando...</div>}
                             {erro && <div style={{ marginTop: 8, color: 'crimson' }}>{erro}</div>}
@@ -214,10 +236,25 @@ export function Configuracao() {
                                         <span>Endereço</span>
                                         <input name="endereco" value={form.endereco} onChange={(ev) => setForm({...form, endereco: ev.target.value})} />
                                     </label>
-                                    <label className={styles['field']}>
+                                    <div className={styles['field']}>
                                         <span>Imagem (opcional)</span>
-                                        <input type="file" accept="image/*" onChange={(ev) => setForm({...form, imagemFile: ev.target.files?.[0] || null})} />
-                                    </label>
+                                        <div className={styles['file-upload-wrapper']}>
+                                            <label htmlFor="file-upload" className={styles['file-upload-button']}>
+                                            Escolher imagem
+                                            </label>
+                                            <input 
+                                                id="file-upload"
+                                                type="file" 
+                                                accept="image/*" 
+                                                onChange={(ev) => setForm({...form, imagemFile: ev.target.files?.[0] || null})} 
+                                            />
+                                            {form.imagemFile && (
+                                                <span className={styles['file-name']}>
+                                                    Arquivo selecionado: {form.imagemFile.name}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
                                     <div className={styles['form-actions']}>
                                         <button type="submit" className={styles['btn-novo']}>Salvar</button>
                                         <button type="button" className={styles['btn-secondary']} onClick={handleCancelMain}>Cancelar</button>
@@ -226,7 +263,16 @@ export function Configuracao() {
                             ) : (
                                 <div className={styles['grid']}>
                                     {opcoes.map(o => (
-                                        <div key={o.key} className={styles['option-card']}>
+                                        <div 
+                                            key={o.key} 
+                                            className={styles['option-card']}
+                                            onClick={() => {
+                                                if (o.key === 'Senha') {
+                                                    navigate('/mudar-senha');
+                                                }
+                                            }}
+                                            style={o.key === 'Senha' ? { cursor: 'pointer' } : {}}
+                                        >
                                             <div className={styles['card-title']}>{o.titulo}</div>
                                             <div className={styles['card-desc']}>
                                                 {usuario ? (
@@ -237,7 +283,14 @@ export function Configuracao() {
                                                             case 'Telefone': return usuario.telefone ;
                                                             case 'Endereço': return usuario.endereco ;
                                                             case 'Cargo': return usuario.cargo ;
-                                                            case 'Senha': return '********';
+                                                            case 'Senha': return (
+                                                                <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                               
+                                                                    <span style={{ fontSize: '12px', color: '#864176', textDecoration: 'underline' }}>
+                                                                        (Clique para alterar)
+                                                                    </span>
+                                                                 </span>
+                                                            );
                                                             // default: return '-';
                                                         }
                                                     })()

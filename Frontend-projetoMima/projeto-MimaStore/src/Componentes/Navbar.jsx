@@ -129,7 +129,7 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
                                         onClick={handlePerfilClick}
                                         style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
                                     >
-                                        <Perfil nome={usuario?.nome || 'Usuário'} fotoId={fotoId} />
+                                        <Perfil nome={usuario?.nome || 'Usuário'} fotoId={usuario?.imagem || fotoId} />
                                         
                                     </div>
                                     {perfilMenuOpen && (
@@ -194,7 +194,7 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
 
                         <div className={styles.sidebarFooter}>
                             <Link to="/Configuracao" className={styles.profilePill} onClick={handleCloseSidebar}>
-                                <img src={fotoId} alt="Avatar" className={styles.profileAvatar} />
+                                <img src={usuario?.imagem || fotoId} alt="Avatar" className={styles.profileAvatar} />
                                 <span className={styles.profileName}>Perfil</span>
                             </Link>
                         </div>
