@@ -51,7 +51,7 @@ export function MenuPrincipal() {
     };
 
     const handleDashboard = () => {
-        navigate('/dashboard');
+        navigate('/dashboard-simples');
     };
 
     const handleGestaoFuncionarios = () => {
