@@ -83,46 +83,76 @@ export default function DashboardCompleto() {
                 });
             }
 
-            // Chart 2 - Revenue Billing Trend (Line chart)
+            // Chart 2 - Revenue Billing Trend (Line chart) com previsão
             if (tendenciaFaturamento && tendenciaFaturamento.labels) {
                 setTendenciaFaturamentoData({
                     labels: tendenciaFaturamento.labels,
                     datasets: [
                         {
-                            label: 'Série: 1',
-                            data: tendenciaFaturamento.valores || [],
+                            label: 'Observado',
+                            data: tendenciaFaturamento.historico || [],
                             borderColor: '#864176',
                             backgroundColor: 'transparent',
                             tension: 0.4,
                             fill: false,
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
                             pointBackgroundColor: '#864176',
                             pointBorderColor: '#864176',
                             pointBorderWidth: 2,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Previsão (próx. 3 meses)',
+                            data: tendenciaFaturamento.previsao || [],
+                            borderColor: '#864176',
+                            backgroundColor: 'transparent',
+                            borderDash: [6, 4],
+                            tension: 0.4,
+                            fill: false,
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
+                            pointBackgroundColor: '#864176',
+                            pointBorderColor: '#864176',
+                            pointBorderWidth: 1.5,
                             borderWidth: 2
                         }
                     ]
                 });
             }
 
-            // Chart 3 - Sales Trend (Line chart)
+            // Chart 3 - Sales Trend (Line chart) com previsão
             if (tendenciaVendas && tendenciaVendas.labels) {
                 setTendenciaVendasData({
                     labels: tendenciaVendas.labels,
                     datasets: [
                         {
-                            label: 'Série: 1',
-                            data: tendenciaVendas.valores || [],
+                            label: 'Observado',
+                            data: tendenciaVendas.historico || [],
                             borderColor: '#864176',
                             backgroundColor: 'transparent',
                             tension: 0.4,
                             fill: false,
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
                             pointBackgroundColor: '#864176',
                             pointBorderColor: '#864176',
                             pointBorderWidth: 2,
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Previsão (próx. 3 meses)',
+                            data: tendenciaVendas.previsao || [],
+                            borderColor: '#864176',
+                            backgroundColor: 'transparent',
+                            borderDash: [6, 4],
+                            tension: 0.4,
+                            fill: false,
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
+                            pointBackgroundColor: '#864176',
+                            pointBorderColor: '#864176',
+                            pointBorderWidth: 1.5,
                             borderWidth: 2
                         }
                     ]
@@ -164,22 +194,22 @@ export default function DashboardCompleto() {
                     {/* KPIs Row */}
                     <div className={styles.kpisRow}>
                         <KpiCard
-                            titulo="Variação do Ticket Médio (mês)"
+                            titulo="Variação do Ticket Médio"
                             valor={ticketMedio.valor}
                             variacao={ticketMedio.variacao}
-                            explicacao="Mostra o valor médio gasto por cliente em cada compra. A variação compara os mesmos dias do mês atual com o mês anterior. Por exemplo: se estamos no dia 15, comparamos com os primeiros 15 dias do mês passado."
+                            explicacao="Quanto seus clientes gastam, em média, por compra. A variação mostra se esse valor aumentou ou diminuiu em relação ao mês passado (considerando os mesmos dias corridos)."
                         />
                         <KpiCard
                             titulo="Índice Sazional de Vendas"
                             valor={indiceSazional.status}
                             variacao={indiceSazional.variacao}
-                            explicacao="Compara as vendas da estação atual com a estação anterior, considerando o mesmo período. Se estamos no dia 15 do primeiro mês desta estação, comparamos com o dia 15 do primeiro mês da última estação."
+                            explicacao="Indica se suas vendas estão acima, na média ou abaixo do esperado para a estação atual. Compara com a estação anterior no mesmo período."
                         />
                         <KpiCard
                             titulo="Variação de Fidelização de Clientes"
                             valor=""
                             variacao={fidelizacao.variacao}
-                            explicacao="Percentual de clientes que voltaram a comprar nos últimos 6 meses. Este valor é atualizado diariamente, sempre considerando exatamente 6 meses antes do dia atual."
+                            explicacao="Percentual de clientes que voltaram a comprar nos últimos 6 meses. Quanto maior, mais fiel é sua base de clientes."
                         />
                     </div>
 
@@ -188,9 +218,10 @@ export default function DashboardCompleto() {
                         {comparacaoMensalData && (
                             <div className={styles.chartCard}>
                                 <ChartCard
-                                    titulo="Aumento ou redução das vendas do mês vigente em relação ao mês anterior"
+                                    titulo="Comparação Mensal de Vendas"
                                     tipo="bar"
                                     dados={comparacaoMensalData}
+                                    explicacao="Compara o desempenho de vendas do mês atual com o mês anterior, mostrando crescimento ou queda nos últimos 3 meses."
                                     opcoes={{
                                         responsive: true,
                                         maintainAspectRatio: false,
@@ -230,9 +261,10 @@ export default function DashboardCompleto() {
                         {tendenciaFaturamentoData && (
                             <div className={styles.chartCard}>
                                 <ChartCard
-                                    titulo="Tendência de faturamento ao longo dos meses"
+                                    titulo="Tendência de Faturamento"
                                     tipo="line"
                                     dados={tendenciaFaturamentoData}
+                                    explicacao="Evolução do faturamento nos últimos 10 meses com projeção para os próximos 3 meses (linha tracejada)."
                                     opcoes={{
                                         responsive: true,
                                         maintainAspectRatio: false,
@@ -272,9 +304,10 @@ export default function DashboardCompleto() {
                         {tendenciaVendasData && (
                             <div className={styles.chartCard}>
                                 <ChartCard
-                                    titulo="Tendência de vendas ao longo dos meses"
+                                    titulo="Tendência de Vendas"
                                     tipo="line"
                                     dados={tendenciaVendasData}
+                                    explicacao="Evolução do volume de vendas nos últimos 10 meses com projeção para os próximos 3 meses (linha tracejada)."
                                     opcoes={{
                                         responsive: true,
                                         maintainAspectRatio: false,

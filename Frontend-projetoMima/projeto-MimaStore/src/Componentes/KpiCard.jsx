@@ -5,6 +5,7 @@ import { Tooltip } from './Tooltip';
 export function KpiCard({ titulo, valor, variacao, subtitulo, explicacao }) {
     const isPositive = variacao >= 0;
     const variacaoFormatada = `${isPositive ? '+' : ''}${variacao}%`;
+    const isValorVazio = !valor || String(valor).trim().length === 0;
 
     return (
         <div className={styles.kpiCard}>
@@ -21,9 +22,13 @@ export function KpiCard({ titulo, valor, variacao, subtitulo, explicacao }) {
                     </Tooltip>
                 )}
             </div>
-            <div className={styles.valor}>{valor}</div>
-            <div className={`${styles.variacao} ${isPositive ? styles.positivo : styles.negativo}`}>
-                {variacaoFormatada}
+            <div className={styles.valorArea}>
+                <div className={styles.valor}>{valor}</div>
+            </div>
+            <div className={styles.variacaoArea}>
+                <div className={`${styles.variacao} ${isValorVazio ? styles.variacaoSolo : ''} ${isPositive ? styles.positivo : styles.negativo}`}>
+                    {variacaoFormatada}
+                </div>
             </div>
             {subtitulo && <div className={styles.subtitulo}>{subtitulo}</div>}
         </div>

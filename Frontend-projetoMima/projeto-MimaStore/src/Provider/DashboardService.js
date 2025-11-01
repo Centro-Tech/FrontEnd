@@ -76,8 +76,35 @@ const getClienteId = (venda) => {
     return id ?? null;
 };
 
-const getItemId = (itemVenda) => itemVenda?.item?.id ?? itemVenda?.fkItem ?? itemVenda?.idItem ?? itemVenda?.item_id;
-const getItemQtdVendida = (itemVenda) => toNumber(itemVenda?.qtdParaVender ?? itemVenda?.quantidade ?? itemVenda?.qtd ?? itemVenda?.qtd_vendida);
+// Try to resolve the array of items in a venda across multiple possible keys
+const getItensVenda = (venda) => {
+    const keys = ['itensVenda', 'itens_venda', 'itensDaVenda', 'itens'];
+    for (const k of keys) {
+        const arr = venda?.[k];
+        if (Array.isArray(arr)) return arr;
+    }
+    return [];
+};
+
+const getItemId = (itemVenda) =>
+    itemVenda?.item?.id ??
+    itemVenda?.produto?.id ??
+    itemVenda?.vestuario?.id ??
+    itemVenda?.fkItem ??
+    itemVenda?.idItem ??
+    itemVenda?.itemId ??
+    itemVenda?.item_id ??
+    itemVenda?.id;
+
+const getItemQtdVendida = (itemVenda) => toNumber(
+    itemVenda?.qtdParaVender ??
+    itemVenda?.qtdVendida ??
+    itemVenda?.qtd_venda ??
+    itemVenda?.quantidadeVendida ??
+    itemVenda?.quantidade_vendida ??
+    itemVenda?.quantidade ??
+    itemVenda?.qtd
+);
 
 // Some endpoints may return arrays directly, others wrap under { data: [...] } or { content: [...] }
 const extractArray = (axiosResponse) => {
@@ -323,12 +350,73 @@ export const getStockSalesRelation = async (options = {}) => {
         });
 
         const [itensResponse, vendasSemana] = await Promise.all([
-            API.get('/itens?size=1000'),
+            API.get('/itens?size=10000').catch(e => e), // ✅ AUMENTADO para garantir todos os itens
             API.get(`/vendas/filtrar-por-data?inicio=${seteDiasAtras.toISOString().split('T')[0]}&fim=${hoje.toISOString().split('T')[0]}`)
         ]);
 
-    const todosItens = extractArray(itensResponse);
+        // Fallback for items list if first attempt fails or returns empty
+        let todosItens = extractArray(itensResponse);
+        console.log('[ESTOQUE X VENDAS] ✅ Itens obtidos:', todosItens.length);
+        // Se veio paginado ou com estoque zerado, tentar endpoint dedicado de estoque
+        const estoqueSum = todosItens.reduce((acc, it) => acc + (Number(it.qtdEstoque ?? it.quantidadeEstoque ?? it.qtd_estoque ?? it.quantidade_estoque ?? it.estoque ?? 0) || 0), 0);
+        if (todosItens.length && estoqueSum === 0) {
+            try {
+                const respEst = await API.get('/itens/estoque');
+                const itensEstoque = extractArray(respEst);
+                if (itensEstoque.length) {
+                    // Merge por codigo quando disponível
+                    const mapEstoquePorCodigo = new Map(itensEstoque.filter(x => x.codigo).map(x => [x.codigo, x]));
+                    todosItens = todosItens.map(it => {
+                        if (it.codigo && mapEstoquePorCodigo.has(it.codigo)) {
+                            const src = mapEstoquePorCodigo.get(it.codigo);
+                            return {
+                                ...it,
+                                qtdEstoque: src.qtdEstoque ?? it.qtdEstoque
+                            };
+                        }
+                        return it;
+                    });
+                    console.log('[ESTOQUE X VENDAS] Estoque atualizado via /itens/estoque');
+                }
+            } catch (e) {
+                console.warn('[ESTOQUE X VENDAS] Falha ao obter /itens/estoque:', e?.message);
+            }
+        }
+        
+        if (!todosItens.length) {
+            const altEndpoints = ['/itens?size=10000', '/itens', '/item', '/produtos', '/vestuarios', '/estoque/itens'];
+            for (const ep of altEndpoints) {
+                try {
+                    const resp = await API.get(ep);
+                    todosItens = extractArray(resp);
+                    if (todosItens.length) {
+                        console.log('[ESTOQUE X VENDAS] Catálogo obtido por endpoint alternativo:', ep, 'qtd:', todosItens.length);
+                        break;
+                    }
+                } catch {}
+            }
+        }
+
         const vendas = extractArray(vendasSemana);
+
+        // Tentar obter um mapa de estoque atualizado via /itens/estoque
+        let estoquePorCodigo = {};
+        try {
+            const respEst = await API.get('/itens/estoque');
+            const itensEst = extractArray(respEst);
+            if (Array.isArray(itensEst) && itensEst.length) {
+                itensEst.forEach(it => {
+                    const codigo = it?.codigo;
+                    const est = it?.qtdEstoque ?? it?.quantidadeEstoque ?? it?.qtd_estoque ?? it?.quantidade_estoque ?? it?.estoque;
+                    if (codigo != null && est != null) {
+                        estoquePorCodigo[codigo] = toNumber(est);
+                    }
+                });
+                console.log('[ESTOQUE X VENDAS] ✅ Estoque obtido via /itens/estoque:', Object.keys(estoquePorCodigo).length);
+            }
+        } catch (e) {
+            console.warn('[ESTOQUE X VENDAS] Aviso: falha ao consultar /itens/estoque:', e?.message);
+        }
 
         console.log('[ESTOQUE X VENDAS] Dados:', {
             totalItens: todosItens.length,
@@ -345,22 +433,33 @@ export const getStockSalesRelation = async (options = {}) => {
         }
 
         const vendasPorItem = {};
+        const vendasPorCodigo = {};
         vendas.forEach(venda => {
-            if (venda.itensVenda && Array.isArray(venda.itensVenda)) {
-                venda.itensVenda.forEach(itemVenda => {
+            const itens = getItensVenda(venda);
+            if (itens && Array.isArray(itens)) {
+                itens.forEach(itemVenda => {
                     const itemId = getItemId(itemVenda);
+                    const codigo = itemVenda?.item?.codigo || itemVenda?.produto?.codigo || itemVenda?.vestuario?.codigo || itemVenda?.codigo;
                     if (itemId) {
                         vendasPorItem[itemId] = (vendasPorItem[itemId] || 0) + getItemQtdVendida(itemVenda);
+                    }
+                    if (codigo) {
+                        vendasPorCodigo[codigo] = (vendasPorCodigo[codigo] || 0) + getItemQtdVendida(itemVenda);
                     }
                 });
             }
         });
 
-        console.log('[ESTOQUE X VENDAS] Vendas por item:', vendasPorItem);
+        console.log('[ESTOQUE X VENDAS] Vendas por item (por ID):', vendasPorItem);
+        console.log('[ESTOQUE X VENDAS] Vendas por item (por CÓDIGO):', Object.entries(vendasPorCodigo).slice(0,5));
+        if (todosItens.length > 0) {
+            console.log('[ESTOQUE X VENDAS] Primeiro item do catálogo:', todosItens[0]);
+        }
 
         const itensComRazao = todosItens.map(item => {
-            const vendas = vendasPorItem[item.id] || 0;
-            const estoque = item.qtdEstoque || item.qtd_estoque || 0;
+            const vendas = (item?.id != null ? vendasPorItem[item.id] : 0) || (item?.codigo ? vendasPorCodigo[item.codigo] : 0) || 0;
+            const estoqueLookup = item?.codigo ? estoquePorCodigo[item.codigo] : undefined;
+            const estoque = (estoqueLookup != null ? estoqueLookup : (item.qtdEstoque || item.quantidadeEstoque || item.qtd_estoque || item.quantidade_estoque || item.estoque)) || 0;
             const razao = estoque > 0 ? vendas / estoque : 0;
             
             return {
@@ -372,6 +471,13 @@ export const getStockSalesRelation = async (options = {}) => {
                 razao: razao
             };
         });
+
+        const matchEstoqueCodigo = itensComRazao.filter(i => i.codigo && (i.estoque ?? 0) > 0 && estoquePorCodigo[i.codigo] != null).length;
+        console.log('[ESTOQUE X VENDAS] Itens com estoque preenchido via /itens/estoque:', { count: matchEstoqueCodigo });
+
+        // Estatística de quantos itens usaram fallback por código
+        const totalMatchCodigo = itensComRazao.filter(i => !i.id && i.codigo && (vendasPorCodigo[i.codigo] || 0) > 0).length;
+        console.log('[ESTOQUE X VENDAS] Itens usando fallback por CÓDIGO:', { totalMatchCodigo });
 
         // Ordenar: maior razão primeiro (vendas/estoque)
         itensComRazao.sort((a, b) => order === 'asc' ? a.razao - b.razao : b.razao - a.razao);
@@ -385,11 +491,30 @@ export const getStockSalesRelation = async (options = {}) => {
         const pageItens = itensComRazao.slice(start, end);
 
         console.log('[ESTOQUE X VENDAS] Página:', { page: safePage, pageSize, totalPages });
+        console.log('[ESTOQUE X VENDAS] pageItens (primeiros 3):', pageItens.slice(0, 3).map(i => ({ 
+            id: i.id, 
+            codigo: i.codigo, 
+            nome: i.nome?.substring(0, 20), 
+            vendas: i.vendas, 
+            estoque: i.estoque 
+        })));
+
+        const labels = pageItens.map(i => i.codigo || (i.nome ? i.nome.substring(0, 15) : `#${i.id}`));
+        const vendasArr = pageItens.map(i => i.vendas);
+        const estoqueArr = pageItens.map(i => i.estoque);
+
+        console.log('[ESTOQUE X VENDAS] ✅ RETORNANDO DADOS:', { 
+            labelsCount: labels.length,
+            labels: labels.slice(0, 5), 
+            vendas: vendasArr.slice(0, 5), 
+            estoque: estoqueArr.slice(0, 5),
+            timestamp: new Date().toISOString()
+        });
 
         return {
-            labels: pageItens.map(i => i.codigo || (i.nome ? i.nome.substring(0, 15) : `#${i.id}`)),
-            vendas: pageItens.map(i => i.vendas),
-            estoque: pageItens.map(i => i.estoque),
+            labels,
+            vendas: vendasArr,
+            estoque: estoqueArr,
             meta: { totalItems, totalPages, page: safePage, pageSize }
         };
     } catch (error) {
@@ -425,10 +550,26 @@ export const getTopCategoriesByMonth = async (monthsBack = 0) => {
         const [vendasMesAtual, vendasMesAnterior, itensResponse] = await Promise.all([
             API.get(`/vendas/filtrar-por-data?inicio=${inicioMesAtual}&fim=${fimMesAtual}`),
             API.get(`/vendas/filtrar-por-data?inicio=${inicioMesAnterior}&fim=${fimMesAnterior}`),
-            API.get('/itens?size=1000')
+            API.get('/itens?size=10000').catch(e => e) // ✅ AUMENTADO para garantir todos os itens
         ]);
 
-    const todosItens = extractArray(itensResponse);
+        // Fallback for items
+        let todosItens = extractArray(itensResponse);
+        console.log('[CATEGORIAS] ✅ Itens obtidos:', todosItens.length);
+        
+        if (!todosItens.length) {
+            const altEndpoints = ['/itens?size=10000', '/itens', '/item', '/produtos', '/vestuarios', '/estoque/itens'];
+            for (const ep of altEndpoints) {
+                try {
+                    const resp = await API.get(ep);
+                    todosItens = extractArray(resp);
+                    if (todosItens.length) {
+                        console.log('[CATEGORIAS] Catálogo obtido por endpoint alternativo:', ep, 'qtd:', todosItens.length);
+                        break;
+                    }
+                } catch {}
+            }
+        }
 
         console.log('[CATEGORIAS] Dados recebidos:', {
             vendasAtual: extractArray(vendasMesAtual).length,
@@ -436,99 +577,139 @@ export const getTopCategoriesByMonth = async (monthsBack = 0) => {
             itens: todosItens.length
         });
 
+        if (todosItens.length > 0) {
+            console.log('[CATEGORIAS] Primeiro item do catálogo (COMPLETO):', todosItens[0]);
+            console.log('[CATEGORIAS] Todas as chaves do item:', Object.keys(todosItens[0]));
+            console.log('[CATEGORIAS] IDs de categoria encontrados:', {
+                fkCategoria: todosItens[0].fkCategoria,
+                idCategoria: todosItens[0].idCategoria,
+                categoriaId: todosItens[0].categoriaId
+            });
+        }
+
         const vendasAtualArr = extractArray(vendasMesAtual);
         if (vendasAtualArr.length > 0) {
             console.log('[CATEGORIAS] Estrutura venda[0]:', vendasAtualArr[0]);
             if (Array.isArray(vendasAtualArr[0]?.itensVenda)) {
-                console.log('[CATEGORIAS] itensVenda[0]:', vendasAtualArr[0].itensVenda[0]);
+                console.log('[CATEGORIAS] itensVenda[0] (COMPLETO):', vendasAtualArr[0].itensVenda[0]);
             } else {
                 console.warn('[CATEGORIAS] itensVenda ausente na venda; verifique backend (lazy/eager).');
             }
         }
 
-        const itemCategoria = {};
+        // Buscar categorias do backend
+        let categorias = {};
+        try {
+            const respCat = await API.get('/categorias?size=1000');
+            const catArray = extractArray(respCat);
+            catArray.forEach(cat => {
+                categorias[cat.id] = cat.nome;
+            });
+            console.log('[CATEGORIAS] Categorias obtidas do backend:', catArray.length);
+        } catch (err) {
+            console.warn('[CATEGORIAS] Erro ao buscar categorias, tentando alternativas:', err.message);
+            // Tentar endpoints alternativos
+            for (const ep of ['/categoria', '/category']) {
+                try {
+                    const resp = await API.get(ep);
+                    const catArray = extractArray(resp);
+                    catArray.forEach(cat => {
+                        categorias[cat.id] = cat.nome;
+                    });
+                    if (Object.keys(categorias).length) break;
+                } catch {}
+            }
+        }
+
+        // Build Maps (follow backend guide)
+        const catById = new Map();
+        Object.entries(categorias).forEach(([id, nome]) => {
+            catById.set(String(id), { id: Number(id), nome });
+        });
+
+        const itemById = new Map();
         todosItens.forEach(item => {
-            const cat = item.categoria || item.categoriaVestiario || item.categoriaVestuario || item.categoriaProduto || item.categoria_produto;
-            if (cat) {
-                itemCategoria[item.id] = {
-                    id: cat.id,
-                    nome: cat.nome
-                };
-            }
+            itemById.set(String(item.id), item);
         });
 
-        const vendasPorCategoriaAtual = {};
+        console.log('[CATEGORIAS] Maps criados:', {
+            categorias: catById.size,
+            itens: itemById.size
+        });
+
+        // Aggregate by category (follow backend guide)
+        const countsAtual = new Map();
         extractArray(vendasMesAtual).forEach(venda => {
-            if (venda.itensVenda && Array.isArray(venda.itensVenda)) {
-                venda.itensVenda.forEach(itemVenda => {
-                    const itemId = getItemId(itemVenda);
-                    if (itemId) {
-                        let info = itemCategoria[itemId];
-                        // fallback: tentar pela venda.item.categoria
-                        if (!info) {
-                            const cat = itemVenda?.item?.categoria || itemVenda?.item?.categoriaVestiario || itemVenda?.item?.categoriaVestuario;
-                            if (cat) {
-                                info = { id: cat.id, nome: cat.nome };
-                                itemCategoria[itemId] = info;
-                            }
-                        }
-                        if (!info) return;
-                        const catId = info.id;
-                        const catNome = info.nome;
-                        if (!vendasPorCategoriaAtual[catId]) {
-                            vendasPorCategoriaAtual[catId] = { id: catId, nome: catNome, count: 0 };
-                        }
-                        vendasPorCategoriaAtual[catId].count++;
-                    }
+            const itens = getItensVenda(venda);
+            if (Array.isArray(itens)) {
+                itens.forEach(itemVenda => {
+                    const itemObj = itemVenda.item || {};
+                    const itemId = String(itemObj.id ?? getItemId(itemVenda) ?? '');
+                    const knownItem = itemById.get(itemId);
+
+                    const catIdRaw =
+                        itemObj.fkCategoria ??
+                        itemObj.idCategoria ??
+                        itemObj.categoria?.id ??
+                        knownItem?.fkCategoria ??
+                        knownItem?.idCategoria ??
+                        knownItem?.categoria?.id;
+
+                    const catId = catIdRaw != null ? String(catIdRaw) : 'sem-categoria';
+                    const qty = getItemQtdVendida(itemVenda) || 1;
+
+                    countsAtual.set(catId, (countsAtual.get(catId) || 0) + qty);
                 });
             }
         });
+        console.log('[CATEGORIAS] countsAtual:', Object.fromEntries(countsAtual));
 
-        const vendasPorCategoriaAnterior = {};
+        const countsAnterior = new Map();
         extractArray(vendasMesAnterior).forEach(venda => {
-            if (venda.itensVenda && Array.isArray(venda.itensVenda)) {
-                venda.itensVenda.forEach(itemVenda => {
-                    const itemId = getItemId(itemVenda);
-                    if (itemId) {
-                        let info = itemCategoria[itemId];
-                        if (!info) {
-                            const cat = itemVenda?.item?.categoria || itemVenda?.item?.categoriaVestiario || itemVenda?.item?.categoriaVestuario;
-                            if (cat) {
-                                info = { id: cat.id, nome: cat.nome };
-                                itemCategoria[itemId] = info;
-                            }
-                        }
-                        if (!info) return;
-                        const catId = info.id;
-                        const catNome = info.nome;
-                        if (!vendasPorCategoriaAnterior[catId]) {
-                            vendasPorCategoriaAnterior[catId] = { id: catId, nome: catNome, count: 0 };
-                        }
-                        vendasPorCategoriaAnterior[catId].count++;
-                    }
+            const itens = getItensVenda(venda);
+            if (Array.isArray(itens)) {
+                itens.forEach(itemVenda => {
+                    const itemObj = itemVenda.item || {};
+                    const itemId = String(itemObj.id ?? getItemId(itemVenda) ?? '');
+                    const knownItem = itemById.get(itemId);
+
+                    const catIdRaw =
+                        itemObj.fkCategoria ??
+                        itemObj.idCategoria ??
+                        itemObj.categoria?.id ??
+                        knownItem?.fkCategoria ??
+                        knownItem?.idCategoria ??
+                        knownItem?.categoria?.id;
+
+                    const catId = catIdRaw != null ? String(catIdRaw) : 'sem-categoria';
+                    const qty = getItemQtdVendida(itemVenda) || 1;
+
+                    countsAnterior.set(catId, (countsAnterior.get(catId) || 0) + qty);
                 });
             }
         });
+        console.log('[CATEGORIAS] countsAnterior:', Object.fromEntries(countsAnterior));
 
+        // Build sorted top 5 (follow backend guide)
         const todasCategorias = new Set([
-            ...Object.keys(vendasPorCategoriaAtual),
-            ...Object.keys(vendasPorCategoriaAnterior)
+            ...countsAtual.keys(),
+            ...countsAnterior.keys()
         ]);
 
         const categoriasComparacao = Array.from(todasCategorias).map(catId => {
-            const atual = vendasPorCategoriaAtual[catId] || { id: catId, nome: '', count: 0 };
-            const anterior = vendasPorCategoriaAnterior[catId] || { count: 0 };
-            
+            const cat = catById.get(catId);
             return {
-                id: parseInt(catId),
-                nome: atual.nome || anterior.nome || 'Desconhecida',
-                vendasAtual: atual.count,
-                vendasAnterior: anterior.count
+                id: catId === 'sem-categoria' ? null : Number(catId),
+                nome: catId === 'sem-categoria' ? 'Sem categoria' : (cat?.nome ?? `Categoria ${catId}`),
+                vendasAtual: countsAtual.get(catId) || 0,
+                vendasAnterior: countsAnterior.get(catId) || 0
             };
         });
 
         categoriasComparacao.sort((a, b) => b.vendasAtual - a.vendasAtual);
         const top5 = categoriasComparacao.slice(0, 5);
+        
+        console.log('[CATEGORIAS] Top 5 final:', top5);
 
         return {
             labels: top5.map(c => c.nome),
@@ -594,7 +775,8 @@ export const getMonthlySalesComparison = async () => {
 // ═══════════════════════════════════════════════════════════════
 export const getRevenueTrend = async () => {
     try {
-        const quantidadeMeses = 10;
+        const quantidadeMeses = 10; // meses históricos
+        const previsaoMeses = 3;    // projeção
         const hoje = new Date();
         const dataInicial = new Date(hoje.getFullYear(), hoje.getMonth() - quantidadeMeses + 1, 1);
 
@@ -615,29 +797,67 @@ export const getRevenueTrend = async () => {
         });
 
         const mesesAbrev = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-        const dadosTendencia = [];
+        const labelsHistoricos = [];
+        const faturamentosHistoricos = [];
 
         for (let i = 0; i < quantidadeMeses; i++) {
             const data = new Date(dataInicial.getFullYear(), dataInicial.getMonth() + i, 1);
             const mesAno = data.toISOString().substring(0, 7);
             const mesFormatado = `${mesesAbrev[data.getMonth()]}/${data.getFullYear().toString().slice(-2)}`;
-            
+
             const vendas = vendasPorMes[mesAno] || [];
             const faturamento = vendas.reduce((sum, v) => sum + getVendaTotalWithFallback(v), 0);
-            
-            dadosTendencia.push({
-                mes: mesFormatado,
-                faturamento: faturamento
-            });
+
+            labelsHistoricos.push(mesFormatado);
+            faturamentosHistoricos.push(faturamento);
         }
 
+        // Regressão linear simples (OLS) y = a + b*x
+        const computeOLS = (ys) => {
+            const n = ys.length;
+            const xs = Array.from({ length: n }, (_, i) => i);
+            const mean = (arr) => (arr.reduce((s, v) => s + v, 0)) / (arr.length || 1);
+            const xBar = mean(xs);
+            const yBar = mean(ys);
+            let num = 0;
+            let den = 0;
+            for (let i = 0; i < n; i++) {
+                num += (xs[i] - xBar) * (ys[i] - yBar);
+                den += (xs[i] - xBar) ** 2;
+            }
+            const b = den === 0 ? 0 : num / den; // inclinação
+            const a = yBar - b * xBar; // intercepto
+            return { a, b };
+        };
+
+        const { a, b } = computeOLS(faturamentosHistoricos);
+
+        // Gera próximas labels e valores previstos
+        const labelsPrevisao = [];
+        const valoresPrevistosSomente = [];
+        const baseDate = new Date(dataInicial.getFullYear(), dataInicial.getMonth() + quantidadeMeses, 1);
+        for (let j = 0; j < previsaoMeses; j++) {
+            const d = new Date(baseDate.getFullYear(), baseDate.getMonth() + j, 1);
+            const label = `${mesesAbrev[d.getMonth()]}/${d.getFullYear().toString().slice(-2)}`;
+            labelsPrevisao.push(label);
+            const x = quantidadeMeses + j; // continuar a sequência de x
+            const yPred = Math.max(0, a + b * x);
+            valoresPrevistosSomente.push(yPred);
+        }
+
+        // Monta arrays alinhados para dois datasets: histórico e previsão
+        const labelsCompletas = [...labelsHistoricos, ...labelsPrevisao];
+        const historico = [...faturamentosHistoricos, ...Array(previsaoMeses).fill(null)];
+        const previsao = [...Array(quantidadeMeses).fill(null), ...valoresPrevistosSomente];
+
         return {
-            labels: dadosTendencia.map(d => d.mes),
-            valores: dadosTendencia.map(d => d.faturamento)
+            labels: labelsCompletas,
+            historico,
+            previsao
         };
     } catch (error) {
         console.error('Error fetching revenue trend:', error);
-        return { labels: [], valores: [] };
+        return { labels: [], historico: [], previsao: [] };
     }
 };
 
@@ -646,7 +866,8 @@ export const getRevenueTrend = async () => {
 // ═══════════════════════════════════════════════════════════════
 export const getSalesTrend = async () => {
     try {
-        const quantidadeMeses = 10;
+        const quantidadeMeses = 10; // meses históricos
+        const previsaoMeses = 3;    // projeção
         const hoje = new Date();
         const dataInicial = new Date(hoje.getFullYear(), hoje.getMonth() - quantidadeMeses + 1, 1);
 
@@ -667,28 +888,64 @@ export const getSalesTrend = async () => {
         });
 
         const mesesAbrev = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-        const dadosTendencia = [];
+        const labelsHistoricos = [];
+        const totaisHistoricos = [];
 
         for (let i = 0; i < quantidadeMeses; i++) {
             const data = new Date(dataInicial.getFullYear(), dataInicial.getMonth() + i, 1);
             const mesAno = data.toISOString().substring(0, 7);
             const mesFormatado = `${mesesAbrev[data.getMonth()]}/${data.getFullYear().toString().slice(-2)}`;
-            
+
             const totalVendas = vendasPorMes[mesAno] || 0;
-            
-            dadosTendencia.push({
-                mes: mesFormatado,
-                totalVendas: totalVendas
-            });
+            labelsHistoricos.push(mesFormatado);
+            totaisHistoricos.push(totalVendas);
         }
 
+        // Regressão linear simples (OLS) y = a + b*x
+        const computeOLS = (ys) => {
+            const n = ys.length;
+            const xs = Array.from({ length: n }, (_, i) => i);
+            const mean = (arr) => (arr.reduce((s, v) => s + v, 0)) / (arr.length || 1);
+            const xBar = mean(xs);
+            const yBar = mean(ys);
+            let num = 0;
+            let den = 0;
+            for (let i = 0; i < n; i++) {
+                num += (xs[i] - xBar) * (ys[i] - yBar);
+                den += (xs[i] - xBar) ** 2;
+            }
+            const b = den === 0 ? 0 : num / den; // inclinação
+            const a = yBar - b * xBar; // intercepto
+            return { a, b };
+        };
+
+        const { a, b } = computeOLS(totaisHistoricos);
+
+        // Próximos meses previstos
+        const labelsPrevisao = [];
+        const valoresPrevistosSomente = [];
+        const baseDate = new Date(dataInicial.getFullYear(), dataInicial.getMonth() + quantidadeMeses, 1);
+        for (let j = 0; j < previsaoMeses; j++) {
+            const d = new Date(baseDate.getFullYear(), baseDate.getMonth() + j, 1);
+            const label = `${mesesAbrev[d.getMonth()]}/${d.getFullYear().toString().slice(-2)}`;
+            labelsPrevisao.push(label);
+            const x = quantidadeMeses + j;
+            const yPred = Math.max(0, a + b * x);
+            valoresPrevistosSomente.push(yPred);
+        }
+
+        const labelsCompletas = [...labelsHistoricos, ...labelsPrevisao];
+        const historico = [...totaisHistoricos, ...Array(previsaoMeses).fill(null)];
+        const previsao = [...Array(quantidadeMeses).fill(null), ...valoresPrevistosSomente];
+
         return {
-            labels: dadosTendencia.map(d => d.mes),
-            valores: dadosTendencia.map(d => d.totalVendas)
+            labels: labelsCompletas,
+            historico,
+            previsao
         };
     } catch (error) {
         console.error('Error fetching sales trend:', error);
-        return { labels: [], valores: [] };
+        return { labels: [], historico: [], previsao: [] };
     }
 };
 

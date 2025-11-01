@@ -1,14 +1,14 @@
 .kpiCard {
     background: white;
     border-radius: 12px;
-    padding: 24px;
+    padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    min-width: 280px;
+    min-width: 260px;
     flex: 1;
 }
 
@@ -17,7 +17,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .titulo {
@@ -43,17 +43,37 @@
 
 .valor {
     font-family: 'Average Sans', sans-serif;
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 800;
     color: #000;
-    margin: 8px 0;
+    margin: 6px 0;
+}
+
+/* Áreas com altura reservada para alinhar verticalmente entre cartões */
+.valorArea {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px; /* reserva para 1 ou 2 linhas curtas */
 }
 
 .variacao {
     font-family: 'Average Sans', sans-serif;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 700;
-    margin: 4px 0;
+    margin: 2px 0;
+}
+
+.variacaoArea {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+}
+
+/* Quando não há 'valor' exibido, a variação ganha mais destaque */
+.variacaoSolo {
+    font-size: 2rem;
 }
 
 .positivo {
@@ -74,7 +94,7 @@
 @media (max-width: 768px) {
     .kpiCard {
         min-width: 200px;
-        padding: 18px;
+        padding: 16px;
     }
 
     .titulo {
@@ -82,10 +102,14 @@
     }
 
     .valor {
-        font-size: 2rem;
+        font-size: 1.9rem;
     }
 
+    .valorArea { min-height: 40px; }
+
     .variacao {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
     }
+
+    .variacaoArea { min-height: 32px; }
 }

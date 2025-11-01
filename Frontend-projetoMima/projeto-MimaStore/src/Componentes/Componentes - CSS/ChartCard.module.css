@@ -7,7 +7,7 @@
     flex-direction: column;
     width: 100%;
     max-width: 100%;
-    overflow: hidden;
+    overflow: visible;
     box-sizing: border-box;
 }
 
@@ -17,6 +17,7 @@
     justify-content: center;
     gap: 8px;
     margin-bottom: 24px;
+    min-height: 56px; /* garante altura consistente (até 2 linhas) */
 }
 
 .titulo {
@@ -27,6 +28,11 @@
     margin: 0;
     text-align: center;
     line-height: 1.4;
+    line-clamp: 2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .iconInfo {
@@ -46,13 +52,27 @@
     position: relative;
     width: 100%;
     max-width: 100%;
-    height: 350px;
-    overflow: hidden;
+    height: 300px;
+    overflow: visible;
+    margin-top: 8px;
 }
 
 .chartContainer canvas {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
+/* Tooltip externo do Chart */
+.chartjs-ext-tooltip {
+    pointer-events: none;
+}
+
+.cardFooter {
+    height: 40px; /* reserva para paginação/legendas adicionais */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @media (max-width: 768px) {
@@ -60,11 +80,10 @@
         padding: 16px;
     }
 
-    .titulo {
-        font-size: 1rem;
-    }
+    .titulo { font-size: 0.95rem; }
+    .tituloContainer { min-height: 52px; }
 
     .chartContainer {
-        height: 280px;
+        height: 240px;
     }
 }

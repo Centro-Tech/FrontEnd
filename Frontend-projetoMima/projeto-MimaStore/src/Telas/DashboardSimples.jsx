@@ -69,7 +69,14 @@ export default function DashboardSimples() {
 
             // Set Chart 1 - Stock vs Sales Relation (Horizontal Bar)
             if (estoqueVendas && estoqueVendas.labels) {
-                setEstoqueVendasData({
+                console.log('[DASHBOARD UI] ✅ RECEBIDO estoqueVendas DO SERVICE:', {
+                    labelsCount: estoqueVendas.labels?.length,
+                    labels: estoqueVendas.labels?.slice(0, 3),
+                    vendas: estoqueVendas.vendas?.slice(0, 3),
+                    estoque: estoqueVendas.estoque?.slice(0, 3),
+                    timestamp: new Date().toISOString()
+                });
+                const chartData = {
                     labels: estoqueVendas.labels,
                     datasets: [
                         {
@@ -87,18 +94,31 @@ export default function DashboardSimples() {
                             barThickness: 20
                         }
                     ]
-                });
+                };
+                console.log('[DASHBOARD UI] Setando estoqueVendasData:', chartData);
+                setEstoqueVendasData(chartData);
                 if (estoqueVendas.meta) setEstoqueMeta(estoqueVendas.meta);
+            } else {
+                console.warn('[DASHBOARD UI] estoqueVendas sem labels:', estoqueVendas);
             }
 
             // Set Chart 2 - Top Categories
             if (categorias && categorias.labels) {
+                let catData = categorias;
+                // Fallback: se não houver dados para mês anterior, tenta mês atual
+                if ((categorias.labels?.length || 0) === 0) {
+                    try {
+                        const categoriasAtual = await DashboardService.getTopCategoriesByMonth(0);
+                        if (categoriasAtual?.labels) catData = categoriasAtual;
+                    } catch {}
+                }
+
                 setCategoriasData({
-                    labels: categorias.labels,
+                    labels: catData.labels || [],
                     datasets: [
                         {
                             label: 'Série: 1',
-                            data: categorias.serie1 || [],
+                            data: catData.serie1 || [],
                             backgroundColor: '#B08AAA',
                             borderRadius: 4,
                             barPercentage: 0.7,
@@ -106,7 +126,7 @@ export default function DashboardSimples() {
                         },
                         {
                             label: 'Série: 2',
-                            data: categorias.serie2 || [],
+                            data: catData.serie2 || [],
                             backgroundColor: '#6B3563',
                             borderRadius: 4,
                             barPercentage: 0.7,
@@ -180,22 +200,22 @@ export default function DashboardSimples() {
                 {/* KPIs Row */}
                 <div className={styles.kpisRow}>
                     <KpiCard
-                        titulo="Variação do Ticket Médio (mês)"
+                        titulo="Variação do Ticket Médio"
                         valor={ticketMedio.valor}
                         variacao={ticketMedio.variacao}
-                        explicacao="Mostra o valor médio gasto por cliente em cada compra. A variação compara os mesmos dias do mês atual com o mês anterior. Por exemplo: se estamos no dia 15, comparamos com os primeiros 15 dias do mês passado."
+                        explicacao="Quanto seus clientes gastam, em média, por compra. A variação mostra se esse valor aumentou ou diminuiu em relação ao mês passado (considerando os mesmos dias corridos)."
                     />
                     <KpiCard
                         titulo="Índice Sazional de Vendas"
                         valor={indiceSazional.status}
                         variacao={indiceSazional.variacao}
-                        explicacao="Compara as vendas da estação atual com a estação anterior, considerando o mesmo período. Se estamos no dia 15 do primeiro mês desta estação, comparamos com o dia 15 do primeiro mês da última estação."
+                        explicacao="Indica se suas vendas estão acima, na média ou abaixo do esperado para a estação atual. Compara com a estação anterior no mesmo período."
                     />
                     <KpiCard
                         titulo="Variação de Fidelização de Clientes"
-                        valor={`${fidelizacao.variacao >= 0 ? '+' : ''}${fidelizacao.variacao}%`}
+                        valor=""
                         variacao={fidelizacao.variacao}
-                        explicacao="Percentual de clientes que voltaram a comprar nos últimos 6 meses. Este valor é atualizado diariamente, sempre considerando exatamente 6 meses antes do dia atual."
+                        explicacao="Percentual de clientes que voltaram a comprar nos últimos 6 meses. Quanto maior, mais fiel é sua base de clientes."
                     />
                 </div>
 
@@ -203,15 +223,20 @@ export default function DashboardSimples() {
                 <div className={styles.chartsSection}>
                     {estoqueVendasData && (
                         <div>
+                            {console.log('[DASHBOARD UI] Renderizando ChartCard com estoqueVendasData:', {
+                                labelsCount: estoqueVendasData?.labels?.length,
+                                hasDatasets: !!estoqueVendasData?.datasets
+                            })}
                             <ChartCard
-                                titulo="Relação entre disponibilidade de estoque e vendas (semana)"
+                                titulo="Produtos com Alta Demanda"
                                 tipo="bar"
                                 dados={estoqueVendasData}
-                                explicacao="Ranking dos itens com maior relação vendas/estoque nesta semana. Use a paginação abaixo para ver todos."
+                                explicacao="Identifica produtos com alta demanda em relação ao estoque atual. Produtos no topo vendem rápido e precisam de reposição urgente para evitar ruptura."
                                 opcoes={{
                                     indexAxis: 'y',
                                     responsive: true,
                                     maintainAspectRatio: false,
+                                    interaction: { mode: 'nearest', intersect: false },
                                     plugins: {
                                         legend: {
                                             display: true,
@@ -220,6 +245,24 @@ export default function DashboardSimples() {
                                                 font: { family: "'Average Sans', sans-serif", size: 12 },
                                                 boxWidth: 12,
                                                 padding: 15
+                                            }
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function(ctx) {
+                                                    const dsLabel = ctx.dataset?.label || '';
+                                                    const vendas = ctx.chart?.data?.datasets?.[0]?.data?.[ctx.dataIndex] ?? 0;
+                                                    const estoque = ctx.chart?.data?.datasets?.[1]?.data?.[ctx.dataIndex] ?? 0;
+                                                    const ratio = estoque > 0 ? (vendas / estoque) : 0;
+                                                    const ratioFmt = isFinite(ratio) ? (ratio).toLocaleString('pt-BR', { maximumFractionDigits: 2 }) : '0';
+                                                    if (dsLabel.toLowerCase().includes('vendas')) {
+                                                        return `Vendas: ${vendas} (razão ${ratioFmt})`;
+                                                    }
+                                                    if (dsLabel.toLowerCase().includes('estoque')) {
+                                                        return `Estoque: ${estoque}`;
+                                                    }
+                                                    return `${dsLabel}: ${ctx.formattedValue}`;
+                                                }
                                             }
                                         }
                                     },
@@ -232,21 +275,23 @@ export default function DashboardSimples() {
                                         y: { title: { display: false }, grid: { display: false } }
                                     }
                                 }}
+                                rodape={
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                                        <button onClick={gotoPrevEstoquePage} disabled={(estoqueMeta?.page || 1) <= 1} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #B08AAA', background: '#fff', color: '#6B3563' }}>Anterior</button>
+                                        <span style={{ fontFamily: 'Average Sans, sans-serif', fontSize: 13, color: '#333' }}>Página {estoqueMeta?.page || 1} de {estoqueMeta?.totalPages || 1}</span>
+                                        <button onClick={gotoNextEstoquePage} disabled={(estoqueMeta?.page || 1) >= (estoqueMeta?.totalPages || 1)} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #B08AAA', background: '#fff', color: '#6B3563' }}>Próxima</button>
+                                    </div>
+                                }
                             />
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
-                                <button onClick={gotoPrevEstoquePage} disabled={(estoqueMeta?.page || 1) <= 1} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #B08AAA', background: '#fff', color: '#6B3563' }}>Anterior</button>
-                                <span style={{ fontFamily: 'Average Sans, sans-serif', fontSize: 12, color: '#333' }}>Página {estoqueMeta?.page || 1} de {estoqueMeta?.totalPages || 1}</span>
-                                <button onClick={gotoNextEstoquePage} disabled={(estoqueMeta?.page || 1) >= (estoqueMeta?.totalPages || 1)} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #B08AAA', background: '#fff', color: '#6B3563' }}>Próxima</button>
-                            </div>
                         </div>
                     )}
 
                     {categoriasData && (
                         <ChartCard
-                            titulo="Categorias mais vendidas no mês x período anterior"
+                            titulo="Categorias Mais Vendidas"
                             tipo="bar"
                             dados={categoriasData}
-                            explicacao="Compara as categorias mais vendidas do mês atual com o mês anterior. Série 1 representa o período anterior e Série 2 representa o período atual, ajudando a identificar mudanças nas preferências dos clientes."
+                            explicacao="Compara as categorias de produtos mais vendidas este mês com o mês passado. Ajuda a identificar mudanças nas preferências dos clientes."
                             opcoes={{
                                 responsive: true,
                                 maintainAspectRatio: false,
