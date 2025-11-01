@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../Componentes/Componentes - CSS/RealizarVenda.module.css';
 import { Navbar } from '../Componentes/Navbar.jsx';
@@ -12,140 +12,113 @@ export function RealizarVenda() {
     const [produtosPesquisa, setProdutosPesquisa] = useState([]);
     const [carrinho, setCarrinho] = useState([]);
     const [valorTotal, setValorTotal] = useState(0);
-    const [mostrarModalItens, setMostrarModalItens] = useState(false);
-    const [todosItens, setTodosItens] = useState([]);
-    const [carregandoItens, setCarregandoItens] = useState(false);
-    const [mostrarCardQuantidade, setMostrarCardQuantidade] = useState(false);
-    const [itemSelecionado, setItemSelecionado] = useState(null);
-    const [quantidadeModal, setQuantidadeModal] = useState(1);
+    const [adicionando, setAdicionando] = useState(false);
+    const [mostrarModalCliente, setMostrarModalCliente] = useState(false);
+    const [clientes, setClientes] = useState([]);
+    const [carregandoClientes, setCarregandoClientes] = useState(false);
+    const [buscaCliente, setBuscaCliente] = useState('');
+    const [clienteSelecionado, setClienteSelecionado] = useState(null);
 
     const voltarAoMenu = () => {
         navigate('/menu-inicial');
     };
 
-    // Função para buscar todos os itens
-    const buscarTodosItens = async () => {
-        setCarregandoItens(true);
+    useEffect(() => {
+        // mostrar modal de cliente assim que a tela abrir
+        setMostrarModalCliente(true);
+        carregarClientes();
+        // tentar carregar cliente previamente selecionado
         try {
-            const response = await API.get('/itens');
-            // Se retornar Page do Spring Boot
-            if (response.data.content && Array.isArray(response.data.content)) {
-                setTodosItens(response.data.content);
-            } else if (Array.isArray(response.data)) {
-                setTodosItens(response.data);
-            } else {
-                setTodosItens([]);
+            const existing = sessionStorage.getItem('clienteId');
+            if (existing) setClienteSelecionado(Number(existing));
+        } catch (e) {}
+    }, []);
+
+    const normalizeCliente = (c) => {
+        const id = c.idCliente ?? c.id ?? c.id_cliente ?? c.codigo ?? c.uuid ?? null;
+        const nome = c.nome ?? c.nomeCompleto ?? c.nomeCliente ?? c.nome_cliente ?? '';
+        const email = c.emailCliente ?? c.email ?? c.email_cliente ?? '';
+        const cpf = c.cpf ?? c.cpfCliente ?? c.cpf_cliente ?? '';
+        return { ...c, id, nome, email, cpf };
+    };
+
+    const carregarClientes = async () => {
+        setCarregandoClientes(true);
+        try {
+            const res = await API.get('/clientes');
+            const body = res.data;
+            let todos = [];
+            if (body && body.content && Array.isArray(body.content)) {
+                todos = body.content;
+            } else if (Array.isArray(body)) {
+                todos = body;
             }
-        } catch (error) {
-            console.error('Erro ao buscar itens:', error);
-            alert('Erro ao carregar lista de itens.');
-            setTodosItens([]);
+            const normalizados = (todos || []).map(normalizeCliente);
+            setClientes(normalizados);
+        } catch (err) {
+            console.error('Erro ao carregar clientes:', err);
+            setClientes([]);
         } finally {
-            setCarregandoItens(false);
+            setCarregandoClientes(false);
         }
     };
 
-    // Função para abrir modal
-    const abrirModalItens = () => {
-        setMostrarModalItens(true);
-        buscarTodosItens();
-    };
+    
 
-    // Função para abrir o card de quantidade
-    const abrirCardQuantidade = (item) => {
-        setItemSelecionado(item);
-        setQuantidadeModal(1);
-        setMostrarCardQuantidade(true);
-    };
+    // Função para pesquisar produto por código (usa endpoint: /itens/codigo/{codigo})
+    const pesquisarProduto = async () => {
+        if (!codigoPeca.trim()) return;
 
-    // Função para fechar o card de quantidade
-    const fecharCardQuantidade = () => {
-        setMostrarCardQuantidade(false);
-        setItemSelecionado(null);
-        setQuantidadeModal(1);
-    };
-
-    // Função para adicionar item do modal ao carrinho
-    // Agora: resolve itemId no front-end (usando cache `todosItens` quando necessário)
-    // e chama o endpoint POST /carrinho com o formato esperado pelo backend.
-    const adicionarItemDoModal = async (item, quantidade) => {
         try {
-            // Tentar pegar id direto do objeto
-            let itemId = item.id;
+            const response = await API.get(`/itens/codigo/${codigoPeca}`);
+            const data = response.data;
 
-            // Se não tiver id, tentar resolver pelo cache (ou carregá-lo)
-            if (!itemId && item.codigo) {
-                if (!todosItens || todosItens.length === 0) {
-                    await buscarTodosItens();
-                }
-
-                const encontrado = (todosItens || []).find(it => String(it.codigo) === String(item.codigo));
-                if (encontrado) itemId = encontrado.id;
-            }
-
-            if (!itemId) {
-                alert('Não foi possível resolver o ID do item.');
+            if (!data) {
+                setProdutosPesquisa([]);
+                alert('Produto não encontrado.');
                 return;
             }
 
-            const payload = {
-                itemId: itemId,
-                clienteId: null,
-                funcionarioId: null,
-                qtdParaVender: quantidade || 1
-            };
-
-            await API.post('/carrinho', payload);
-
-            // Atualizar carrinho local para refletir na UI
-            const produto = {
-                codigo: item.codigo,
-                nome: item.nome,
-                tamanho: item.tamanho?.nome || item.tamanho || '-',
-                disponivel: item.qtdEstoque,
-                valor: item.preco,
-                quantidade: quantidade || 1,
-                valorTotal: (item.preco || 0) * (quantidade || 1)
-            };
-
-            const produtoExistente = carrinho.find(i => i.codigo === produto.codigo);
-            if (produtoExistente) {
-                setCarrinho(carrinho.map(i => 
-                    i.codigo === produto.codigo 
-                        ? { ...i, quantidade: i.quantidade + produto.quantidade, valorTotal: (i.quantidade + produto.quantidade) * i.valor }
-                        : i
-                ));
-            } else {
-                setCarrinho([...carrinho, produto]);
+            // Caso o backend retorne uma lista
+            if (Array.isArray(data)) {
+                setProdutosPesquisa(data);
+                return;
             }
 
-            setValorTotal(prev => prev + produto.valorTotal);
-            setMostrarModalItens(false);
+            // Caso venha paginado (content)
+            if (data.content && Array.isArray(data.content)) {
+                setProdutosPesquisa(data.content);
+                return;
+            }
+
+            // Caso venha um único objeto, normalizar campos esperados pela UI
+            const produtoEncontrado = {
+                // normalizar campos comuns
+                id: data.id ?? data.itemId ?? data.produtoId ?? null,
+                codigo: data.codigo ?? data.cod ?? codigoPeca,
+                nome: data.nome ?? data.descricao ?? '',
+                tamanho: data.tamanho?.nome || data.tamanho || '-',
+                disponivel: data.qtdEstoque ?? data.disponivel ?? data.estoque ?? 0,
+                valor: Number(data.preco ?? data.valor ?? 0),
+                // preservar outras propriedades que o restante do componente pode usar
+                ...data
+            };
+
+            setProdutosPesquisa([produtoEncontrado]);
         } catch (error) {
-            console.error('Erro ao adicionar item ao carrinho:', error);
-            alert('Erro ao adicionar item ao carrinho.');
+            console.error('Erro ao pesquisar produto:', error);
+            setProdutosPesquisa([]);
+            if (error.response?.status === 404) {
+                alert('Produto não encontrado.');
+            } else {
+                alert('Erro na pesquisa. Tente novamente.');
+            }
         }
     };
 
-    // Função para pesquisar produto por código
-   const pesquisarProduto = async () => {
-  if (!codigoPeca.trim()) return;
-
-  try {
-    const response = await API.get(`/itens/${codigoPeca}`);
-    const produtoEncontrado = response.data;
-
-    setProdutosPesquisa([produtoEncontrado]);
-  } catch (error) {
-    console.error('Erro ao pesquisar produto:', error);
-    setProdutosPesquisa([]);
-    alert('Produto não encontrado ou erro na pesquisa.');
-  }
-};
-
 
     // Função para adicionar produto ao carrinho
-    const adicionarAoCarrinho = (produto) => {
+    const adicionarAoCarrinho = async (produto) => {
         if (quantidadeProduto <= 0 || quantidadeProduto > produto.disponivel) {
             alert('Quantidade inválida');
             return;
@@ -154,31 +127,62 @@ export function RealizarVenda() {
         const itemCarrinho = {
             ...produto,
             quantidade: quantidadeProduto,
-            valorTotal: produto.valor * quantidadeProduto
+            valorTotal: (produto.valor || 0) * quantidadeProduto
         };
 
-        // Verifica se o produto já existe no carrinho
-        const produtoExistente = carrinho.find(item => item.codigo === produto.codigo);
-        
-        if (produtoExistente) {
-            // Atualiza a quantidade se o produto já existe
-            setCarrinho(carrinho.map(item => 
-                item.codigo === produto.codigo 
-                    ? { ...item, quantidade: item.quantidade + quantidadeProduto, valorTotal: (item.quantidade + quantidadeProduto) * item.valor }
-                    : item
-            ));
-        } else {
-            // Adiciona novo produto ao carrinho
-            setCarrinho([...carrinho, itemCarrinho]);
+        // Preparar payload para o backend - preferir itemId quando disponível
+        const payload = {
+            codigoProduto: produto.codigo ?? null,
+            qtdParaVender: quantidadeProduto,
+            funcionarioId: null,
+            clienteId: null
+        };
+
+        // só anexar itemId se existir
+        if (produto.id) {
+            payload.itemId = produto.id;
         }
 
-        // Atualiza valor total
-        setValorTotal(valorTotal + itemCarrinho.valorTotal);
-        
-        // Limpa a pesquisa
-        setCodigoPeca('');
-        setProdutosPesquisa([]);
-        setQuantidadeProduto(1);
+        // buscar ids de cliente/funcionário do sessionStorage (se foram armazenados em alguma tela)
+        try {
+            const funcId = sessionStorage.getItem('funcionarioId');
+            const cliId = sessionStorage.getItem('clienteId');
+            if (funcId) payload.funcionarioId = Number(funcId);
+            if (cliId) payload.clienteId = Number(cliId);
+            // se não existir, mantemos explicitamente null para o backend saber que o campo existe
+        } catch (e) {
+            // se sessionStorage não estiver disponível, ignorar silenciosamente
+        }
+
+        try {
+            setAdicionando(true);
+            await API.post('/item-venda/carrinho', payload);
+
+            // Atualizar carrinho local para refletir na UI
+            const produtoExistente = carrinho.find(item => item.codigo === produto.codigo);
+            if (produtoExistente) {
+                setCarrinho(prev => prev.map(item => 
+                    item.codigo === produto.codigo 
+                        ? { ...item, quantidade: item.quantidade + quantidadeProduto, valorTotal: (item.quantidade + quantidadeProduto) * item.valor }
+                        : item
+                ));
+            } else {
+                setCarrinho(prev => [...prev, itemCarrinho]);
+            }
+
+            // Atualiza valor total de forma segura
+            setValorTotal(prev => prev + itemCarrinho.valorTotal);
+
+            // Limpa a pesquisa
+            setCodigoPeca('');
+            setProdutosPesquisa([]);
+            setQuantidadeProduto(1);
+        } catch (error) {
+            console.error('Erro ao adicionar ao carrinho:', error);
+            alert('Erro ao adicionar item ao carrinho. Tente novamente.');
+        } finally {
+            setAdicionando(false);
+        }
     };
 
     // Função para remover produto do carrinho
@@ -233,28 +237,32 @@ export function RealizarVenda() {
             <div className={styles.conteudo}>
                 <h1 className={styles.titulo}>Realizar Venda</h1>
                 
-                <div style={{ marginBottom: '20px', textAlign: 'right' }}>
-                    <button 
-                        className={styles.botaoListarItens}
-                        onClick={abrirModalItens}
-                    >
-                        📋 Ver Todos os Itens
-                    </button>
-                </div>
+                
 
                 <div className={styles.paineis}>
                     {/* Painel de Pesquisa */}
                     <div className={styles.painelEsquerdo}>
                         <div className={styles.campoPesquisa}>
                             <label className={styles.label}>Código da peça :</label>
-                            <input
-                                type="text"
-                                value={codigoPeca}
-                                onChange={(e) => setCodigoPeca(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && pesquisarProduto()}
-                                placeholder="Digite o código da peça"
-                                className={styles.inputPesquisa}
-                            />
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                <input
+                                    type="text"
+                                    value={codigoPeca}
+                                    onChange={(e) => setCodigoPeca(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && pesquisarProduto()}
+                                    placeholder="Digite o código da peça"
+                                    className={styles.inputPesquisa}
+                                />
+                                <button
+                                    type="button"
+                                    className={styles.botaoPesquisar}
+                                    onClick={pesquisarProduto}
+                                    disabled={!codigoPeca.trim()}
+                                    title="Pesquisar código"
+                                >
+                                    🔍
+                                </button>
+                            </div>
                         </div>
 
                         {/* Tabela de Produtos Encontrados */}
@@ -299,8 +307,9 @@ export function RealizarVenda() {
                                 <button 
                                     className={styles.botaoAdicionar}
                                     onClick={() => adicionarAoCarrinho(produtosPesquisa[0])}
+                                    disabled={adicionando}
                                 >
-                                    Adicionar no carrinho
+                                    {adicionando ? 'Adicionando...' : 'Adicionar no carrinho'}
                                 </button>
                             </div>
                         )}
@@ -361,54 +370,59 @@ export function RealizarVenda() {
                     </div>
                 </div>
             </div>
-
-            {/* Modal de Todos os Itens */}
-            {mostrarModalItens && (
-                <div className={styles.modalOverlay}>
-                    <div className={styles.modalContent}>
-                        <div className={styles.modalHeader}>
-                            <h2>Todos os Itens Cadastrados</h2>
-                            <button 
-                                className={styles.btnFechar}
-                                onClick={() => setMostrarModalItens(false)}
-                            >
-                                ✖
-                            </button>
+            
+            {/* Modal de seleção de cliente (aparece ao abrir a tela) */}
+            {mostrarModalCliente && (
+                <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1200 }}>
+                    <div style={{ width: '90%', maxWidth: 900, background: 'white', borderRadius: 8, padding: 20, boxShadow: '0 8px 30px rgba(0,0,0,0.2)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                            <h2 style={{ margin: 0 }}>Selecionar Cliente</h2>
+                            <div>
+                                <button onClick={() => { setMostrarModalCliente(false); }} style={{ marginRight: 8 }}>Fechar</button>
+                                <button onClick={() => { 
+                                    // continuar sem cliente
+                                    try { sessionStorage.removeItem('clienteId'); } catch(e){}
+                                    setClienteSelecionado(null);
+                                    setMostrarModalCliente(false);
+                                }}>Continuar sem cliente</button>
+                            </div>
                         </div>
-                        
-                        <div className={styles.modalBody}>
-                            {carregandoItens ? (
-                                <p>Carregando itens...</p>
-                            ) : todosItens.length === 0 ? (
-                                <p>Nenhum item cadastrado.</p>
+
+                        <div style={{ marginBottom: 12, display: 'flex', gap: 8 }}>
+                            <input placeholder="Buscar cliente por nome, email ou CPF" value={buscaCliente} onChange={(e) => setBuscaCliente(e.target.value)} style={{ flex: 1, padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
+                            <button onClick={carregarClientes} style={{ padding: '8px 12px' }}>Atualizar</button>
+                        </div>
+
+                        <div style={{ maxHeight: '50vh', overflow: 'auto' }}>
+                            {carregandoClientes ? (
+                                <p>Carregando clientes...</p>
                             ) : (
-                                <table className={styles.tabelaModal}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                     <thead>
-                                        <tr>
-                                            <th>Código</th>
-                                            <th>Nome</th>
-                                            <th>Tamanho</th>
-                                            <th>Estoque</th>
-                                            <th>Preço</th>
-                                            <th>Ação</th>
+                                        <tr style={{ textAlign: 'left', borderBottom: '1px solid #eee' }}>
+                                            <th style={{ padding: '8px' }}>Nome</th>
+                                            <th style={{ padding: '8px' }}>Email</th>
+                                            <th style={{ padding: '8px' }}>CPF</th>
+                                            <th style={{ padding: '8px' }}>Ação</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {todosItens.map((item, index) => (
-                                            <tr key={index}>
-                                                <td>{item.codigo}</td>
-                                                <td>{item.nome}</td>
-                                                <td>{item.tamanho?.nome || item.tamanho || '-'}</td>
-                                                <td>{item.qtdEstoque}</td>
-                                                <td>R$ {Number(item.preco).toFixed(2)}</td>
-                                                <td>
-                                                    <button
-                                                        className={styles.btnAdicionarModal}
-                                                        onClick={() => adicionarItemDoModal(item)}
-                                                        disabled={item.qtdEstoque <= 0}
-                                                    >
-                                                        Adicionar
-                                                    </button>
+                                        {clientes.filter(c => {
+                                            if (!buscaCliente) return true;
+                                            const q = buscaCliente.toLowerCase();
+                                            return (c.nome || '').toLowerCase().includes(q) || (c.email || '').toLowerCase().includes(q) || (c.cpf || '').includes(q);
+                                        }).map((c, idx) => (
+                                            <tr key={idx} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                                                <td style={{ padding: 8 }}>{c.nome}</td>
+                                                <td style={{ padding: 8 }}>{c.email}</td>
+                                                <td style={{ padding: 8 }}>{c.cpf}</td>
+                                                <td style={{ padding: 8 }}>
+                                                    <button onClick={() => {
+                                                        const id = c.id ?? null;
+                                                        try { sessionStorage.setItem('clienteId', String(id)); } catch(e){}
+                                                        setClienteSelecionado(id);
+                                                        setMostrarModalCliente(false);
+                                                    }}>Selecionar</button>
                                                 </td>
                                             </tr>
                                         ))}

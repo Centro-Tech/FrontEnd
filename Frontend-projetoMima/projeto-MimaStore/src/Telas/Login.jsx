@@ -36,6 +36,39 @@ export default function Login() {
       localStorage.setItem("token", token);
       API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
+      // tentar obter o email do token e buscar o usuário para guardar o id do funcionário
+      try {
+        const getEmailFromToken = (token) => {
+          try {
+            const parts = token.split('.');
+            if (parts.length < 2) return null;
+            const payload = parts[1];
+            const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            const obj = JSON.parse(jsonPayload);
+            return obj.sub || obj.user_name || obj.email || null;
+          } catch (e) {
+            return null;
+          }
+        };
+
+        const email = getEmailFromToken(token);
+        if (email) {
+          const res = await API.get('/usuarios');
+          const lista = res.data || [];
+          const encontrado = lista.find(u => (u.email || '').toLowerCase() === (email || '').toLowerCase());
+          if (encontrado && (encontrado.id || encontrado.id === 0)) {
+            // armazenar no sessionStorage para uso em telas (ex: RealizarVenda)
+            try { sessionStorage.setItem('funcionarioId', String(encontrado.id)); } catch(e) { /* no-op */ }
+          }
+        }
+      } catch (err) {
+        // não bloquear o login se algo falhar aqui
+        console.warn('Não foi possível armazenar funcionarioId no sessionStorage', err);
+      }
+
       setSucesso(true);
 
       // redireciona após 2s

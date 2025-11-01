@@ -63,6 +63,30 @@
     border-color: #D7BFD3;
 }
 
+.botaoPesquisar {
+    background-color: #864176;
+    color: #fff;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.05s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.botaoPesquisar:hover:not(:disabled) {
+    background-color: #724165;
+}
+
+.botaoPesquisar:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
 /* Tabelas */
 .tabelaProdutos, .tabelaCarrinho {
     margin: 20px 0;
