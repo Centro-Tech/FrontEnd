@@ -71,7 +71,7 @@ jobs:
           ssh -i ${{ env.SSH_KEY_PATH }} \
             -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \
-            ${{ secrets.REMOTE_USER }}@${{ env.HOST_REAL }} << 'EOF'
+            ${{ secrets.REMOTE_USER }}@${{ env.HOST_REAL }} << EOF
           
           echo "🚀 Configurando Docker e subindo container..."
 
@@ -81,7 +81,7 @@ jobs:
             sudo yum install -y docker || sudo dnf install -y docker
             sudo systemctl enable docker
             sudo systemctl start docker
-            sudo usermod -aG docker $USER
+            sudo usermod -aG docker \$USER
           fi
 
           cd /home/${{ secrets.REMOTE_USER }}/app
