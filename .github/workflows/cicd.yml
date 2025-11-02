@@ -36,9 +36,14 @@ jobs:
           npm run build --if-present
         working-directory: Frontend-projetoMima/projeto-MimaStore
 
-      # 5️⃣ Esperar a instância subir
-      - name: Aguardar inicialização da EC2
-        run: sleep 40
+      # 5️⃣ Criar chaves SSH para cada host
+      - name: Criar chaves SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY_A }}" > ~/.ssh/private_key_a.pem
+          chmod 600 ~/.ssh/private_key_a.pem
+          echo "${{ secrets.EC2_SSH_KEY_B }}" > ~/.ssh/private_key_b.pem
+          chmod 600 ~/.ssh/private_key_b.pem
 
       # 6️⃣ Mapear host e chave SSH específica para cada instância
       - name: Definir host e chave SSH
@@ -46,30 +51,51 @@ jobs:
         run: |
           if [ "${{ matrix.host }}" = "host_a" ]; then
             echo "HOST_REAL=${{ secrets.REMOTE_HOST }}" >> $GITHUB_ENV
-            echo "SSH_KEY=${{ secrets.EC2_SSH_KEY_A }}" >> $GITHUB_ENV
+            echo "SSH_KEY_PATH=$HOME/.ssh/private_key_a.pem" >> $GITHUB_ENV
           else
             echo "HOST_REAL=${{ secrets.REMOTE_HOST_B }}" >> $GITHUB_ENV
-            echo "SSH_KEY=${{ secrets.EC2_SSH_KEY_B }}" >> $GITHUB_ENV
+            echo "SSH_KEY_PATH=$HOME/.ssh/private_key_b.pem" >> $GITHUB_ENV
           fi
 
       # 7️⃣ Copiar arquivos do frontend via SSH (rsync)
       - name: FE - Copiar arquivos e Deploy
-        uses: easingthemes/ssh-deploy@main
-        with:
-          SSH_PRIVATE_KEY: ${{ env.SSH_KEY }}
-          REMOTE_HOST: ${{ env.HOST_REAL }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: /home/${{ secrets.REMOTE_USER }}/app
-          SOURCE: "Frontend-projetoMima/projeto-MimaStore/"
-          ARGS: "-rltgoDzvO --delete"
+        run: |
+          rsync -avz -e "ssh -i ${{ env.SSH_KEY_PATH }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
+            --delete \
+            Frontend-projetoMima/projeto-MimaStore/ \
+            ${{ secrets.REMOTE_USER }}@${{ env.HOST_REAL }}:/home/${{ secrets.REMOTE_USER }}/app/
 
       # 8️⃣ Configurar Docker e rodar container
       - name: FE - Configurar Docker e rodar container
-        uses: appleboy/ssh-action@v1.1.0
-        with:
-          host: ${{ env.HOST_REAL }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ env.SSH_KEY }}
+        run: |
+          ssh -i ${{ env.SSH_KEY_PATH }} \
+            -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            ${{ secrets.REMOTE_USER }}@${{ env.HOST_REAL }} << 'EOF'
+          
+          echo "🚀 Configurando Docker e subindo container..."
+
+          # Instala Docker se não existir
+          if ! command -v docker &> /dev/null; then
+            echo "⚙️ Instalando Docker..."
+            sudo yum install -y docker || sudo dnf install -y docker
+            sudo systemctl enable docker
+            sudo systemctl start docker
+            sudo usermod -aG docker $USER
+          fi
+
+          cd /home/${{ secrets.REMOTE_USER }}/app
+
+          # Para containers antigos
+          docker stop mimastore || true
+          docker rm mimastore || true
+
+          # Build e run do novo container
+          docker build -t mimastore-frontend .
+          docker run -d -p 80:80 --name mimastore mimastore-frontend
+
+          echo "✅ Deploy finalizado e container em execução!"
+          EOF
           script: |
             echo "🚀 Configurando Docker e subindo container..."
 
