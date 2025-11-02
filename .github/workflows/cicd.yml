@@ -98,26 +98,3 @@ jobs:
 
           echo "✅ Deploy finalizado e container em execução!"
           ENDSSH
-          script: |
-            echo "🚀 Configurando Docker e subindo container..."
-
-            # Instala Docker se não existir
-            if ! command -v docker &> /dev/null; then
-              echo "⚙️ Instalando Docker..."
-              sudo yum install -y docker || sudo dnf install -y docker
-              sudo systemctl enable docker
-              sudo systemctl start docker
-              sudo usermod -aG docker $USER
-            fi
-
-            cd /home/${{ secrets.REMOTE_USER }}/app
-
-            # Para containers antigos
-            docker stop mimastore || true
-            docker rm mimastore || true
-
-            # Build e run do novo container
-            docker build -t mimastore-frontend .
-            docker run -d -p 80:80 --name mimastore mimastore-frontend
-
-            echo "✅ Deploy finalizado e container em execução!"
