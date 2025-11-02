@@ -18,6 +18,11 @@ export function RealizarVenda() {
     const [carregandoClientes, setCarregandoClientes] = useState(false);
     const [buscaCliente, setBuscaCliente] = useState('');
     const [clienteSelecionado, setClienteSelecionado] = useState(null);
+    const [mostrarModalConfirmacao, setMostrarModalConfirmacao] = useState(false);
+    const [finalizando, setFinalizando] = useState(false);
+    const [vendaFinalizada, setVendaFinalizada] = useState(null);
+    const [vendaId, setVendaId] = useState(null);
+    const [enviandoComprovante, setEnviandoComprovante] = useState(false);
 
     const voltarAoMenu = () => {
         navigate('/menu-inicial');
@@ -40,6 +45,25 @@ export function RealizarVenda() {
         const email = c.emailCliente ?? c.email ?? c.email_cliente ?? '';
         const cpf = c.cpf ?? c.cpfCliente ?? c.cpf_cliente ?? '';
         return { ...c, id, nome, email, cpf };
+    };
+
+    const normalizeProduto = (data, fallbackCodigo = '') => {
+        const id = data.id ?? data.itemId ?? data.produtoId ?? null;
+        const codigo = data.codigo ?? data.cod ?? fallbackCodigo ?? '';
+        const nome = data.nome ?? data.descricao ?? '';
+        const tamanho = data.tamanho?.nome || data.tamanho || '-';
+        // tentar extrair quantidade/estoque
+        const disponivel = Number(data.qtdEstoque ?? data.disponivel ?? data.estoque ?? 0) || 0;
+        // garantir que valor seja numérico
+        let valor = data.preco ?? data.valor ?? data.price ?? 0;
+        // algumas APIs retornam valor como string com vírgula
+        if (typeof valor === 'string') {
+            valor = Number(String(valor).replace(',', '.')) || 0;
+        } else {
+            valor = Number(valor) || 0;
+        }
+
+        return { ...data, id, codigo, nome, tamanho, disponivel, valor };
     };
 
     const carregarClientes = async () => {
@@ -81,29 +105,18 @@ export function RealizarVenda() {
 
             // Caso o backend retorne uma lista
             if (Array.isArray(data)) {
-                setProdutosPesquisa(data);
+                setProdutosPesquisa(data.map(d => normalizeProduto(d, codigoPeca)));
                 return;
             }
 
             // Caso venha paginado (content)
             if (data.content && Array.isArray(data.content)) {
-                setProdutosPesquisa(data.content);
+                setProdutosPesquisa(data.content.map(d => normalizeProduto(d, codigoPeca)));
                 return;
             }
 
             // Caso venha um único objeto, normalizar campos esperados pela UI
-            const produtoEncontrado = {
-                // normalizar campos comuns
-                id: data.id ?? data.itemId ?? data.produtoId ?? null,
-                codigo: data.codigo ?? data.cod ?? codigoPeca,
-                nome: data.nome ?? data.descricao ?? '',
-                tamanho: data.tamanho?.nome || data.tamanho || '-',
-                disponivel: data.qtdEstoque ?? data.disponivel ?? data.estoque ?? 0,
-                valor: Number(data.preco ?? data.valor ?? 0),
-                // preservar outras propriedades que o restante do componente pode usar
-                ...data
-            };
-
+            const produtoEncontrado = normalizeProduto(data, codigoPeca);
             setProdutosPesquisa([produtoEncontrado]);
         } catch (error) {
             console.error('Erro ao pesquisar produto:', error);
@@ -195,38 +208,95 @@ export function RealizarVenda() {
     };
 
     // Função para finalizar venda
-   const finalizarVenda = async () => {
-  if (carrinho.length === 0) {
-    alert('Carrinho vazio');
-    return;
-  }
+         // Step 1: finalizar o carrinho (cria/fecha venda no backend)
+         const finalizarCarrinho = async () => {
+        if (carrinho.length === 0) {
+            alert('Carrinho vazio');
+            return;
+        }
 
-  try {
-    const vendaPayload = {
-      itens: carrinho.map(item => ({
-        codigoProduto: item.codigo,
-        quantidade: item.quantidade,
-        valorUnitario: item.valor,
-        valorTotal: item.valorTotal
-      })),
-      valorTotal
+        try {
+            setFinalizando(true);
+            const vendaPayload = {
+                itens: carrinho.map(item => ({
+                    codigoProduto: item.codigo,
+                    quantidade: item.quantidade,
+                    valorUnitario: item.valor,
+                    valorTotal: item.valorTotal
+                })),
+                valorTotal
+            };
+
+                let response;
+                // Chamar endpoint de finalizar carrinho — se existir cliente selecionado, incluir no path
+                if (clienteSelecionado) {
+                    response = await API.post(`/item-venda/carrinho/finalizar/${clienteSelecionado}`, vendaPayload);
+                } else {
+                    // tentar endpoint sem cliente
+                    response = await API.post('/item-venda/carrinho/finalizar', vendaPayload);
+                }
+
+                    // armazenar a resposta (espera-se que retorne dados da venda com algum id)
+                    // log para debug: mostrar body e headers retornados pelo backend
+                    try {
+                        console.log('finalizarCarrinho response.data:', response?.data);
+                        console.log('finalizarCarrinho response.headers:', response?.headers);
+                    } catch (e) {
+                        // ignorar se console não estiver disponível
+                    }
+                    setVendaFinalizada(response?.data ?? null);
+                // tentar extrair id da venda de várias fontes: body ou header Location
+                const body = response?.data ?? {};
+                let id = body.id ?? body.vendaId ?? body.idVenda ?? body.codigoVenda ?? null;
+                // se ainda não encontrou, tentar extrair do header Location (ex: Location: /vendas/123)
+                const locationHeader = response?.headers?.location || response?.headers?.Location || null;
+                if (!id && locationHeader) {
+                    try {
+                        const parts = String(locationHeader).split('/').filter(Boolean);
+                        id = parts[parts.length - 1] || null;
+                    } catch (e) {
+                        console.warn('Não foi possível extrair id da Location header:', locationHeader);
+                    }
+                }
+                if (id) setVendaId(id);
+                // abrir modal perguntando se deseja enviar comprovante
+                setMostrarModalConfirmacao(true);
+        } catch (error) {
+            console.error('Erro ao finalizar carrinho:', error);
+            const msg = error?.response?.data?.message || error?.message || 'Erro ao finalizar venda. Verifique os dados ou tente novamente.';
+            alert(msg);
+        } finally {
+            setFinalizando(false);
+        }
     };
 
-    await API.post('/vendas/vender', vendaPayload, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json"
-      }
-    });
+        // Step 2: enviar comprovante (assumo endpoint: POST /vendas/enviar-comprovante/{vendaId})
+        const enviarComprovante = async () => {
+        // preferir vendaId extraído dos headers/body; fallback para vendaFinalizada
+        const idToUse = vendaId ?? vendaFinalizada?.id ?? vendaFinalizada?.vendaId ?? vendaFinalizada?.idVenda ?? vendaFinalizada?.codigoVenda ?? null;
+        if (!idToUse) {
+            alert('ID da venda não retornado pelo servidor. Não é possível enviar comprovante automaticamente.');
+            return;
+        }
 
-    alert(`Venda finalizada com sucesso! Total: R$ ${valorTotal.toFixed(2)}`);
-    setCarrinho([]);
-    setValorTotal(0);
-  } catch (error) {
-    console.error('Erro ao finalizar venda:', error);
-    alert('Erro ao finalizar venda. Verifique os dados ou tente novamente.');
-  }
-};
+        try {
+            setEnviandoComprovante(true);
+            await API.post(`/vendas/finalizar/${idToUse}`);
+            alert('Comprovante enviado com sucesso.');
+            // limpar estado
+            setCarrinho([]);
+            setValorTotal(0);
+            setMostrarModalConfirmacao(false);
+            setVendaFinalizada(null);
+            setVendaId(null);
+        } catch (error) {
+            console.error('Erro ao enviar comprovante:', error);
+            const msg = error?.response?.data?.message || error?.message || 'Erro ao enviar comprovante. Tente novamente.';
+            alert(msg);
+        } finally {
+            setEnviandoComprovante(false);
+        }
+        };
 
 
     return (
@@ -284,7 +354,7 @@ export function RealizarVenda() {
                                             <td>{produto.nome}</td>
                                             <td>{produto.tamanho}</td>
                                             <td>{produto.disponivel}</td>
-                                            <td>R$ {produto.valor.toFixed(2)}</td>
+                                            <td>R$ {Number(produto.valor || 0).toFixed(2)}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -338,7 +408,7 @@ export function RealizarVenda() {
                                             <td>{item.nome}</td>
                                             <td>{item.tamanho}</td>
                                             <td>{item.quantidade}</td>
-                                            <td>R$ {item.valorTotal.toFixed(2)}</td>
+                                            <td>R$ {Number(item.valorTotal || (item.valor * item.quantidade) || 0).toFixed(2)}</td>
                                             <td>
                                                 <button 
                                                     className={styles.botaoRemover}
@@ -357,14 +427,14 @@ export function RealizarVenda() {
                         <div className={styles.resumoVenda}>
                             <div className={styles.valorTotal}>
                                 <h3>VALOR A PAGAR</h3>
-                                <h2>R$ {valorTotal.toFixed(2)}</h2>
+                                <h2>R$ {Number(valorTotal || 0).toFixed(2)}</h2>
                             </div>
                             <button 
                                 className={styles.botaoFinalizar}
-                                onClick={finalizarVenda}
-                                disabled={carrinho.length === 0}
+                                onClick={finalizarCarrinho}
+                                disabled={carrinho.length === 0 || finalizando}
                             >
-                                Finalizar
+                                {finalizando ? 'Finalizando...' : 'Finalizar'}
                             </button>
                         </div>
                     </div>
@@ -430,6 +500,36 @@ export function RealizarVenda() {
                                 </table>
                             )}
                         </div>
+                    </div>
+                </div>
+            )}
+            {/* Modal de confirmação de finalização de venda */}
+            {mostrarModalConfirmacao && (
+                <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1300 }}>
+                    <div style={{ width: '90%', maxWidth: 420, background: 'white', borderRadius: 8, padding: 20, boxShadow: '0 8px 30px rgba(0,0,0,0.2)' }}>
+                        {vendaFinalizada ? (
+                            <>
+                                <h3 style={{ marginTop: 0 }}>Venda finalizada</h3>
+                                <p>Venda concluída no valor de <strong>R$ {Number(valorTotal || 0).toFixed(2)}</strong>.</p>
+                                {vendaId && (
+                                    <p>Número da venda: <strong>{vendaId}</strong></p>
+                                )}
+                                {/* debug details removed */}
+                                <p style={{ marginTop: 8 }}>Deseja enviar o comprovante agora?</p>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
+                                    <button onClick={() => { setMostrarModalConfirmacao(false); setVendaFinalizada(null); setVendaId(null); }} disabled={enviandoComprovante} style={{ padding: '8px 12px' }}>Fechar</button>
+                                    <button onClick={enviarComprovante} disabled={enviandoComprovante} style={{ padding: '8px 12px' }}>{enviandoComprovante ? 'Enviando...' : 'Enviar comprovante'}</button>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <h3 style={{ marginTop: 0 }}>Processando finalização</h3>
+                                <p>Aguarde, estamos finalizando a venda...</p>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
+                                    <button onClick={() => setMostrarModalConfirmacao(false)} disabled={finalizando} style={{ padding: '8px 12px' }}>Cancelar</button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             )}
