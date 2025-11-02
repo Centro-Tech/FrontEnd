@@ -67,11 +67,13 @@ jobs:
 
       # 8️⃣ Configurar Docker e rodar container
       - name: FE - Configurar Docker e rodar container
+        env:
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
         run: |
           ssh -i ${{ env.SSH_KEY_PATH }} \
             -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \
-            ${{ secrets.REMOTE_USER }}@${{ env.HOST_REAL }} << EOF
+            ${{ secrets.REMOTE_USER }}@${{ env.HOST_REAL }} bash << 'ENDSSH'
           
           echo "🚀 Configurando Docker e subindo container..."
 
@@ -81,10 +83,10 @@ jobs:
             sudo yum install -y docker || sudo dnf install -y docker
             sudo systemctl enable docker
             sudo systemctl start docker
-            sudo usermod -aG docker \$USER
+            sudo usermod -aG docker $USER
           fi
 
-          cd /home/${{ secrets.REMOTE_USER }}/app
+          cd $HOME/app
 
           # Para containers antigos
           docker stop mimastore || true
@@ -95,7 +97,7 @@ jobs:
           docker run -d -p 80:80 --name mimastore mimastore-frontend
 
           echo "✅ Deploy finalizado e container em execução!"
-          EOF
+          ENDSSH
           script: |
             echo "🚀 Configurando Docker e subindo container..."
 
