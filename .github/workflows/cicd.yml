@@ -9,7 +9,7 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     strategy:
-      matrix:
+      matrix: 
         host: ["host_a", "host_b"]  # nomes literais para a matrix
 
     steps:
@@ -40,21 +40,23 @@ jobs:
       - name: Aguardar inicialização da EC2
         run: sleep 40
 
-      # 6️⃣ Mapear host literal para o secret real
-      - name: Definir host real
+      # 6️⃣ Mapear host e chave SSH específica para cada instância
+      - name: Definir host e chave SSH
         id: set_host
         run: |
           if [ "${{ matrix.host }}" = "host_a" ]; then
             echo "HOST_REAL=${{ secrets.REMOTE_HOST }}" >> $GITHUB_ENV
+            echo "SSH_KEY=${{ secrets.EC2_SSH_KEY_A }}" >> $GITHUB_ENV
           else
             echo "HOST_REAL=${{ secrets.REMOTE_HOST_B }}" >> $GITHUB_ENV
+            echo "SSH_KEY=${{ secrets.EC2_SSH_KEY_B }}" >> $GITHUB_ENV
           fi
 
       # 7️⃣ Copiar arquivos do frontend via SSH (rsync)
       - name: FE - Copiar arquivos e Deploy
         uses: easingthemes/ssh-deploy@main
         with:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          SSH_PRIVATE_KEY: ${{ env.SSH_KEY }}
           REMOTE_HOST: ${{ env.HOST_REAL }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: /home/${{ secrets.REMOTE_USER }}/app
@@ -67,7 +69,7 @@ jobs:
         with:
           host: ${{ env.HOST_REAL }}
           username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          key: ${{ env.SSH_KEY }}
           script: |
             echo "🚀 Configurando Docker e subindo container..."
 
