@@ -14,12 +14,13 @@ export default function DashboardSimples() {
     // KPIs State
     const [ticketMedio, setTicketMedio] = useState({ valor: 'R$ 0,00', variacao: 0 });
     const [indiceSazional, setIndiceSazional] = useState({ status: 'Calculando...', variacao: 0 });
-    const [fidelizacao, setFidelizacao] = useState({ variacao: 0 });
+    const [fidelizacao, setFidelizacao] = useState({ valor: '0', variacao: 0 });
     
     // Charts Data State
     const [estoqueVendasData, setEstoqueVendasData] = useState(null);
     const [estoqueMeta, setEstoqueMeta] = useState({ page: 1, totalPages: 1, pageSize: 10 });
     const [categoriasData, setCategoriasData] = useState(null);
+    const [categoriasMeta, setCategoriasMeta] = useState([]);
 
     useEffect(() => {
         loadDashboardData();
@@ -35,12 +36,12 @@ export default function DashboardSimples() {
         setLoading(true);
         try {
             // Load KPIs
-            const [ticketData, sazonalData, fidelizacaoData, estoqueVendas, categorias] = await Promise.all([
+            const [ticketData, sazonalData, fidelizacaoData, estoqueVendas, categoriasTop3] = await Promise.all([
                 DashboardService.getAverageTicket(),
                 DashboardService.getSeasonalIndex(),
-                DashboardService.getCustomerRetention(),
+                DashboardService.getLoyalCustomersStats(),
                 DashboardService.getStockSalesRelation({ page: 1, pageSize: 10, order: 'desc' }),
-                DashboardService.getTopCategoriesByMonth(1)
+                DashboardService.getCategoriesTopPerLast3Months()
             ]);
 
             // Set KPI 1 - Average Ticket
@@ -62,9 +63,14 @@ export default function DashboardSimples() {
 
             // Set KPI 3 - Customer Retention
             if (fidelizacaoData) {
-                setFidelizacao({
-                    variacao: fidelizacaoData.variacao || 0
-                });
+                const abs = Number(fidelizacaoData.currentCount || 0);
+                const base = Number(fidelizacaoData.startOfMonthCount || 0);
+                const varPct = fidelizacaoData.variationPercent;
+                // Caso especial baseline zero: mostrar "+X clientes"
+                const variacaoDisplay = (varPct === null)
+                    ? `+${Math.max(0, abs - base)} clientes`
+                    : Math.round(varPct);
+                setFidelizacao({ valor: String(abs), variacao: variacaoDisplay });
             }
 
             // Set Chart 1 - Stock vs Sales Relation (Horizontal Bar)
@@ -102,38 +108,22 @@ export default function DashboardSimples() {
                 console.warn('[DASHBOARD UI] estoqueVendas sem labels:', estoqueVendas);
             }
 
-            // Set Chart 2 - Top Categories
-            if (categorias && categorias.labels) {
-                let catData = categorias;
-                // Fallback: se não houver dados para mês anterior, tenta mês atual
-                if ((categorias.labels?.length || 0) === 0) {
-                    try {
-                        const categoriasAtual = await DashboardService.getTopCategoriesByMonth(0);
-                        if (categoriasAtual?.labels) catData = categoriasAtual;
-                    } catch {}
-                }
-
+            // Set Chart 2 - Top category per month (últimos 3)
+            if (categoriasTop3 && categoriasTop3.labels) {
                 setCategoriasData({
-                    labels: catData.labels || [],
+                    labels: categoriasTop3.labels,
                     datasets: [
                         {
-                            label: 'Série: 1',
-                            data: catData.serie1 || [],
-                            backgroundColor: '#B08AAA',
-                            borderRadius: 4,
-                            barPercentage: 0.7,
-                            categoryPercentage: 0.8
-                        },
-                        {
-                            label: 'Série: 2',
-                            data: catData.serie2 || [],
-                            backgroundColor: '#6B3563',
-                            borderRadius: 4,
+                            label: 'Categoria campeã por mês',
+                            data: categoriasTop3.values || [],
+                            backgroundColor: categoriasTop3.colors || [],
+                            borderRadius: 6,
                             barPercentage: 0.7,
                             categoryPercentage: 0.8
                         }
                     ]
                 });
+                setCategoriasMeta(categoriasTop3.meta || []);
             }
 
         } catch (error) {
@@ -212,10 +202,10 @@ export default function DashboardSimples() {
                         explicacao="Indica se suas vendas estão acima, na média ou abaixo do esperado para a estação atual. Compara com a estação anterior no mesmo período."
                     />
                     <KpiCard
-                        titulo="Variação de Fidelização de Clientes"
-                        valor=""
+                        titulo="Clientes fidelizados"
+                        valor={fidelizacao.valor}
                         variacao={fidelizacao.variacao}
-                        explicacao="Percentual de clientes que voltaram a comprar nos últimos 6 meses. Quanto maior, mais fiel é sua base de clientes."
+                        explicacao="Total de clientes fidelizados (últimos 12 meses). Abaixo, a variação em relação ao início do mês; se não houver base no início do mês, mostramos o ganho absoluto."
                     />
                 </div>
 
@@ -228,7 +218,7 @@ export default function DashboardSimples() {
                                 hasDatasets: !!estoqueVendasData?.datasets
                             })}
                             <ChartCard
-                                titulo="Produtos com Alta Demanda"
+                                titulo="Produtos em Risco de Ruptura"
                                 tipo="bar"
                                 dados={estoqueVendasData}
                                 explicacao="Identifica produtos com alta demanda em relação ao estoque atual. Produtos no topo vendem rápido e precisam de reposição urgente para evitar ruptura."
@@ -288,42 +278,97 @@ export default function DashboardSimples() {
 
                     {categoriasData && (
                         <ChartCard
-                            titulo="Categorias Mais Vendidas"
+                            titulo="Categorias Mais Vendidas (últimos 3 meses)"
                             tipo="bar"
                             dados={categoriasData}
-                            explicacao="Compara as categorias de produtos mais vendidas este mês com o mês passado. Ajuda a identificar mudanças nas preferências dos clientes."
+                            explicacao="Para cada mês, mostramos a categoria campeã em vendas e sua quantidade. A cor da barra indica a categoria vencedora."
                             opcoes={{
                                 responsive: true,
                                 maintainAspectRatio: false,
                                 plugins: {
-                                    legend: {
-                                        display: true,
-                                        position: 'top',
-                                        align: 'end',
-                                        labels: {
-                                            font: {
-                                                family: "'Average Sans', sans-serif",
-                                                size: 11
-                                            },
-                                            boxWidth: 12,
-                                            padding: 10
+                                    legend: { display: false },
+                                    tooltip: {
+                                        enabled: false,
+                                        external: (context) => {
+                                            const { chart, tooltip } = context;
+                                            if (!tooltip || tooltip.opacity === 0) return;
+                                            const dp = tooltip.dataPoints?.[0];
+                                            if (!dp) return;
+                                            const idx = dp.dataIndex;
+                                            const meta = (Array.isArray(categoriasMeta) ? categoriasMeta : []);
+                                            const info = meta[idx];
+                                            const catNome = info?.categoryName || dp.dataset?.label || 'Categoria';
+                                            const qtd = Number(dp.raw || 0);
+                                            // Cria/atualiza elemento do tooltip
+                                            let el = document.querySelector(`#ext-tooltip-${chart.id}`);
+                                            if (!el) {
+                                                el = document.createElement('div');
+                                                el.id = `ext-tooltip-${chart.id}`;
+                                                el.className = 'chartjs-ext-tooltip';
+                                                el.style.position = 'fixed';
+                                                el.style.background = 'rgba(134, 65, 118, 0.95)';
+                                                el.style.color = '#fff';
+                                                el.style.borderRadius = '8px';
+                                                el.style.padding = '10px 12px';
+                                                el.style.pointerEvents = 'none';
+                                                el.style.transform = 'translate(-50%, -100%)';
+                                                el.style.whiteSpace = 'nowrap';
+                                                el.style.zIndex = '2147483647';
+                                                el.style.boxShadow = '0 6px 16px rgba(0,0,0,0.18)';
+                                                el.style.fontFamily = "'Average Sans', sans-serif";
+                                                el.style.fontSize = '12px';
+                                                document.body.appendChild(el);
+                                            }
+                                            el.innerHTML = `<div style="font-weight:700; margin-bottom:6px; font-family:'Average', serif; font-size:13px">${categoriasData.labels[idx]}</div>` +
+                                                `<div>Categoria campeã do mês: ${catNome} — ${qtd} vendas</div>`;
+                                            const rect = chart.canvas.getBoundingClientRect();
+                                            const x = rect.left + window.scrollX + tooltip.caretX;
+                                            const y = rect.top + window.scrollY + tooltip.caretY;
+                                            el.style.opacity = '1';
+                                            const margin = 12;
+                                            const ttW = el.offsetWidth;
+                                            const ttH = el.offsetHeight;
+                                            let left = x;
+                                            let top = y - 12;
+                                            if (top - ttH < window.scrollY) {
+                                                el.style.transform = 'translate(-50%, 0)';
+                                                top = y + margin;
+                                            } else {
+                                                el.style.transform = 'translate(-50%, -100%)';
+                                            }
+                                            const minLeft = window.scrollX + margin + ttW / 2;
+                                            const maxLeft = window.scrollX + window.innerWidth - margin - ttW / 2;
+                                            if (left < minLeft) left = minLeft;
+                                            if (left > maxLeft) left = maxLeft;
+                                            el.style.left = `${left}px`;
+                                            el.style.top = `${top}px`;
                                         }
                                     }
                                 },
                                 scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        grid: {
-                                            display: true
-                                        }
-                                    },
-                                    x: {
-                                        grid: {
-                                            display: false
-                                        }
-                                    }
+                                    y: { beginAtZero: true, grid: { display: true } },
+                                    x: { grid: { display: false } }
                                 }
                             }}
+                            rodape={
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
+                                        {categoriasMeta.map((m, i) => (
+                                            <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'Average Sans, sans-serif', fontSize: 12 }}>
+                                                <span style={{ width: 10, height: 10, background: m.color, borderRadius: 2, display: 'inline-block' }}></span>
+                                                <span style={{ color: '#333' }}>{m.categoryName}</span>
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+                                        {categoriasMeta.map((m, i) => (
+                                            <span key={`b-${i}`} style={{ background: '#f5f0f4', color: '#6B3563', border: '1px solid #B08AAA', borderRadius: 12, padding: '2px 8px', fontFamily: 'Average Sans, sans-serif', fontSize: 12 }}>
+                                                {m.monthLabel}: {m.categoryName} ({m.count})
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            }
                         />
                     )}
                 </div>

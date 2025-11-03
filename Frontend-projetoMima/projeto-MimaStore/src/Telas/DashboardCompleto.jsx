@@ -14,10 +14,11 @@ export default function DashboardCompleto() {
     // KPIs State
     const [ticketMedio, setTicketMedio] = useState({ valor: 'R$ 0,00', variacao: 0 });
     const [indiceSazional, setIndiceSazional] = useState({ status: 'Calculando...', variacao: 0 });
-    const [fidelizacao, setFidelizacao] = useState({ variacao: 0 });
+    const [fidelizacao, setFidelizacao] = useState({ valor: '0', variacao: 0 });
     
     // Charts Data State
-    const [comparacaoMensalData, setComparacaoMensalData] = useState(null);
+    const [clientesEvolucaoData, setClientesEvolucaoData] = useState(null);
+    const [clientesEvolucaoMeta, setClientesEvolucaoMeta] = useState(null);
     const [tendenciaFaturamentoData, setTendenciaFaturamentoData] = useState(null);
     const [tendenciaVendasData, setTendenciaVendasData] = useState(null);
 
@@ -28,11 +29,11 @@ export default function DashboardCompleto() {
     const loadDashboardData = async () => {
         setLoading(true);
         try {
-            const [ticketMedioData, sazionalData, fidelizacaoData, comparacaoMensal, tendenciaFaturamento, tendenciaVendas] = await Promise.all([
+            const [ticketMedioData, sazionalData, fidelizacaoData, clientesEvolucao, tendenciaFaturamento, tendenciaVendas] = await Promise.all([
                 DashboardService.getAverageTicket(),
                 DashboardService.getSeasonalIndex(),
-                DashboardService.getCustomerRetention(),
-                DashboardService.getMonthlySalesComparison(),
+                DashboardService.getLoyalCustomersStats(),
+                DashboardService.getCustomersEvolution(),
                 DashboardService.getRevenueTrend(),
                 DashboardService.getSalesTrend()
             ]);
@@ -53,34 +54,45 @@ export default function DashboardCompleto() {
             }
 
             if (fidelizacaoData) {
-                setFidelizacao({
-                    variacao: fidelizacaoData.variacao || 0
-                });
+                const abs = Number(fidelizacaoData.currentCount || 0);
+                const base = Number(fidelizacaoData.startOfMonthCount || 0);
+                const varPct = fidelizacaoData.variationPercent;
+                const variacaoDisplay = (varPct === null) ? `+${Math.max(0, abs - base)} clientes` : Math.round(varPct);
+                setFidelizacao({ valor: String(abs), variacao: variacaoDisplay });
             }
 
-            // Chart 1 - Monthly Sales Comparison (3 items showing)
-            if (comparacaoMensal && comparacaoMensal.labels) {
-                setComparacaoMensalData({
-                    labels: comparacaoMensal.labels,
-                    datasets: [
-                        {
-                            label: 'Série: 1',
-                            data: comparacaoMensal.serie1 || [],
-                            backgroundColor: '#B08AAA',
-                            borderRadius: 4,
-                            barPercentage: 0.7,
-                            categoryPercentage: 0.8
-                        },
-                        {
-                            label: 'Série: 2',
-                            data: comparacaoMensal.serie2 || [],
-                            backgroundColor: '#6B3563',
-                            borderRadius: 4,
-                            barPercentage: 0.7,
-                            categoryPercentage: 0.8
-                        }
-                    ]
-                });
+            // Chart 1 - Clientes únicos por mês + previsão
+            if (clientesEvolucao && clientesEvolucao.labels) {
+                const labels = clientesEvolucao.labels;
+                const hist = clientesEvolucao.historico || [];
+                const prev = clientesEvolucao.previsao || [];
+                const datasets = [
+                    {
+                        type: 'bar',
+                        label: 'Clientes únicos',
+                        data: hist,
+                        backgroundColor: '#6B3563',
+                        borderRadius: 4,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8,
+                        order: 1
+                    }
+                ];
+                if ((prev?.length || 0) > 0) {
+                    // Barras para previsão (somente nos 3 meses futuros)
+                    datasets.push({
+                        type: 'bar',
+                        label: 'Clientes previstos',
+                        data: prev,
+                        backgroundColor: 'rgba(242, 201, 224, 0.7)',
+                        borderRadius: 4,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8,
+                        order: 1
+                    });
+                }
+                setClientesEvolucaoData({ labels, datasets });
+                setClientesEvolucaoMeta(clientesEvolucao.meta || null);
             }
 
             // Chart 2 - Revenue Billing Trend (Line chart) com previsão
@@ -206,22 +218,22 @@ export default function DashboardCompleto() {
                             explicacao="Indica se suas vendas estão acima, na média ou abaixo do esperado para a estação atual. Compara com a estação anterior no mesmo período."
                         />
                         <KpiCard
-                            titulo="Variação de Fidelização de Clientes"
-                            valor=""
+                            titulo="Clientes fidelizados"
+                            valor={fidelizacao.valor}
                             variacao={fidelizacao.variacao}
-                            explicacao="Percentual de clientes que voltaram a comprar nos últimos 6 meses. Quanto maior, mais fiel é sua base de clientes."
+                            explicacao="Total de clientes fidelizados (últimos 12 meses). Abaixo, a variação em relação ao início do mês; se não houver base no início do mês, mostramos o ganho absoluto."
                         />
                     </div>
 
                     {/* Charts Grid - 3 columns layout */}
                     <div className={styles.chartsGrid}>
-                        {comparacaoMensalData && (
+                        {clientesEvolucaoData && (
                             <div className={styles.chartCard}>
                                 <ChartCard
-                                    titulo="Comparação Mensal de Vendas"
+                                    titulo="Volume de Clientes"
                                     tipo="bar"
-                                    dados={comparacaoMensalData}
-                                    explicacao="Compara o desempenho de vendas do mês atual com o mês anterior, mostrando crescimento ou queda nos últimos 3 meses."
+                                    dados={clientesEvolucaoData}
+                                    explicacao="Número de clientes únicos por mês (últimos 10 meses) e previsão para os próximos 3. Se a série for curta/ruidosa, a projeção é omitida."
                                     opcoes={{
                                         responsive: true,
                                         maintainAspectRatio: false,
@@ -254,6 +266,11 @@ export default function DashboardCompleto() {
                                             }
                                         }
                                     }}
+                                    rodape={clientesEvolucaoMeta?.warn ? (
+                                        <div style={{ fontFamily: 'Average Sans, sans-serif', fontSize: 12, color: '#864176' }}>
+                                            Série curta/ruidosa (R² {clientesEvolucaoMeta?.r2}). Previsões não exibidas para evitar extrapolação incerta.
+                                        </div>
+                                    ) : null}
                                 />
                             </div>
                         )}
@@ -343,6 +360,7 @@ export default function DashboardCompleto() {
                                 />
                             </div>
                         )}
+                        
                     </div>
                 </div>
             </div>

@@ -3,8 +3,12 @@ import styles from './Componentes - CSS/KpiCard.module.css';
 import { Tooltip } from './Tooltip';
 
 export function KpiCard({ titulo, valor, variacao, subtitulo, explicacao }) {
-    const isPositive = variacao >= 0;
-    const variacaoFormatada = `${isPositive ? '+' : ''}${variacao}%`;
+    const isNumber = typeof variacao === 'number' && isFinite(variacao);
+    const isString = typeof variacao === 'string';
+    const isPositive = isNumber ? (variacao >= 0) : (isString ? !String(variacao).trim().startsWith('-') : true);
+    const variacaoFormatada = isNumber
+        ? `${variacao >= 0 ? '+' : ''}${Math.round(variacao)}%`
+        : (isString ? String(variacao) : '');
     const isValorVazio = !valor || String(valor).trim().length === 0;
 
     return (
@@ -26,9 +30,11 @@ export function KpiCard({ titulo, valor, variacao, subtitulo, explicacao }) {
                 <div className={styles.valor}>{valor}</div>
             </div>
             <div className={styles.variacaoArea}>
-                <div className={`${styles.variacao} ${isValorVazio ? styles.variacaoSolo : ''} ${isPositive ? styles.positivo : styles.negativo}`}>
-                    {variacaoFormatada}
-                </div>
+                {(isNumber || isString) && (
+                    <div className={`${styles.variacao} ${isValorVazio ? styles.variacaoSolo : ''} ${isPositive ? styles.positivo : styles.negativo}`}>
+                        {variacaoFormatada}
+                    </div>
+                )}
             </div>
             {subtitulo && <div className={styles.subtitulo}>{subtitulo}</div>}
         </div>
