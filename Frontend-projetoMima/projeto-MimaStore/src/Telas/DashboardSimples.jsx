@@ -90,14 +90,16 @@ export default function DashboardSimples() {
                             data: estoqueVendas.vendas || [],
                             backgroundColor: '#864176',
                             borderRadius: 6,
-                            barThickness: 20
+                            barPercentage: 0.7,
+                            categoryPercentage: 0.5
                         },
                         {
                             label: 'Estoque',
                             data: estoqueVendas.estoque || [],
                             backgroundColor: '#B08AAA',
                             borderRadius: 6,
-                            barThickness: 20
+                            barPercentage: 0.7,
+                            categoryPercentage: 0.5
                         }
                     ]
                 };
@@ -140,8 +142,8 @@ export default function DashboardSimples() {
                 setEstoqueVendasData({
                     labels: estoqueVendas.labels,
                     datasets: [
-                        { label: 'Vendas', data: estoqueVendas.vendas || [], backgroundColor: '#864176', borderRadius: 6, barThickness: 20 },
-                        { label: 'Estoque', data: estoqueVendas.estoque || [], backgroundColor: '#B08AAA', borderRadius: 6, barThickness: 20 }
+                        { label: 'Vendas', data: estoqueVendas.vendas || [], backgroundColor: '#864176', borderRadius: 6, barPercentage: 0.7, categoryPercentage: 0.5 },
+                        { label: 'Estoque', data: estoqueVendas.estoque || [], backgroundColor: '#B08AAA', borderRadius: 6, barPercentage: 0.7, categoryPercentage: 0.5 }
                     ]
                 });
                 if (estoqueVendas.meta) setEstoqueMeta(estoqueVendas.meta);
@@ -278,7 +280,7 @@ export default function DashboardSimples() {
 
                     {categoriasData && (
                         <ChartCard
-                            titulo="Categorias Mais Vendidas (últimos 3 meses)"
+                            titulo="Categorias Mais Vendidas"
                             tipo="bar"
                             dados={categoriasData}
                             explicacao="Para cada mês, mostramos a categoria campeã em vendas e sua quantidade. A cor da barra indica a categoria vencedora."
