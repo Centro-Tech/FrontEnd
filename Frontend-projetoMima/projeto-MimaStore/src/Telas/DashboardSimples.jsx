@@ -90,7 +90,7 @@ export default function DashboardSimples() {
                             data: estoqueVendas.vendas || [],
                             backgroundColor: '#864176',
                             borderRadius: 6,
-                            barPercentage: 0.8,
+                            barPercentage: 0.9,
                             categoryPercentage: 0.5
                         },
                         {
@@ -98,7 +98,7 @@ export default function DashboardSimples() {
                             data: estoqueVendas.estoque || [],
                             backgroundColor: '#B08AAA',
                             borderRadius: 6,
-                            barPercentage: 0.8,
+                            barPercentage: 0.9,
                             categoryPercentage: 0.5
                         }
                     ]
@@ -229,6 +229,12 @@ export default function DashboardSimples() {
                                     responsive: true,
                                     maintainAspectRatio: false,
                                     interaction: { mode: 'nearest', intersect: false },
+                                    datasets: {
+                                        bar: {
+                                            barPercentage: 0.8,
+                                            categoryPercentage: 0.5
+                                        }
+                                    },
                                     plugins: {
                                         legend: {
                                             display: true,
