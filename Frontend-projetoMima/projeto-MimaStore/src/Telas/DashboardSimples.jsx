@@ -90,7 +90,7 @@ export default function DashboardSimples() {
                             data: estoqueVendas.vendas || [],
                             backgroundColor: '#864176',
                             borderRadius: 6,
-                            barPercentage: 0.7,
+                            barPercentage: 0.8,
                             categoryPercentage: 0.5
                         },
                         {
@@ -98,7 +98,7 @@ export default function DashboardSimples() {
                             data: estoqueVendas.estoque || [],
                             backgroundColor: '#B08AAA',
                             borderRadius: 6,
-                            barPercentage: 0.7,
+                            barPercentage: 0.8,
                             categoryPercentage: 0.5
                         }
                     ]
@@ -142,8 +142,8 @@ export default function DashboardSimples() {
                 setEstoqueVendasData({
                     labels: estoqueVendas.labels,
                     datasets: [
-                        { label: 'Vendas', data: estoqueVendas.vendas || [], backgroundColor: '#864176', borderRadius: 6, barPercentage: 0.7, categoryPercentage: 0.5 },
-                        { label: 'Estoque', data: estoqueVendas.estoque || [], backgroundColor: '#B08AAA', borderRadius: 6, barPercentage: 0.7, categoryPercentage: 0.5 }
+                        { label: 'Vendas', data: estoqueVendas.vendas || [], backgroundColor: '#864176', borderRadius: 6, barPercentage: 0.8, categoryPercentage: 0.5 },
+                        { label: 'Estoque', data: estoqueVendas.estoque || [], backgroundColor: '#B08AAA', borderRadius: 6, barPercentage: 0.8, categoryPercentage: 0.5 }
                     ]
                 });
                 if (estoqueVendas.meta) setEstoqueMeta(estoqueVendas.meta);
