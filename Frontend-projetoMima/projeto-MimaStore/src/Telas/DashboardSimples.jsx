@@ -18,7 +18,7 @@ export default function DashboardSimples() {
     
     // Charts Data State
     const [estoqueVendasData, setEstoqueVendasData] = useState(null);
-    const [estoqueMeta, setEstoqueMeta] = useState({ page: 1, totalPages: 1, pageSize: 10 });
+    const [estoqueMeta, setEstoqueMeta] = useState({ page: 1, totalPages: 1, pageSize: 4 });
     const [categoriasData, setCategoriasData] = useState(null);
     const [categoriasMeta, setCategoriasMeta] = useState([]);
 
@@ -40,7 +40,7 @@ export default function DashboardSimples() {
                 DashboardService.getAverageTicket(),
                 DashboardService.getSeasonalIndex(),
                 DashboardService.getLoyalCustomersStats(),
-                DashboardService.getStockSalesRelation({ page: 1, pageSize: 10, order: 'desc' }),
+                DashboardService.getStockSalesRelation({ page: 1, pageSize: 4, order: 'desc' }),
                 DashboardService.getCategoriesTopPerLast3Months()
             ]);
 
@@ -90,16 +90,20 @@ export default function DashboardSimples() {
                             data: estoqueVendas.vendas || [],
                             backgroundColor: '#864176',
                             borderRadius: 6,
-                            barPercentage: 0.9,
-                            categoryPercentage: 0.5
+                            barPercentage: 0.78,
+                            categoryPercentage: 0.25,
+                            barThickness: 14,
+                            maxBarThickness: 18
                         },
                         {
                             label: 'Estoque',
                             data: estoqueVendas.estoque || [],
                             backgroundColor: '#B08AAA',
                             borderRadius: 6,
-                            barPercentage: 0.9,
-                            categoryPercentage: 0.5
+                            barPercentage: 0.78,
+                            categoryPercentage: 0.25,
+                            barThickness: 14,
+                            maxBarThickness: 18
                         }
                     ]
                 };
@@ -137,13 +141,13 @@ export default function DashboardSimples() {
 
     const loadEstoqueChart = async (page) => {
         try {
-            const estoqueVendas = await DashboardService.getStockSalesRelation({ page: page || 1, pageSize: estoqueMeta.pageSize || 10, order: 'desc' });
+            const estoqueVendas = await DashboardService.getStockSalesRelation({ page: page || 1, pageSize: estoqueMeta.pageSize || 4, order: 'desc' });
             if (estoqueVendas && estoqueVendas.labels) {
                 setEstoqueVendasData({
                     labels: estoqueVendas.labels,
                     datasets: [
-                        { label: 'Vendas', data: estoqueVendas.vendas || [], backgroundColor: '#864176', borderRadius: 6, barPercentage: 0.8, categoryPercentage: 0.5 },
-                        { label: 'Estoque', data: estoqueVendas.estoque || [], backgroundColor: '#B08AAA', borderRadius: 6, barPercentage: 0.8, categoryPercentage: 0.5 }
+                        { label: 'Vendas', data: estoqueVendas.vendas || [], backgroundColor: '#864176', borderRadius: 6, barPercentage: 0.78, categoryPercentage: 0.25, barThickness: 14, maxBarThickness: 18 },
+                        { label: 'Estoque', data: estoqueVendas.estoque || [], backgroundColor: '#B08AAA', borderRadius: 6, barPercentage: 0.78, categoryPercentage: 0.25, barThickness: 14, maxBarThickness: 18 }
                     ]
                 });
                 if (estoqueVendas.meta) setEstoqueMeta(estoqueVendas.meta);
@@ -231,8 +235,10 @@ export default function DashboardSimples() {
                                     interaction: { mode: 'nearest', intersect: false },
                                     datasets: {
                                         bar: {
-                                            barPercentage: 0.8,
-                                            categoryPercentage: 0.5
+                                            barPercentage: 0.78,
+                                            categoryPercentage: 0.25,
+                                            barThickness: 14,
+                                            maxBarThickness: 18
                                         }
                                     },
                                     plugins: {
