@@ -178,7 +178,7 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
                             <ul className={styles.menuList}>
                                 <li><Link to="/realizar-venda" className={styles.menuItem}><span className={styles.menuIcon}><ShoppingCartIcon /></span><span className={styles.menuText}>Realizar Venda</span></Link></li>
                                 <li><Link to="/historico-vendas" className={styles.menuItem}><span className={styles.menuIcon}><HistoryIcon /></span><span className={styles.menuText}>Histórico de Vendas</span></Link></li>
-                                <li><Link to="/dashboard" className={styles.menuItem}><span className={styles.menuIcon}><DashboardIcon /></span><span className={styles.menuText}>Dashboard</span></Link></li>
+                                <li><Link to="/dashboard-simples" className={styles.menuItem}><span className={styles.menuIcon}><DashboardIcon /></span><span className={styles.menuText}>Dashboard</span></Link></li>
                             </ul>
                         </div>
 
