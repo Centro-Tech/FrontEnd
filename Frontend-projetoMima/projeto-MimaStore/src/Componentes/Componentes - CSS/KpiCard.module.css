@@ -20,6 +20,12 @@
     margin-bottom: 12px;
 }
 
+.filtroContainer {
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: center;
+}
+
 .titulo {
     font-family: 'Average', serif;
     font-size: 1rem;

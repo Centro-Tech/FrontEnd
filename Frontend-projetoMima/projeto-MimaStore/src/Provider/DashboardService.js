@@ -138,19 +138,58 @@ const extractArray = (axiosResponse) => {
 // ═══════════════════════════════════════════════════════════════
 // KPI 1: TICKET MÉDIO
 // ═══════════════════════════════════════════════════════════════
-export const getAverageTicket = async () => {
+// Versão aceita: dias (modo básico) ou mes+ano (modo avançado)
+export const getAverageTicket = async (diasOuOpcoes = 30) => {
     try {
+        let inicioAtual, fimAtual, inicioAnterior, fimAnterior;
+        let mesesComVendasAnoAtual = [];
+        
         const hoje = new Date();
-        const primeiroDiaMesAtual = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-        const diaAtual = hoje.getDate();
+        const anoAtual = hoje.getFullYear();
+        const mesAtual = hoje.getMonth() + 1;
 
-        const inicioAtual = primeiroDiaMesAtual.toISOString().split('T')[0];
-        const fimAtual = hoje.toISOString().split('T')[0];
+        // SEMPRE calcular meses com vendas no ano atual (necessário para o dropdown)
+        console.log('[TICKET MÉDIO] Calculando meses com vendas para ano:', anoAtual, 'mês atual:', mesAtual);
+        
+        for (let m = 1; m <= 12; m++) {
+            // Incluir apenas meses passados (não o atual nem futuros)
+            if (m >= mesAtual) continue;
+            
+            const inicioMes = new Date(anoAtual, m - 1, 1).toISOString().split('T')[0];
+            const fimMes = new Date(anoAtual, m, 0).toISOString().split('T')[0];
+            
+            const vendasMes = await API.get(`/vendas/filtrar-por-data?inicio=${inicioMes}&fim=${fimMes}`);
+            const vendasMesArray = extractArray(vendasMes);
+            
+            console.log(`[TICKET MÉDIO] Mês ${m} (${inicioMes} a ${fimMes}): ${vendasMesArray.length} vendas`);
+            
+            if (vendasMesArray.length > 0) {
+                mesesComVendasAnoAtual.push(m);
+            }
+        }
+        
+        console.log('[TICKET MÉDIO] Meses com vendas no ano atual:', mesesComVendasAnoAtual);
 
-        const primeiroDiaMesAnterior = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
-        const ultimoDiaMesAnterior = new Date(hoje.getFullYear(), hoje.getMonth() - 1, diaAtual);
-        const inicioAnterior = primeiroDiaMesAnterior.toISOString().split('T')[0];
-        const fimAnterior = ultimoDiaMesAnterior.toISOString().split('T')[0];
+        // Verificar se é modo avançado (objeto com mes e ano)
+        if (typeof diasOuOpcoes === 'object' && diasOuOpcoes.mes && diasOuOpcoes.ano) {
+            const { mes, ano } = diasOuOpcoes;
+            
+            // O período "anterior" (selecionado) é o mês completo escolhido pelo usuário
+            inicioAnterior = new Date(ano, mes - 1, 1).toISOString().split('T')[0];
+            fimAnterior = new Date(ano, mes, 0).toISOString().split('T')[0];
+            
+            // O período "atual" é sempre o mês/ano de HOJE (do início do mês até hoje)
+            fimAtual = hoje.toISOString().split('T')[0];
+            inicioAtual = new Date(anoAtual, mesAtual - 1, 1).toISOString().split('T')[0];
+        } else {
+            // Modo básico (dias)
+            const dias = diasOuOpcoes;
+            fimAtual = hoje.toISOString().split('T')[0];
+            inicioAtual = new Date(hoje.getTime() - dias * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+            fimAnterior = new Date(hoje.getTime() - dias * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            inicioAnterior = new Date(hoje.getTime() - 2 * dias * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        }
 
         console.log('[TICKET MÉDIO] Buscando dados:', {
             periodoAtual: `${inicioAtual} - ${fimAtual}`,
@@ -176,11 +215,11 @@ export const getAverageTicket = async () => {
         }
 
         const totalVendasAtual = vendasAtuaisData.length;
-    const faturamentoAtual = vendasAtuaisData.reduce((sum, v) => sum + getVendaTotalWithFallback(v), 0);
+        const faturamentoAtual = vendasAtuaisData.reduce((sum, v) => sum + getVendaTotalWithFallback(v), 0);
         const ticketMedioAtual = totalVendasAtual > 0 ? faturamentoAtual / totalVendasAtual : 0;
 
         const totalVendasAnterior = vendasAnterioresData.length;
-    const faturamentoAnterior = vendasAnterioresData.reduce((sum, v) => sum + getVendaTotalWithFallback(v), 0);
+        const faturamentoAnterior = vendasAnterioresData.reduce((sum, v) => sum + getVendaTotalWithFallback(v), 0);
         const ticketMedioAnterior = totalVendasAnterior > 0 ? faturamentoAnterior / totalVendasAnterior : 0;
 
         console.log('[TICKET MÉDIO] Cálculos:', {
@@ -188,83 +227,236 @@ export const getAverageTicket = async () => {
             ticketAnterior: ticketMedioAnterior
         });
 
-        let variacaoPercentual = 0;
-        if (ticketMedioAnterior > 0 && !isNaN(ticketMedioAtual) && !isNaN(ticketMedioAnterior)) {
-            variacaoPercentual = ((ticketMedioAtual - ticketMedioAnterior) / ticketMedioAnterior) * 100;
+        const modoAvancado = typeof diasOuOpcoes === 'object' && diasOuOpcoes.mes && diasOuOpcoes.ano;
+        
+        let valorDisplay, variacaoPercentual;
+        
+        if (modoAvancado) {
+            // Modo avançado:
+            // - Mostrar valor do período selecionado (ticketMedioAnterior)
+            // - Variação sempre comparando período selecionado COM o mês/ano atual (hoje)
+            valorDisplay = ticketMedioAnterior;
+            
+            if (ticketMedioAnterior > 0 && !isNaN(ticketMedioAtual) && !isNaN(ticketMedioAnterior)) {
+                // Variação = (Atual - Selecionado) / Selecionado
+                // Se atual > selecionado = positivo (cresceu)
+                // Se atual < selecionado = negativo (diminuiu)
+                variacaoPercentual = ((ticketMedioAtual - ticketMedioAnterior) / ticketMedioAnterior) * 100;
+            } else {
+                variacaoPercentual = 0;
+            }
+        } else {
+            // Modo básico: mostrar valor atual e comparar com período anterior
+            valorDisplay = ticketMedioAtual;
+            
+            if (ticketMedioAnterior > 0 && !isNaN(ticketMedioAtual) && !isNaN(ticketMedioAnterior)) {
+                variacaoPercentual = ((ticketMedioAtual - ticketMedioAnterior) / ticketMedioAnterior) * 100;
+            } else {
+                variacaoPercentual = 0;
+            }
         }
 
         const variacaoFinal = isNaN(variacaoPercentual) ? 0 : Math.round(variacaoPercentual);
 
         return {
-            valor: `R$ ${ticketMedioAtual.toFixed(2).replace('.', ',')}`,
-            variacao: variacaoFinal
+            valor: `R$ ${valorDisplay.toFixed(2).replace('.', ',')}`,
+            variacao: variacaoFinal,
+            mesesComVendasAnoAtual // Incluir para filtrar dropdown
         };
     } catch (error) {
         console.error('Error fetching average ticket:', error);
-        return { valor: 'R$ 0,00', variacao: 0 };
+        return { valor: 'R$ 0,00', variacao: 0, mesesComVendasAnoAtual: [] };
     }
 };
 
 // ═══════════════════════════════════════════════════════════════
 // KPI 2: ÍNDICE SAZIONAL
 // ═══════════════════════════════════════════════════════════════
-export const getSeasonalIndex = async () => {
-    try {
-        const obterEstacao = (data) => {
-            const mes = data.getMonth() + 1;
-            const dia = data.getDate();
-            
-            if ((mes === 12 && dia >= 21) || mes === 1 || mes === 2 || (mes === 3 && dia < 21)) {
-                return { nome: 'Verão', inicioMes: 12, inicioDia: 21 };
-            } else if ((mes === 3 && dia >= 21) || mes === 4 || mes === 5 || (mes === 6 && dia < 21)) {
-                return { nome: 'Outono', inicioMes: 3, inicioDia: 21 };
-            } else if ((mes === 6 && dia >= 21) || mes === 7 || mes === 8 || (mes === 9 && dia < 21)) {
-                return { nome: 'Inverno', inicioMes: 6, inicioDia: 21 };
-            } else {
-                return { nome: 'Primavera', inicioMes: 9, inicioDia: 21 };
-            }
-        };
 
+// Helper para obter info de uma estação
+const obterEstacao = (data) => {
+    const mes = data.getMonth() + 1;
+    const dia = data.getDate();
+    
+    if ((mes === 12 && dia >= 21) || mes === 1 || mes === 2 || (mes === 3 && dia < 21)) {
+        return { nome: 'Verão', codigo: 'verao', inicioMes: 12, inicioDia: 21, ordem: 0 };
+    } else if ((mes === 3 && dia >= 21) || mes === 4 || mes === 5 || (mes === 6 && dia < 21)) {
+        return { nome: 'Outono', codigo: 'outono', inicioMes: 3, inicioDia: 21, ordem: 1 };
+    } else if ((mes === 6 && dia >= 21) || mes === 7 || mes === 8 || (mes === 9 && dia < 21)) {
+        return { nome: 'Inverno', codigo: 'inverno', inicioMes: 6, inicioDia: 21, ordem: 2 };
+    } else {
+        return { nome: 'Primavera', codigo: 'primavera', inicioMes: 9, inicioDia: 21, ordem: 3 };
+    }
+};
+
+// Helper para calcular início de uma estação em um ano específico
+const calcularInicioEstacao = (estacao, ano) => {
+    let dataInicio = new Date(ano, estacao.inicioMes - 1, estacao.inicioDia);
+    // Verão começa em dezembro do ano anterior
+    if (estacao.inicioMes === 12) {
+        dataInicio = new Date(ano - 1, 11, 21);
+    }
+    return dataInicio;
+};
+
+export const getSeasonalIndex = async (estacao1Codigo = null, ano1 = null, estacao2Codigo = null, ano2 = null) => {
+    try {
         const hoje = new Date();
         const estacaoAtual = obterEstacao(hoje);
+        const anoAtual = hoje.getFullYear();
 
-        let inicioEstacaoAtual;
-        if (estacaoAtual.inicioMes === 12 && hoje.getMonth() + 1 < 12) {
-            inicioEstacaoAtual = new Date(hoje.getFullYear() - 1, estacaoAtual.inicioMes - 1, estacaoAtual.inicioDia);
-        } else {
-            inicioEstacaoAtual = new Date(hoje.getFullYear(), estacaoAtual.inicioMes - 1, estacaoAtual.inicioDia);
+        const estacoes = [
+            { nome: 'Verão', codigo: 'verao', inicioMes: 12, inicioDia: 21, ordem: 0 },
+            { nome: 'Outono', codigo: 'outono', inicioMes: 3, inicioDia: 21, ordem: 1 },
+            { nome: 'Inverno', codigo: 'inverno', inicioMes: 6, inicioDia: 21, ordem: 2 },
+            { nome: 'Primavera', codigo: 'primavera', inicioMes: 9, inicioDia: 21, ordem: 3 }
+        ];
+
+        // Verificar quais estações do ano atual têm vendas
+        const estacoesComVendasAnoAtual = [];
+        for (const estacao of estacoes) {
+            const inicioEstacao = calcularInicioEstacao(estacao, anoAtual);
+            const fimEstacao = new Date(inicioEstacao);
+            fimEstacao.setDate(fimEstacao.getDate() + 92); // ~3 meses
+            
+            // Se a estação já terminou ou está em curso
+            if (fimEstacao <= hoje || (inicioEstacao <= hoje && hoje < fimEstacao)) {
+                const fimConsulta = fimEstacao <= hoje ? fimEstacao : hoje;
+                try {
+                    const vendas = await API.get(`/vendas/filtrar-por-data?inicio=${inicioEstacao.toISOString().split('T')[0]}&fim=${fimConsulta.toISOString().split('T')[0]}`);
+                    const vendasArr = extractArray(vendas);
+                    if (vendasArr.length > 0) {
+                        estacoesComVendasAnoAtual.push(estacao.codigo);
+                    }
+                } catch (err) {
+                    console.warn(`Erro ao verificar vendas para ${estacao.nome}:`, err);
+                }
+            }
         }
 
-        const diasDecorridos = Math.floor((hoje - inicioEstacaoAtual) / (1000 * 60 * 60 * 24));
+        // Se não foram passados parâmetros, usar estação atual vs estação anterior
+        let estacao1, ano1Final, estacao2, ano2Final;
 
-        const inicioEstacaoAnterior = new Date(inicioEstacaoAtual);
-        inicioEstacaoAnterior.setMonth(inicioEstacaoAnterior.getMonth() - 3);
-        const fimEstacaoAnterior = new Date(inicioEstacaoAnterior);
-        fimEstacaoAnterior.setDate(fimEstacaoAnterior.getDate() + diasDecorridos);
+        if (!estacao1Codigo) {
+            // Estação 1 = Estação Atual
+            estacao1 = estacaoAtual;
+            ano1Final = anoAtual;
+        } else {
+            estacao1 = estacoes.find(e => e.codigo === estacao1Codigo) || estacaoAtual;
+            ano1Final = ano1 || anoAtual;
+        }
 
-        const [vendasAtual, vendasAnterior] = await Promise.all([
-            API.get(`/vendas/filtrar-por-data?inicio=${inicioEstacaoAtual.toISOString().split('T')[0]}&fim=${hoje.toISOString().split('T')[0]}`),
-            API.get(`/vendas/filtrar-por-data?inicio=${inicioEstacaoAnterior.toISOString().split('T')[0]}&fim=${fimEstacaoAnterior.toISOString().split('T')[0]}`)
+        if (!estacao2Codigo) {
+            // Estação 2 = Estação Anterior
+            const ordemAnterior = (estacaoAtual.ordem - 1 + 4) % 4;
+            estacao2 = estacoes.find(e => e.ordem === ordemAnterior);
+            
+            // Ajustar ano se a estação anterior for do ano passado
+            if (estacaoAtual.ordem === 0 && estacao2.ordem === 3) {
+                ano2Final = anoAtual - 1;
+            } else if (estacaoAtual.inicioMes === 12 && estacao2.ordem === 2) {
+                ano2Final = anoAtual - 1;
+            } else {
+                ano2Final = anoAtual;
+            }
+        } else {
+            estacao2 = estacoes.find(e => e.codigo === estacao2Codigo) || estacoes[3];
+            ano2Final = ano2 || (anoAtual - 1);
+        }
+
+        // Calcular início das estações
+        const inicioEstacao1 = calcularInicioEstacao(estacao1, ano1Final);
+        const inicioEstacao2 = calcularInicioEstacao(estacao2, ano2Final);
+
+        // Calcular dias corridos (usar a estação 1 como referência)
+        let fimEstacao1, diasDecorridos;
+        if (estacao1.codigo === estacaoAtual.codigo && ano1Final === anoAtual) {
+            // Se estação 1 é a atual, usar até hoje
+            fimEstacao1 = hoje;
+            diasDecorridos = Math.floor((hoje - inicioEstacao1) / (1000 * 60 * 60 * 24));
+        } else {
+            // Se não, usar a estação completa (92 dias aproximadamente)
+            diasDecorridos = 92;
+            fimEstacao1 = new Date(inicioEstacao1);
+            fimEstacao1.setDate(fimEstacao1.getDate() + diasDecorridos);
+        }
+
+        // Calcular período proporcional para estação 2
+        const fimEstacao2 = new Date(inicioEstacao2);
+        fimEstacao2.setDate(fimEstacao2.getDate() + diasDecorridos);
+
+        console.log('[ÍNDICE SAZIONAL]', {
+            estacao1: `${estacao1.nome} ${ano1Final}`,
+            estacao2: `${estacao2.nome} ${ano2Final}`,
+            diasDecorridos,
+            periodo1: `${inicioEstacao1.toISOString().split('T')[0]} - ${fimEstacao1.toISOString().split('T')[0]}`,
+            periodo2: `${inicioEstacao2.toISOString().split('T')[0]} - ${fimEstacao2.toISOString().split('T')[0]}`
+        });
+
+        const [vendas1, vendas2] = await Promise.all([
+            API.get(`/vendas/filtrar-por-data?inicio=${inicioEstacao1.toISOString().split('T')[0]}&fim=${fimEstacao1.toISOString().split('T')[0]}`),
+            API.get(`/vendas/filtrar-por-data?inicio=${inicioEstacao2.toISOString().split('T')[0]}&fim=${fimEstacao2.toISOString().split('T')[0]}`)
         ]);
 
-        const vendasArrAtual = extractArray(vendasAtual);
-        const vendasArrAnterior = extractArray(vendasAnterior);
-        const totalVendasAtual = vendasArrAtual.length;
-        const totalVendasAnterior = vendasArrAnterior.length;
+        const vendasArr1 = extractArray(vendas1);
+        const vendasArr2 = extractArray(vendas2);
+        const totalVendas1 = vendasArr1.length;
+        const totalVendas2 = vendasArr2.length;
 
-        const indice = totalVendasAnterior > 0 
-            ? (totalVendasAtual / totalVendasAnterior) * 100 
+        const indice = totalVendas2 > 0 
+            ? (totalVendas1 / totalVendas2) * 100 
             : 0;
 
-        const status = indice >= 100 ? "Acima da Média" : "Abaixo da Média";
+        // Se totalVendas1 == totalVendas2, mostrar "Na média"
+        let status;
+        if (totalVendas1 === totalVendas2 && totalVendas1 > 0) {
+            status = "Na média";
+        } else if (indice > 100) {
+            status = "Acima da Média";
+        } else if (indice < 100) {
+            status = "Abaixo da Média";
+        } else {
+            // Caso edge: indice == 100 mas vendas não são exatamente iguais (arredondamento)
+            status = "Na média";
+        }
+
+        // Calcular estação anterior padrão para retornar
+        const ordemAnterior = (estacaoAtual.ordem - 1 + 4) % 4;
+        const estacaoAnterior = estacoes.find(e => e.ordem === ordemAnterior);
+        let anoAnterior = anoAtual;
+        if (estacaoAtual.ordem === 0 && estacaoAnterior.ordem === 3) {
+            anoAnterior = anoAtual - 1;
+        } else if (estacaoAtual.inicioMes === 12 && estacaoAnterior.ordem === 2) {
+            anoAnterior = anoAtual - 1;
+        }
 
         return {
             status: status,
-            variacao: Math.round(indice - 100)
+            variacao: Math.round(indice - 100),
+            estacaoAtual: estacaoAtual.nome,
+            estacaoAtualCodigo: estacaoAtual.codigo,
+            anoAtual: anoAtual,
+            estacaoAnteriorPadrao: estacaoAnterior.codigo,
+            anoAnteriorPadrao: anoAnterior,
+            estacao1Selecionada: estacao1.codigo,
+            ano1Selecionado: ano1Final,
+            estacao2Selecionada: estacao2.codigo,
+            ano2Selecionado: ano2Final,
+            estacoesComVendasAnoAtual: estacoesComVendasAnoAtual,
+            diasDecorridos
         };
     } catch (error) {
         console.error('Error fetching seasonal index:', error);
-        return { status: 'Sem dados', variacao: 0 };
+        return { 
+            status: 'Sem dados', 
+            variacao: 0, 
+            estacaoAtual: '-', 
+            estacaoAtualCodigo: '', 
+            anoAtual: new Date().getFullYear(),
+            estacaoAnteriorPadrao: '',
+            anoAnteriorPadrao: new Date().getFullYear() - 1,
+            estacoesComVendasAnoAtual: []
+        };
     }
 };
 
@@ -348,22 +540,94 @@ export const getCustomerRetention = async () => {
 // ═══════════════════════════════════════════════════════════════
 // KPI 3 (Refinado): FIDELIZAÇÃO DE CLIENTES – janela 12m + variação
 // ═══════════════════════════════════════════════════════════════
-export const getLoyalCustomersStats = async () => {
+export const getLoyalCustomersStats = async (mesesOuOpcoes = 12) => {
     try {
-        const hoje = new Date();
-        const inicioHojeJanela = new Date(hoje);
-        inicioHojeJanela.setMonth(inicioHojeJanela.getMonth() - 12);
+        let hoje, inicioHojeJanela, inicioMesAtual, inicioMesJanela;
+        let mesesComVendasAnoAtual = [];
+        
+        const hojeReal = new Date();
+        const anoAtual = hojeReal.getFullYear();
+        const mesAtual = hojeReal.getMonth() + 1;
 
-        // Início do mês atual
-        const inicioMesAtual = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-        const inicioMesJanela = new Date(inicioMesAtual);
-        inicioMesJanela.setMonth(inicioMesJanela.getMonth() - 12);
+        // SEMPRE calcular meses com vendas no ano atual (necessário para o dropdown)
+        console.log('[FIDELIZAÇÃO] Calculando meses com vendas para ano:', anoAtual, 'mês atual:', mesAtual);
+        
+        for (let m = 1; m <= 12; m++) {
+            // Incluir apenas meses passados (não o atual nem futuros)
+            if (m >= mesAtual) continue;
+            
+            const inicioMes = new Date(anoAtual, m - 1, 1).toISOString().split('T')[0];
+            const fimMes = new Date(anoAtual, m, 0).toISOString().split('T')[0];
+            
+            const vendasMes = await API.get(`/vendas/filtrar-por-data?inicio=${inicioMes}&fim=${fimMes}`);
+            const vendasMesArray = extractArray(vendasMes);
+            
+            console.log(`[FIDELIZAÇÃO] Mês ${m} (${inicioMes} a ${fimMes}): ${vendasMesArray.length} vendas`);
+            
+            if (vendasMesArray.length > 0) {
+                mesesComVendasAnoAtual.push(m);
+            }
+        }
+        
+        console.log('[FIDELIZAÇÃO] Meses com vendas no ano atual:', mesesComVendasAnoAtual);
+
+        // Verificar se é modo avançado (objeto com mes e ano)
+        if (typeof mesesOuOpcoes === 'object' && mesesOuOpcoes.mes && mesesOuOpcoes.ano) {
+            const { mes, ano } = mesesOuOpcoes;
+            
+            // Período "hoje" é sempre HOJE com janela de 12 meses
+            hoje = hojeReal;
+            inicioHojeJanela = new Date(hoje);
+            inicioHojeJanela.setMonth(inicioHojeJanela.getMonth() - 12);
+
+            // Período "selecionado" é o mês/ano escolhido pelo usuário com janela de 12 meses
+            // Usar último dia do mês selecionado como referência
+            inicioMesAtual = new Date(ano, mes, 0); // Último dia do mês selecionado
+            inicioMesJanela = new Date(inicioMesAtual);
+            inicioMesJanela.setMonth(inicioMesJanela.getMonth() - 12);
+        } else {
+            // Modo básico (meses) - MESMA LÓGICA DA DASHBOARD COMPLETA
+            // Sempre usar janela de 12 meses, mas em períodos diferentes
+            const meses = mesesOuOpcoes;
+            
+            // Período atual: SEMPRE últimos 12 meses até HOJE
+            hoje = new Date(hojeReal);
+            inicioHojeJanela = new Date(hoje);
+            inicioHojeJanela.setMonth(inicioHojeJanela.getMonth() - 12);
+
+            // Período de comparação: 12 meses, mas há X meses atrás
+            // Por exemplo, se meses=24:
+            // - Período atual: últimos 12 meses até hoje
+            // - Período comparação: 12 meses terminando há 24 meses atrás (de 36 a 24 meses atrás)
+            inicioMesAtual = new Date(hojeReal);
+            inicioMesAtual.setMonth(inicioMesAtual.getMonth() - meses); // Data de referência (há X meses)
+            
+            inicioMesJanela = new Date(hojeReal);
+            inicioMesJanela.setMonth(inicioMesJanela.getMonth() - meses - 12); // 12 meses antes da referência
+        }
 
         const fmt = (d) => d.toISOString().split('T')[0];
 
+        const modoAvancado = typeof mesesOuOpcoes === 'object' && mesesOuOpcoes.mes && mesesOuOpcoes.ano;
+        const mesesJanela = 12; // SEMPRE 12 meses para critérios de fidelização
+        const mesesDeslocamento = modoAvancado ? 0 : mesesOuOpcoes;
+        
+        console.log('[FIDELIZAÇÃO REGRAS NOVAS] Modo:', modoAvancado ? 'AVANÇADO' : 'BÁSICO', '| Parâmetro:', mesesOuOpcoes);
         console.log('[FIDELIZAÇÃO REGRAS NOVAS] Janelas:', {
-            referenciaHoje: { inicio: fmt(inicioHojeJanela), fim: fmt(hoje) },
-            referenciaInicioMes: { inicio: fmt(inicioMesJanela), fim: fmt(inicioMesAtual) }
+            periodoAtual: { 
+                inicio: fmt(inicioHojeJanela), 
+                fim: fmt(hoje), 
+                duracao: '12 meses',
+                descricao: 'Últimos 12 meses até HOJE' 
+            },
+            periodoComparacao: { 
+                inicio: fmt(inicioMesJanela), 
+                fim: fmt(inicioMesAtual),
+                duracao: '12 meses',
+                descricao: modoAvancado 
+                    ? `12 meses terminando em ${fmt(inicioMesAtual)}` 
+                    : `12 meses terminando há ${mesesDeslocamento} meses atrás` 
+            }
         });
 
         const [respHoje, respInicioMes] = await Promise.all([
@@ -373,8 +637,15 @@ export const getLoyalCustomersStats = async () => {
 
         const vendasHojeArr = extractArray(respHoje);
         const vendasInicioMesArr = extractArray(respInicioMes);
+        
+        console.log('[FIDELIZAÇÃO] Vendas retornadas:', {
+            hoje: vendasHojeArr.length,
+            historico: vendasInicioMesArr.length
+        });
 
-        const calcFidelizados = (vendasArr, referencia) => {
+        const calcFidelizados = (vendasArr, referencia, janelaMeses = 12) => {
+            console.log(`[FIDELIZAÇÃO] Calculando para referência "${referencia}" com ${vendasArr.length} vendas, janela de ${janelaMeses} meses`);
+            
             // Mapa: clienteId -> Set de meses (YYYY-MM) e mapa mês -> data (menor data do mês)
             const mesesPorCliente = new Map();
             const menorDataPorMesCliente = new Map(); // key `${clienteId}|${mes}` -> date
@@ -438,8 +709,8 @@ export const getLoyalCustomersStats = async () => {
             return fidelizados;
         };
 
-        const currentCount = calcFidelizados(vendasHojeArr, 'hoje');
-        const startOfMonthCount = calcFidelizados(vendasInicioMesArr, 'inicio-do-mes');
+        const currentCount = calcFidelizados(vendasHojeArr, 'periodo-atual', mesesJanela);
+        const startOfMonthCount = calcFidelizados(vendasInicioMesArr, 'periodo-comparacao', mesesJanela);
         
         console.log('[FIDELIZAÇÃO REGRAS NOVAS] Resultado final:', {
             currentCount,
@@ -454,11 +725,12 @@ export const getLoyalCustomersStats = async () => {
             currentCount,
             startOfMonthCount,
             variationPercent: variationPercent !== null ? Math.round(variationPercent) : null,
-            addedSinceStart: delta
+            addedSinceStart: delta,
+            mesesComVendasAnoAtual // Incluir para filtrar dropdown
         };
     } catch (error) {
         console.error('Error computing loyal customers stats:', error);
-        return { currentCount: 0, startOfMonthCount: 0, variationPercent: 0, addedSinceStart: 0 };
+        return { currentCount: 0, startOfMonthCount: 0, variationPercent: 0, addedSinceStart: 0, mesesComVendasAnoAtual: [] };
     }
 };
 
@@ -586,11 +858,56 @@ export const getStockSalesRelation = async (options = {}) => {
             console.log('[ESTOQUE X VENDAS] Primeiro item do catálogo:', todosItens[0]);
         }
 
+        // Calcular vendas diárias por item para calcular desvio padrão
+        const vendasDiariasPorItem = {};
+        vendas.forEach(venda => {
+            const dataVenda = getVendaDateISO(venda);
+            if (!dataVenda) return;
+            
+            const itens = getItensVenda(venda);
+            if (itens && Array.isArray(itens)) {
+                itens.forEach(itemVenda => {
+                    const itemId = getItemId(itemVenda);
+                    const codigo = itemVenda?.item?.codigo || itemVenda?.produto?.codigo || itemVenda?.vestuario?.codigo || itemVenda?.codigo;
+                    const key = itemId || codigo;
+                    
+                    if (key) {
+                        if (!vendasDiariasPorItem[key]) {
+                            vendasDiariasPorItem[key] = {};
+                        }
+                        vendasDiariasPorItem[key][dataVenda] = (vendasDiariasPorItem[key][dataVenda] || 0) + getItemQtdVendida(itemVenda);
+                    }
+                });
+            }
+        });
+
         const itensComRazao = todosItens.map(item => {
             const vendas = (item?.id != null ? vendasPorItem[item.id] : 0) || (item?.codigo ? vendasPorCodigo[item.codigo] : 0) || 0;
             const estoqueLookup = item?.codigo ? estoquePorCodigo[item.codigo] : undefined;
             const estoque = (estoqueLookup != null ? estoqueLookup : (item.qtdEstoque || item.quantidadeEstoque || item.qtd_estoque || item.quantidade_estoque || item.estoque)) || 0;
-            const razao = estoque > 0 ? vendas / estoque : 0;
+            
+            // Calcular μ (média de vendas por dia)
+            const key = item.id || item.codigo;
+            const vendasDiarias = vendasDiariasPorItem[key] || {};
+            const diasComVendas = Object.keys(vendasDiarias).length;
+            const mu = diasComVendas > 0 ? vendas / 7 : 0; // Média de vendas por dia na semana
+            
+            // Calcular σ (desvio padrão das vendas diárias)
+            let sigma = 0;
+            if (diasComVendas > 1) {
+                const valores = Object.values(vendasDiarias);
+                const soma = valores.reduce((a, b) => a + b, 0);
+                const media = soma / valores.length;
+                const variancia = valores.reduce((acc, val) => acc + Math.pow(val - media, 2), 0) / valores.length;
+                sigma = Math.sqrt(variancia);
+            }
+            
+            // Aplicar Fórmula B: Risk = [μ / (S + ε)] × (1 + CV)
+            // onde CV = σ / μ
+            const S = estoque;
+            const epsilon = 0.5; // Constante pequena para evitar divisão por zero
+            const CV = mu > 0 ? sigma / mu : 0;
+            const risk = mu > 0 ? (mu / (S + epsilon)) * (1 + CV) : 0;
             
             return {
                 id: item.id,
@@ -598,7 +915,11 @@ export const getStockSalesRelation = async (options = {}) => {
                 nome: item.nome,
                 estoque: estoque,
                 vendas: vendas,
-                razao: razao
+                mu: mu,
+                sigma: sigma,
+                cv: CV,
+                risk: risk,
+                razao: risk // Usar risk como critério de ordenação
             };
         });
 
@@ -609,8 +930,20 @@ export const getStockSalesRelation = async (options = {}) => {
         const totalMatchCodigo = itensComRazao.filter(i => !i.id && i.codigo && (vendasPorCodigo[i.codigo] || 0) > 0).length;
         console.log('[ESTOQUE X VENDAS] Itens usando fallback por CÓDIGO:', { totalMatchCodigo });
 
-        // Ordenar: maior razão primeiro (vendas/estoque)
-        itensComRazao.sort((a, b) => order === 'asc' ? a.razao - b.razao : b.razao - a.razao);
+        // Log de alguns cálculos de risco para debug
+        const itensComRisco = itensComRazao.filter(i => i.risk > 0).slice(0, 3);
+        console.log('[RISCO DE RUPTURA] Exemplos de cálculo (top 3):', itensComRisco.map(i => ({
+            nome: i.nome?.substring(0, 20),
+            estoque: i.estoque,
+            vendas: i.vendas,
+            μ: i.mu.toFixed(2),
+            σ: i.sigma.toFixed(2),
+            CV: i.cv.toFixed(2),
+            risk: i.risk.toFixed(4)
+        })));
+
+        // Ordenar: maior risco primeiro (risk score)
+        itensComRazao.sort((a, b) => order === 'asc' ? a.risk - b.risk : b.risk - a.risk);
 
         // Paginação
         const totalItems = itensComRazao.length;
@@ -626,7 +959,8 @@ export const getStockSalesRelation = async (options = {}) => {
             codigo: i.codigo, 
             nome: i.nome?.substring(0, 20), 
             vendas: i.vendas, 
-            estoque: i.estoque 
+            estoque: i.estoque,
+            risk: i.risk?.toFixed(4)
         })));
 
         const labels = pageItens.map(i => i.codigo || (i.nome ? i.nome.substring(0, 15) : `#${i.id}`));
@@ -853,14 +1187,14 @@ export const getTopCategoriesByMonth = async (monthsBack = 0) => {
 };
 
 // ═══════════════════════════════════════════════════════════════
-// GRÁFICO 2 (Novo formato): Categoria campeã por mês (últimos 3)
+// GRÁFICO 2 (Novo formato): Categoria campeã por mês (últimos N)
 // Uma barra por mês com a categoria mais vendida e cor por categoria
 // ═══════════════════════════════════════════════════════════════
-export const getCategoriesTopPerLast3Months = async () => {
+export const getCategoriesTopPerLast3Months = async (numMeses = 3) => {
     try {
         const hoje = new Date();
         const meses = [];
-        for (let i = 2; i >= 0; i--) {
+        for (let i = numMeses - 1; i >= 0; i--) {
             const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
             const mes = d.toISOString().substring(0, 7);
             const inicio = `${mes}-01`;

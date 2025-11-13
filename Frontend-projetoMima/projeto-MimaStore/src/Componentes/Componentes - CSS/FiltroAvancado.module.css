@@ -1,0 +1,94 @@
+.filtroAvancadoContainer {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.dropdownGrupo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.label {
+    font-size: 10px;
+    color: #666;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.select,
+.inputData {
+    padding: 8px 10px;
+    border: 1.5px solid #ddd;
+    background-color: white;
+    color: #333;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    outline: none;
+    appearance: none;
+}
+
+.select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 30px;
+}
+
+.select:hover,
+.inputData:hover {
+    border-color: #864176;
+    background-color: #fafafa;
+}
+
+.select:focus,
+.inputData:focus {
+    border-color: #864176;
+    box-shadow: 0 0 0 3px rgba(134, 65, 118, 0.1);
+}
+
+.select option {
+    padding: 8px;
+    font-size: 13px;
+}
+
+.inputData {
+    font-family: inherit;
+}
+
+.inputData::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.inputData::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .filtroAvancadoContainer {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .select,
+    .inputData {
+        font-size: 12px;
+        padding: 7px 9px;
+    }
+
+    .select {
+        padding-right: 28px;
+    }
+
+    .label {
+        font-size: 9px;
+    }
+}

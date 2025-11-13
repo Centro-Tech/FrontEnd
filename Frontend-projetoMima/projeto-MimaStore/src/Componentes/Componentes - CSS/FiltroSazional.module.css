@@ -1,0 +1,118 @@
+.filtroSazionalContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+
+.comparacaoRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.dropdownGrupo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+}
+
+.dropdownLabel {
+    font-size: 9px;
+    color: #999;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.dropdown {
+    padding: 6px 8px;
+    border: 1px solid #e0e0e0;
+    background-color: #fafafa;
+    color: #333;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23864176' d='M5 7L1 3h8z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    padding-right: 24px;
+    min-width: 0;
+    width: 100%;
+}
+
+.dropdown:hover {
+    border-color: #864176;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.dropdown:focus {
+    border-color: #864176;
+    background-color: white;
+    box-shadow: 0 0 0 2px rgba(134, 65, 118, 0.15);
+}
+
+.dropdown option {
+    padding: 8px;
+    font-size: 11px;
+    background-color: white;
+}
+
+.opcaoAtual {
+    background-color: #f9f5f8 !important;
+    color: #864176 !important;
+    font-weight: bold !important;
+}
+
+.vsText {
+    font-size: 11px;
+    font-weight: 700;
+    color: #864176;
+    padding: 0 4px;
+    text-transform: lowercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    flex-shrink: 0;
+    align-self: flex-end;
+    padding-bottom: 6px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 968px) {
+    .comparacaoRow {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .vsText {
+        padding: 8px 0;
+        font-size: 10px;
+    }
+
+    .dropdown {
+        font-size: 12px;
+        padding: 8px 10px;
+        padding-right: 28px;
+    }
+
+    .dropdownLabel {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .comparacaoRow {
+        grid-template-columns: 1fr;
+    }
+}

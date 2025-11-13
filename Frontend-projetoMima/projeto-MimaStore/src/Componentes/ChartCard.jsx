@@ -3,7 +3,7 @@ import Chart from 'chart.js/auto';
 import styles from './Componentes - CSS/ChartCard.module.css';
 import { Tooltip } from './Tooltip';
 
-export function ChartCard({ titulo, tipo, dados, opcoes, explicacao, rodape }) {
+export function ChartCard({ titulo, tipo, dados, opcoes, explicacao, rodape, filtroTemporal }) {
     const canvasRef = useRef(null);
     const chartRef = useRef(null);
 
@@ -256,6 +256,11 @@ export function ChartCard({ titulo, tipo, dados, opcoes, explicacao, rodape }) {
                     </Tooltip>
                 )}
             </div>
+            {filtroTemporal && (
+                <div className={styles.filtroContainer}>
+                    {filtroTemporal}
+                </div>
+            )}
             <div className={styles.chartContainer}>
                 {isEmpty ? (
                     <div style={{

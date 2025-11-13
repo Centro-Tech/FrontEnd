@@ -16,8 +16,14 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
     min-height: 56px; /* garante altura consistente (até 2 linhas) */
+}
+
+.filtroContainer {
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: center;
 }
 
 .titulo {

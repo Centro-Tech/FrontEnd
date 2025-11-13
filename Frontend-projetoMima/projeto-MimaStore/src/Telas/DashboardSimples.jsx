@@ -5,6 +5,8 @@ import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import { KpiCard } from '../Componentes/KpiCard';
 import { ChartCard } from '../Componentes/ChartCard';
+import { FiltroTemporal } from '../Componentes/FiltroTemporal';
+import FiltroSazional from '../Componentes/FiltroSazional';
 import DashboardService from '../Provider/DashboardService';
 
 export default function DashboardSimples() {
@@ -13,7 +15,16 @@ export default function DashboardSimples() {
     
     // KPIs State
     const [ticketMedio, setTicketMedio] = useState({ valor: 'R$ 0,00', variacao: 0 });
-    const [indiceSazional, setIndiceSazional] = useState({ status: 'Calculando...', variacao: 0 });
+    const [indiceSazional, setIndiceSazional] = useState({ 
+        status: 'Calculando...', 
+        variacao: 0,
+        estacaoAtual: '-',
+        estacaoAtualCodigo: '',
+        anoAtual: new Date().getFullYear(),
+        estacaoAnteriorPadrao: '',
+        anoAnteriorPadrao: new Date().getFullYear() - 1,
+        estacoesComVendasAnoAtual: []
+    });
     const [fidelizacao, setFidelizacao] = useState({ valor: '0', variacao: 0 });
     
     // Charts Data State
@@ -22,9 +33,27 @@ export default function DashboardSimples() {
     const [categoriasData, setCategoriasData] = useState(null);
     const [categoriasMeta, setCategoriasMeta] = useState([]);
 
+    // Dashboard Simples: Sempre modo BÁSICO
+    // Filtros Básicos
+    const [filtroTicket, setFiltroTicket] = useState(30); // dias: 7, 30, 90
+    const [filtroFidelizacao, setFiltroFidelizacao] = useState(24); // meses: 24, 36, 48
+    const [filtroCategorias, setFiltroCategorias] = useState(3); // meses: 1, 3, 6
+    
+    // Filtros Sazionais (4 dropdowns: estação1, ano1, estação2, ano2)
+    const [filtroEstacao1, setFiltroEstacao1] = useState(null); // null = auto (estação atual)
+    const [filtroAno1, setFiltroAno1] = useState(null); // null = auto (ano atual)
+    const [filtroEstacao2, setFiltroEstacao2] = useState(null); // null = auto (estação anterior)
+    const [filtroSazionalBasico, setFiltroSazionalBasico] = useState(1); // 1, 2 ou 3 estações atrás
+    const [filtroAno2, setFiltroAno2] = useState(null); // null = auto (ano da estação anterior)
+
     useEffect(() => {
         loadDashboardData();
-    }, []);
+    }, [
+        filtroTicket,
+        filtroFidelizacao,
+        filtroCategorias, 
+        filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2
+    ]);
 
     // Load only the estoque x vendas chart when page changes
     useEffect(() => {
@@ -35,103 +64,104 @@ export default function DashboardSimples() {
     const loadDashboardData = async () => {
         setLoading(true);
         try {
-            // Load KPIs
+            // Dashboard Simples: Sempre usar filtros básicos
+            console.log('[DASHBOARD SIMPLES] Parâmetros básicos:', { 
+                ticket: filtroTicket, 
+                fidelizacao: filtroFidelizacao 
+            });
+
             const [ticketData, sazonalData, fidelizacaoData, estoqueVendas, categoriasTop3] = await Promise.all([
-                DashboardService.getAverageTicket(),
-                DashboardService.getSeasonalIndex(),
-                DashboardService.getLoyalCustomersStats(),
-                DashboardService.getStockSalesRelation({ page: 1, pageSize: 4, order: 'desc' }),
-                DashboardService.getCategoriesTopPerLast3Months()
+                DashboardService.getAverageTicket(filtroTicket),
+                DashboardService.getSeasonalIndex(filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2),
+                DashboardService.getLoyalCustomersStats(filtroFidelizacao),
+                DashboardService.getStockSalesRelation({ page: 1, pageSize: estoqueMeta.pageSize || 4, order: 'desc' }),
+                DashboardService.getCategoriesTopPerLast3Months(filtroCategorias)
             ]);
 
-            // Set KPI 1 - Average Ticket
+            console.log('[DASHBOARD] ticketData recebido:', ticketData);
+            console.log('[DASHBOARD] fidelizacaoData recebido:', fidelizacaoData);
+
             if (ticketData) {
-                // valor já vem formatado do serviço (ex.: "R$ 425,44")
-                setTicketMedio({
-                    valor: ticketData.valor || 'R$ 0,00',
-                    variacao: ticketData.variacao || 0
+                setTicketMedio({ 
+                    valor: ticketData.valor || 'R$ 0,00', 
+                    variacao: ticketData.variacao || 0,
+                    mesesComVendasAnoAtual: ticketData.mesesComVendasAnoAtual || []
                 });
             }
 
-            // Set KPI 2 - Seasonal Index
             if (sazonalData) {
-                setIndiceSazional({
-                    status: sazonalData.status || 'Abaixo da Média',
-                    variacao: sazonalData.variacao || 0
+                setIndiceSazional({ 
+                    status: sazonalData.status || 'Abaixo da Média', 
+                    variacao: sazonalData.variacao || 0,
+                    estacaoAtual: sazonalData.estacaoAtual || '-',
+                    estacaoAtualCodigo: sazonalData.estacaoAtualCodigo || '',
+                    anoAtual: sazonalData.anoAtual || new Date().getFullYear(),
+                    estacaoAnteriorPadrao: sazonalData.estacaoAnteriorPadrao || '',
+                    anoAnteriorPadrao: sazonalData.anoAnteriorPadrao || (new Date().getFullYear() - 1),
+                    estacoesComVendasAnoAtual: sazonalData.estacoesComVendasAnoAtual || []
                 });
+                
+                // Atualizar filtros com os valores padrão se ainda não foram definidos
+                if (filtroEstacao1 === null) setFiltroEstacao1(sazonalData.estacao1Selecionada);
+                if (filtroAno1 === null) setFiltroAno1(sazonalData.ano1Selecionado);
+                if (filtroEstacao2 === null) setFiltroEstacao2(sazonalData.estacao2Selecionada);
+                if (filtroAno2 === null) setFiltroAno2(sazonalData.ano2Selecionado);
             }
 
-            // Set KPI 3 - Customer Retention
             if (fidelizacaoData) {
-                const abs = Number(fidelizacaoData.currentCount || 0);
-                const base = Number(fidelizacaoData.startOfMonthCount || 0);
-                const varPct = fidelizacaoData.variationPercent;
-                // Caso especial baseline zero: mostrar "+X clientes"
-                const variacaoDisplay = (varPct === null)
-                    ? `+${Math.max(0, abs - base)} clientes`
-                    : Math.round(varPct);
-                setFidelizacao({ valor: String(abs), variacao: variacaoDisplay });
+                // Dashboard Simples: Modo básico com janela móvel
+                // currentCount = fidelizados no período atual (últimos X meses)
+                // startOfMonthCount = fidelizados no período anterior (mesma duração, deslocado)
+                const valorAtual = Number(fidelizacaoData.currentCount || 0);
+                const valorAnterior = Number(fidelizacaoData.startOfMonthCount || 0);
+                
+                console.log('[DASHBOARD SIMPLES] Fidelização recebida:', {
+                    currentCount: fidelizacaoData.currentCount,
+                    startOfMonthCount: fidelizacaoData.startOfMonthCount,
+                    valorAtual,
+                    valorAnterior,
+                    filtroFidelizacao
+                });
+                
+                // Variação: comparar período atual com período anterior
+                let variacaoDisplay;
+                if (valorAnterior > 0) {
+                    const variacaoPct = ((valorAtual - valorAnterior) / valorAnterior) * 100;
+                    variacaoDisplay = Math.round(variacaoPct);
+                } else {
+                    variacaoDisplay = valorAtual > 0 ? `+${valorAtual} clientes` : 0;
+                }
+                
+                setFidelizacao({ 
+                    valor: String(valorAtual), 
+                    variacao: variacaoDisplay,
+                    mesesComVendasAnoAtual: fidelizacaoData.mesesComVendasAnoAtual || []
+                });
             }
 
-            // Set Chart 1 - Stock vs Sales Relation (Horizontal Bar)
             if (estoqueVendas && estoqueVendas.labels) {
-                console.log('[DASHBOARD UI] ✅ RECEBIDO estoqueVendas DO SERVICE:', {
-                    labelsCount: estoqueVendas.labels?.length,
-                    labels: estoqueVendas.labels?.slice(0, 3),
-                    vendas: estoqueVendas.vendas?.slice(0, 3),
-                    estoque: estoqueVendas.estoque?.slice(0, 3),
-                    timestamp: new Date().toISOString()
-                });
                 const chartData = {
                     labels: estoqueVendas.labels,
                     datasets: [
-                        {
-                            label: 'Vendas',
-                            data: estoqueVendas.vendas || [],
-                            backgroundColor: '#864176',
-                            borderRadius: 6,
-                            barPercentage: 0.78,
-                            categoryPercentage: 0.25,
-                            barThickness: 14,
-                            maxBarThickness: 18
-                        },
-                        {
-                            label: 'Estoque',
-                            data: estoqueVendas.estoque || [],
-                            backgroundColor: '#B08AAA',
-                            borderRadius: 6,
-                            barPercentage: 0.78,
-                            categoryPercentage: 0.25,
-                            barThickness: 14,
-                            maxBarThickness: 18
-                        }
+                        { label: 'Vendas', data: estoqueVendas.vendas || [], backgroundColor: '#864176', borderRadius: 6, barPercentage: 0.78, categoryPercentage: 0.25, barThickness: 14, maxBarThickness: 18 },
+                        { label: 'Estoque', data: estoqueVendas.estoque || [], backgroundColor: '#B08AAA', borderRadius: 6, barPercentage: 0.78, categoryPercentage: 0.25, barThickness: 14, maxBarThickness: 18 }
                     ]
                 };
-                console.log('[DASHBOARD UI] Setando estoqueVendasData:', chartData);
                 setEstoqueVendasData(chartData);
                 if (estoqueVendas.meta) setEstoqueMeta(estoqueVendas.meta);
             } else {
                 console.warn('[DASHBOARD UI] estoqueVendas sem labels:', estoqueVendas);
             }
 
-            // Set Chart 2 - Top category per month (últimos 3)
             if (categoriasTop3 && categoriasTop3.labels) {
                 setCategoriasData({
                     labels: categoriasTop3.labels,
                     datasets: [
-                        {
-                            label: 'Categoria campeã por mês',
-                            data: categoriasTop3.values || [],
-                            backgroundColor: categoriasTop3.colors || [],
-                            borderRadius: 6,
-                            barPercentage: 0.7,
-                            categoryPercentage: 0.8
-                        }
+                        { label: 'Categoria campeã por mês', data: categoriasTop3.values || [], backgroundColor: categoriasTop3.colors || [], borderRadius: 6, barPercentage: 0.7, categoryPercentage: 0.8 }
                     ]
                 });
                 setCategoriasMeta(categoriasTop3.meta || []);
             }
-
         } catch (error) {
             console.error('Error loading dashboard data:', error);
         } finally {
@@ -199,19 +229,92 @@ export default function DashboardSimples() {
                         titulo="Variação do Ticket Médio"
                         valor={ticketMedio.valor}
                         variacao={ticketMedio.variacao}
-                        explicacao="Quanto seus clientes gastam, em média, por compra. A variação mostra se esse valor aumentou ou diminuiu em relação ao mês passado (considerando os mesmos dias corridos)."
+                        explicacao="Quanto seus clientes gastam, em média, por compra. A variação mostra se esse valor aumentou ou diminuiu em relação ao período anterior."
+                        filtroTemporal={
+                            <FiltroTemporal
+                                opcoes={[
+                                    { valor: 7, label: '7d', descricao: 'Últimos 7 dias' },
+                                    { valor: 30, label: '30d', descricao: 'Últimos 30 dias' },
+                                    { valor: 90, label: '90d', descricao: 'Últimos 90 dias' }
+                                ]}
+                                valorSelecionado={filtroTicket}
+                                onChange={setFiltroTicket}
+                                tamanho="pequeno"
+                            />
+                        }
                     />
                     <KpiCard
                         titulo="Índice Sazional de Vendas"
                         valor={indiceSazional.status}
                         variacao={indiceSazional.variacao}
-                        explicacao="Indica se suas vendas estão acima, na média ou abaixo do esperado para a estação atual. Compara com a estação anterior no mesmo período."
+                        explicacao="Compara vendas entre duas estações usando os mesmos dias corridos para análise justa."
+                        filtroTemporal={
+                            indiceSazional.estacaoAnteriorPadrao && (
+                                <div>
+                                    <FiltroTemporal
+                                        opcoes={(() => {
+                                            const estacaoAtualOrdem = ['verao', 'outono', 'inverno', 'primavera'].indexOf(indiceSazional.estacaoAtualCodigo);
+                                            const estacoes = ['Verão', 'Outono', 'Inverno', 'Primavera'];
+                                            
+                                            return [1, 2, 3].map(valor => {
+                                                const ordemAnterior = (estacaoAtualOrdem - valor + 4) % 4;
+                                                const nomeEstacao = estacoes[ordemAnterior];
+                                                return {
+                                                    valor,
+                                                    label: nomeEstacao,
+                                                    descricao: `${valor} estação atrás`
+                                                };
+                                            });
+                                        })()}
+                                        valorSelecionado={filtroSazionalBasico}
+                                        onChange={(valor) => {
+                                            setFiltroSazionalBasico(valor);
+                                            // Calcular qual estação é baseado no valor
+                                            const estacaoAtualOrdem = ['verao', 'outono', 'inverno', 'primavera'].indexOf(indiceSazional.estacaoAtualCodigo);
+                                            const ordemAnterior = (estacaoAtualOrdem - valor + 4) % 4;
+                                            const estacaoCodigo = ['verao', 'outono', 'inverno', 'primavera'][ordemAnterior];
+                                            
+                                            setFiltroEstacao1(indiceSazional.estacaoAtualCodigo);
+                                            setFiltroAno1(indiceSazional.anoAtual);
+                                            setFiltroEstacao2(estacaoCodigo);
+                                            // Calcular ano da estação anterior
+                                            let anoAnterior = indiceSazional.anoAtual;
+                                            if (valor >= estacaoAtualOrdem + 1) {
+                                                anoAnterior = indiceSazional.anoAtual - 1;
+                                            }
+                                            setFiltroAno2(anoAnterior);
+                                        }}
+                                        tamanho="pequeno"
+                                    />
+                                    <div style={{ fontSize: '11px', color: '#666', marginTop: '4px', textAlign: 'center' }}>
+                                        {(() => {
+                                            const estacaoAtualOrdem = ['verao', 'outono', 'inverno', 'primavera'].indexOf(indiceSazional.estacaoAtualCodigo);
+                                            const ordemAnterior = (estacaoAtualOrdem - filtroSazionalBasico + 4) % 4;
+                                            const estacoes = ['Verão', 'Outono', 'Inverno', 'Primavera'];
+                                            return `Comparando ${indiceSazional.estacaoAtual} com ${estacoes[ordemAnterior]}`;
+                                        })()}
+                                    </div>
+                                </div>
+                            )
+                        }
                     />
                     <KpiCard
                         titulo="Clientes fidelizados"
                         valor={fidelizacao.valor}
                         variacao={fidelizacao.variacao}
-                        explicacao="Total de clientes fidelizados (últimos 12 meses). Abaixo, a variação em relação ao início do mês; se não houver base no início do mês, mostramos o ganho absoluto."
+                        explicacao="Mostra quantos clientes fidelizados temos HOJE (últimos 12 meses). A variação compara com quantos tínhamos há X meses atrás (também considerando 12 meses naquele período)."
+                        filtroTemporal={
+                            <FiltroTemporal
+                                opcoes={[
+                                    { valor: 24, label: '24m', descricao: 'Comparar com há 24 meses' },
+                                    { valor: 36, label: '36m', descricao: 'Comparar com há 36 meses' },
+                                    { valor: 48, label: '48m', descricao: 'Comparar com há 48 meses' }
+                                ]}
+                                valorSelecionado={filtroFidelizacao}
+                                onChange={setFiltroFidelizacao}
+                                tamanho="pequeno"
+                            />
+                        }
                     />
                 </div>
 
@@ -224,7 +327,7 @@ export default function DashboardSimples() {
                                 hasDatasets: !!estoqueVendasData?.datasets
                             })}
                             <ChartCard
-                                titulo="Produtos em Risco de Ruptura"
+                                titulo="Produtos em Risco de Ruptura (Risco = Vendas médias / Estoque atual)"
                                 tipo="bar"
                                 dados={estoqueVendasData}
                                 explicacao="Identifica produtos com alta demanda em relação ao estoque atual. Produtos no topo vendem rápido e precisam de reposição urgente para evitar ruptura."
@@ -296,6 +399,18 @@ export default function DashboardSimples() {
                             tipo="bar"
                             dados={categoriasData}
                             explicacao="Para cada mês, mostramos a categoria campeã em vendas e sua quantidade. A cor da barra indica a categoria vencedora."
+                            filtroTemporal={
+                                <FiltroTemporal
+                                    opcoes={[
+                                        { valor: 1, label: '1m', descricao: 'Último mês' },
+                                        { valor: 3, label: '3m', descricao: 'Últimos 3 meses' },
+                                        { valor: 6, label: '6m', descricao: 'Últimos 6 meses' }
+                                    ]}
+                                    valorSelecionado={filtroCategorias}
+                                    onChange={setFiltroCategorias}
+                                    tamanho="pequeno"
+                                />
+                            }
                             opcoes={{
                                 responsive: true,
                                 maintainAspectRatio: false,

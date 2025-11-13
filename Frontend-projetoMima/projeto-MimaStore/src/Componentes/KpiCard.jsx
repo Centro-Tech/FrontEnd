@@ -2,7 +2,18 @@ import React from 'react';
 import styles from './Componentes - CSS/KpiCard.module.css';
 import { Tooltip } from './Tooltip';
 
-export function KpiCard({ titulo, valor, variacao, subtitulo, explicacao }) {
+export function KpiCard({ 
+    titulo, 
+    valor, 
+    variacao, 
+    subtitulo, 
+    explicacao, 
+    filtroTemporal,
+    toggleModo,
+    filtroBasico,
+    filtroAvancado,
+    modoAvancado
+}) {
     const isNumber = typeof variacao === 'number' && isFinite(variacao);
     const isString = typeof variacao === 'string';
     const isPositive = isNumber ? (variacao >= 0) : (isString ? !String(variacao).trim().startsWith('-') : true);
@@ -26,6 +37,22 @@ export function KpiCard({ titulo, valor, variacao, subtitulo, explicacao }) {
                     </Tooltip>
                 )}
             </div>
+            
+            {/* Toggle Básico/Avançado */}
+            {toggleModo && (
+                <div className={styles.toggleContainer}>
+                    {toggleModo}
+                </div>
+            )}
+
+            {/* Filtros */}
+            {(filtroTemporal || filtroBasico || filtroAvancado) && (
+                <div className={styles.filtroContainer}>
+                    {filtroTemporal}
+                    {!modoAvancado && filtroBasico}
+                    {modoAvancado && filtroAvancado}
+                </div>
+            )}
             <div className={styles.valorArea}>
                 <div className={styles.valor}>{valor}</div>
             </div>

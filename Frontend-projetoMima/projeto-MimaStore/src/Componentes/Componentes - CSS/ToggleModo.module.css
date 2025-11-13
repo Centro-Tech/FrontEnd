@@ -1,0 +1,58 @@
+.toggleContainer {
+    position: relative;
+    display: inline-flex;
+    background-color: #f5f0f4;
+    border-radius: 8px;
+    padding: 3px;
+    gap: 0;
+    margin-bottom: 8px;
+}
+
+.toggleBtn {
+    position: relative;
+    padding: 6px 16px;
+    border: none;
+    background: transparent;
+    color: #666;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: color 0.3s ease;
+    z-index: 2;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.toggleBtn.ativo {
+    color: white;
+}
+
+.toggleBtn:hover:not(.ativo) {
+    color: #864176;
+}
+
+.slider {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: calc(50% - 3px);
+    height: calc(100% - 6px);
+    background-color: #864176;
+    border-radius: 6px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+    box-shadow: 0 2px 4px rgba(134, 65, 118, 0.2);
+}
+
+.slider.sliderAvancado {
+    transform: translateX(calc(100% + 0px));
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .toggleBtn {
+        padding: 5px 12px;
+        font-size: 10px;
+    }
+}

@@ -5,6 +5,8 @@ import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import { KpiCard } from '../Componentes/KpiCard';
 import { ChartCard } from '../Componentes/ChartCard';
+import FiltroSazional from '../Componentes/FiltroSazional';
+import FiltroAvancado from '../Componentes/FiltroAvancado';
 import DashboardService from '../Provider/DashboardService';
 
 export default function DashboardCompleto() {
@@ -13,7 +15,16 @@ export default function DashboardCompleto() {
     
     // KPIs State
     const [ticketMedio, setTicketMedio] = useState({ valor: 'R$ 0,00', variacao: 0 });
-    const [indiceSazional, setIndiceSazional] = useState({ status: 'Calculando...', variacao: 0 });
+    const [indiceSazional, setIndiceSazional] = useState({ 
+        status: 'Calculando...', 
+        variacao: 0,
+        estacaoAtual: '-',
+        estacaoAtualCodigo: '',
+        anoAtual: new Date().getFullYear(),
+        estacaoAnteriorPadrao: '',
+        anoAnteriorPadrao: new Date().getFullYear() - 1,
+        estacoesComVendasAnoAtual: []
+    });
     const [fidelizacao, setFidelizacao] = useState({ valor: '0', variacao: 0 });
     
     // Charts Data State
@@ -21,18 +32,39 @@ export default function DashboardCompleto() {
     const [clientesEvolucaoMeta, setClientesEvolucaoMeta] = useState(null);
     const [tendenciaFaturamentoData, setTendenciaFaturamentoData] = useState(null);
     const [tendenciaVendasData, setTendenciaVendasData] = useState(null);
+    
+    // Filtros Avançados (sempre ativos no Dashboard Completo)
+    const mesAtualInicial = new Date().getMonth(); // 0-11, mês anterior ao atual
+    const [ticketMesAvancado, setTicketMesAvancado] = useState(mesAtualInicial === 0 ? 12 : mesAtualInicial);
+    const [ticketAnoAvancado, setTicketAnoAvancado] = useState(mesAtualInicial === 0 ? new Date().getFullYear() - 1 : new Date().getFullYear());
+    const [fidelizacaoMesAvancado, setFidelizacaoMesAvancado] = useState(mesAtualInicial === 0 ? 12 : mesAtualInicial);
+    const [fidelizacaoAnoAvancado, setFidelizacaoAnoAvancado] = useState(mesAtualInicial === 0 ? new Date().getFullYear() - 1 : new Date().getFullYear());
+    
+    // Filtros Sazionais
+    const [filtroEstacao1, setFiltroEstacao1] = useState(null);
+    const [filtroAno1, setFiltroAno1] = useState(null);
+    const [filtroEstacao2, setFiltroEstacao2] = useState(null);
+    const [filtroAno2, setFiltroAno2] = useState(null);
 
     useEffect(() => {
         loadDashboardData();
-    }, []);
+    }, [
+        ticketMesAvancado, ticketAnoAvancado,
+        fidelizacaoMesAvancado, fidelizacaoAnoAvancado,
+        filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2
+    ]);
 
     const loadDashboardData = async () => {
         setLoading(true);
         try {
+            // Dashboard Completo sempre usa filtros avançados
+            const ticketParam = { mes: ticketMesAvancado, ano: ticketAnoAvancado };
+            const fidelizacaoParam = { mes: fidelizacaoMesAvancado, ano: fidelizacaoAnoAvancado };
+
             const [ticketMedioData, sazionalData, fidelizacaoData, clientesEvolucao, tendenciaFaturamento, tendenciaVendas] = await Promise.all([
-                DashboardService.getAverageTicket(),
-                DashboardService.getSeasonalIndex(),
-                DashboardService.getLoyalCustomersStats(),
+                DashboardService.getAverageTicket(ticketParam),
+                DashboardService.getSeasonalIndex(filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2),
+                DashboardService.getLoyalCustomersStats(fidelizacaoParam),
                 DashboardService.getCustomersEvolution(),
                 DashboardService.getRevenueTrend(),
                 DashboardService.getSalesTrend()
@@ -42,23 +74,53 @@ export default function DashboardCompleto() {
             if (ticketMedioData) {
                 setTicketMedio({
                     valor: ticketMedioData.valor || 'R$ 0,00',
-                    variacao: ticketMedioData.variacao || 0
+                    variacao: ticketMedioData.variacao || 0,
+                    mesesComVendasAnoAtual: ticketMedioData.mesesComVendasAnoAtual || []
                 });
             }
 
             if (sazionalData) {
                 setIndiceSazional({
                     status: sazionalData.status || 'Média',
-                    variacao: sazionalData.variacao || 0
+                    variacao: sazionalData.variacao || 0,
+                    estacaoAtual: sazionalData.estacaoAtual || '-',
+                    estacaoAtualCodigo: sazionalData.estacaoAtualCodigo || '',
+                    anoAtual: sazionalData.anoAtual || new Date().getFullYear(),
+                    estacaoAnteriorPadrao: sazionalData.estacaoAnteriorPadrao || '',
+                    anoAnteriorPadrao: sazionalData.anoAnteriorPadrao || (new Date().getFullYear() - 1),
+                    estacoesComVendasAnoAtual: sazionalData.estacoesComVendasAnoAtual || []
                 });
+                
+                // Atualizar filtros com os valores padrão se ainda não foram definidos
+                if (filtroEstacao1 === null) setFiltroEstacao1(sazionalData.estacao1Selecionada);
+                if (filtroAno1 === null) setFiltroAno1(sazionalData.ano1Selecionado);
+                if (filtroEstacao2 === null) setFiltroEstacao2(sazionalData.estacao2Selecionada);
+                if (filtroAno2 === null) setFiltroAno2(sazionalData.ano2Selecionado);
             }
 
             if (fidelizacaoData) {
-                const abs = Number(fidelizacaoData.currentCount || 0);
-                const base = Number(fidelizacaoData.startOfMonthCount || 0);
-                const varPct = fidelizacaoData.variationPercent;
-                const variacaoDisplay = (varPct === null) ? `+${Math.max(0, abs - base)} clientes` : Math.round(varPct);
-                setFidelizacao({ valor: String(abs), variacao: variacaoDisplay });
+                // Dashboard Completo sempre usa modo avançado
+                // Mostrar quantidade do período selecionado, variação comparada com hoje
+                let valorDisplay, variacaoDisplay;
+                
+                const valorPeriodoSelecionado = Number(fidelizacaoData.startOfMonthCount || 0);
+                const valorAtual = Number(fidelizacaoData.currentCount || 0);
+                
+                valorDisplay = String(valorPeriodoSelecionado);
+                
+                // Variação: quanto mudou do período selecionado até hoje
+                if (valorPeriodoSelecionado > 0) {
+                    const variacao = ((valorAtual - valorPeriodoSelecionado) / valorPeriodoSelecionado) * 100;
+                    variacaoDisplay = Math.round(variacao);
+                } else {
+                    variacaoDisplay = `+${valorAtual} clientes`;
+                }
+                
+                setFidelizacao({ 
+                    valor: valorDisplay, 
+                    variacao: variacaoDisplay,
+                    mesesComVendasAnoAtual: fidelizacaoData.mesesComVendasAnoAtual || []
+                });
             }
 
             // Chart 1 - Clientes únicos por mês + previsão
@@ -209,19 +271,69 @@ export default function DashboardCompleto() {
                             titulo="Variação do Ticket Médio"
                             valor={ticketMedio.valor}
                             variacao={ticketMedio.variacao}
-                            explicacao="Quanto seus clientes gastam, em média, por compra. A variação mostra se esse valor aumentou ou diminuiu em relação ao mês passado (considerando os mesmos dias corridos)."
+                            explicacao="Quanto seus clientes gastam, em média, por compra. A variação mostra se esse valor aumentou ou diminuiu em relação ao período anterior."
+                            filtroTemporal={
+                                <FiltroAvancado
+                                    tipo="mes-ano"
+                                    mesSelecionado={ticketMesAvancado}
+                                    anoSelecionado={ticketAnoAvancado}
+                                    onMesChange={setTicketMesAvancado}
+                                    onAnoChange={setTicketAnoAvancado}
+                                    mesesComVendasAnoAtual={ticketMedio.mesesComVendasAnoAtual || []}
+                                />
+                            }
                         />
                         <KpiCard
                             titulo="Índice Sazional de Vendas"
                             valor={indiceSazional.status}
                             variacao={indiceSazional.variacao}
-                            explicacao="Indica se suas vendas estão acima, na média ou abaixo do esperado para a estação atual. Compara com a estação anterior no mesmo período."
+                            explicacao="Compara vendas entre duas estações usando os mesmos dias corridos para análise justa."
+                            filtroTemporal={
+                                filtroEstacao1 && filtroEstacao2 && (
+                                    <FiltroSazional
+                                        estacaoAtual={indiceSazional.estacaoAtual}
+                                        estacaoAtualCodigo={indiceSazional.estacaoAtualCodigo}
+                                        anoAtual={indiceSazional.anoAtual}
+                                        estacaoSelecionada1={filtroEstacao1}
+                                        anoSelecionado1={filtroAno1}
+                                        onEstacao1Change={setFiltroEstacao1}
+                                        onAno1Change={setFiltroAno1}
+                                        estacaoSelecionada2={filtroEstacao2}
+                                        anoSelecionado2={filtroAno2}
+                                        onEstacao2Change={setFiltroEstacao2}
+                                        onAno2Change={setFiltroAno2}
+                                        estacoesComVendasAnoAtual={indiceSazional.estacoesComVendasAnoAtual}
+                                        opcoesEstacoes={[
+                                            { valor: 'verao', label: 'Verão' },
+                                            { valor: 'outono', label: 'Outono' },
+                                            { valor: 'inverno', label: 'Inverno' },
+                                            { valor: 'primavera', label: 'Primavera' }
+                                        ]}
+                                        opcoesAnos={[
+                                            { valor: new Date().getFullYear(), label: String(new Date().getFullYear()) },
+                                            { valor: new Date().getFullYear() - 1, label: String(new Date().getFullYear() - 1) },
+                                            { valor: new Date().getFullYear() - 2, label: String(new Date().getFullYear() - 2) },
+                                            { valor: new Date().getFullYear() - 3, label: String(new Date().getFullYear() - 3) }
+                                        ]}
+                                    />
+                                )
+                            }
                         />
                         <KpiCard
                             titulo="Clientes fidelizados"
                             valor={fidelizacao.valor}
                             variacao={fidelizacao.variacao}
-                            explicacao="Total de clientes fidelizados (últimos 12 meses). Abaixo, a variação em relação ao início do mês; se não houver base no início do mês, mostramos o ganho absoluto."
+                            explicacao="Total de clientes fidelizados na janela de tempo selecionada. Abaixo, a variação em relação ao início do mês; se não houver base no início do mês, mostramos o ganho absoluto."
+                            filtroTemporal={
+                                <FiltroAvancado
+                                    tipo="mes-ano"
+                                    mesSelecionado={fidelizacaoMesAvancado}
+                                    anoSelecionado={fidelizacaoAnoAvancado}
+                                    onMesChange={setFidelizacaoMesAvancado}
+                                    onAnoChange={setFidelizacaoAnoAvancado}
+                                    mesesComVendasAnoAtual={fidelizacao.mesesComVendasAnoAtual || []}
+                                />
+                            }
                         />
                     </div>
 
