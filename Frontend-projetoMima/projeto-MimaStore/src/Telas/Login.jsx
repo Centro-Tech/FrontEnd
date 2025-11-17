@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "../Componentes/Navbar";
 import { FaixaSair } from "../Componentes/FaixaSair";
 import styles from "../Componentes/Componentes - CSS/PrimeiroAcesso.module.css";
 import API from "../Provider/API";
+import { AuthContext } from '../Provider/AuthProvider';
+import { useLocation } from 'react-router-dom';
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const auth = useContext(AuthContext);
   const [form, setForm] = useState({ email: "", senha: "" });
   const [erro, setErro] = useState("");
   const [sucesso, setSucesso] = useState(false);
@@ -33,8 +37,8 @@ export default function Login() {
       );
 
       const token = response.data.token;
-      localStorage.setItem("token", token);
-      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      // usar AuthContext para setar token
+      try { auth.login(token); } catch(e) { localStorage.setItem("token", token); API.defaults.headers.common["Authorization"] = `Bearer ${token}`; }
 
       // tentar obter o email do token e buscar o usuário para guardar o id do funcionário
       try {
@@ -71,10 +75,11 @@ export default function Login() {
 
       setSucesso(true);
 
-      // redireciona após 2s
+      // redirecionar de volta para rota solicitada ou menu-inicial
+      const dest = location.state?.from?.pathname || '/menu-inicial';
       setTimeout(() => {
-        navigate("/menu-inicial");
-      }, 2000);
+        navigate(dest);
+      }, 800);
     } catch (error) {
       console.error("Erro no login:", error);
       if (error.response?.status === 401 || error.response?.status === 404) {

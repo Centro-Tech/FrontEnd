@@ -21,6 +21,8 @@ import GroupIcon from '@mui/icons-material/Group';
 import PeopleIcon from '@mui/icons-material/People';
 import LockIcon from '@mui/icons-material/Lock';
 import API from '../Provider/API';
+import { useContext } from 'react';
+import { AuthContext } from '../Provider/AuthProvider';
 
 export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil: mostrarPerfilProp }) {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -53,10 +55,12 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
         setPerfilMenuOpen((open) => !open);
     };
 
+    const auth = useContext(AuthContext);
     const handleLogout = () => {
-        // Adicione sua lógica de logout aqui
         setPerfilMenuOpen(false);
-        // Exemplo: navigate('/login');
+        try { auth.logout(); } catch(e) { try { localStorage.removeItem('token'); } catch(e){} }
+        setUsuario(null);
+        navigate('/login');
     };
 
     const handleConfig = () => {
