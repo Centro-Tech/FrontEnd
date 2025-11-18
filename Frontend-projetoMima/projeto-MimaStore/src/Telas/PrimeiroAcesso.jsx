@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "../Componentes/Navbar.jsx";
 import { FaixaSair } from "../Componentes/FaixaSair.jsx";
-import styles from "../Componentes/Componentes - CSS/PrimeiroAcesso.module.css"; // Crie um CSS para estilizar
+import styles from "../Componentes/Componentes - CSS/PrimeiroAcesso.module.css";
 import API from "../Provider/API";
 
 export default function PrimeiroAcesso() {
@@ -47,7 +47,7 @@ export default function PrimeiroAcesso() {
 
       const loginData = loginResp?.data || {};
 
-      // tenta extrair o token por alguns nomes comuns
+      // tenta extrair o token por alguns nomes comuns MUDAR ------------------------------------------------------------------------------------
       const token =
         loginData.token ||
         loginData.jwt ||
@@ -62,7 +62,7 @@ export default function PrimeiroAcesso() {
         return;
       }
 
-      // 2) Chama endpoint de redefinir senha passando o JWT no corpo (fluxo suportado pelo backend)
+      // 2) Chama endpoint de redefinir senha passando o JWT no corpo
       await API.post("/usuarios/redefinir-senha", {
         token: token,
         novaSenha: form.novaSenha,
@@ -98,7 +98,7 @@ export default function PrimeiroAcesso() {
               alt="Roupas"
               className={styles.img}
             />
-            <p>Configure seu acesso para fazer seu primeiro login!</p>
+            <p>Caso seu cadastro já tenha sido realizado, configure o seu primeiro login!</p>
           </div>
           <div className={styles.right}>
             <h2>Configure seu acesso!</h2>

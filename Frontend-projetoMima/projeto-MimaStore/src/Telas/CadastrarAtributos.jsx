@@ -76,17 +76,24 @@ export function CadastrarAtributo() {
                     <form onSubmit={cadastrar}>
                         <div className={styles['form-group']}>
                             <label htmlFor="tipo">O que deseja cadastrar?</label>
-                            <select 
-                                id="tipo" 
-                                value={tipoAtributo} 
-                                onChange={e => setTipoAtributo(e.target.value)}
-                            >
-                                <option value="">Selecione uma opção</option>
-                                <option value="cor">Cor</option>
-                                <option value="tamanho">Tamanho</option>
-                                <option value="material">Material</option>
-                                <option value="categoria">Categoria</option>
-                            </select>
+                                <select
+                                    id="tipo"
+                                    value={tipoAtributo}
+                                    onChange={e => setTipoAtributo(e.target.value)}
+                                >
+                                    <option value="">Selecione uma opção</option>
+                                    {[
+                                        { value: 'categoria', label: 'Categoria' },
+                                        { value: 'cor', label: 'Cor' },
+                                        { value: 'material', label: 'Material' },
+                                        { value: 'tamanho', label: 'Tamanho' }
+                                    ]
+                                        .slice() // copy to avoid mutating original
+                                        .sort((a, b) => a.label.localeCompare(b.label, 'pt', { sensitivity: 'base' }))
+                                        .map(item => (
+                                            <option key={item.value} value={item.value}>{item.label}</option>
+                                        ))}
+                                </select>
                         </div>
                         <div className={styles['form-group']}>
                             <label htmlFor="nome">Nome</label>

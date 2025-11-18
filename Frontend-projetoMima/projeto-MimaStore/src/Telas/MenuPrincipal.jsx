@@ -70,8 +70,7 @@ export function MenuPrincipal() {
                 
                 <div className={styles.secoes}>
                     <div className={styles.coluna}>
-                        <BotaoEscuro texto="Estoque" />
-                        <BotaoClaro texto="Visualizar Estoque" onClick={handleVisualizarEstoque} />
+                        <BotaoEscuro texto="Estoque" />                      <BotaoClaro texto="Visualizar Estoque" onClick={handleVisualizarEstoque} />
                         <BotaoClaro texto="Cadastrar Novas Peças" onClick={handleCadastrarNovoVestuario}/>
                         <BotaoClaro texto="Cadastrar Atributos" onClick={handleCadastrarAtributos}/>
                     </div>
@@ -88,7 +87,6 @@ export function MenuPrincipal() {
                         <BotaoClaro texto="Gestão de Fornecedores" onClick={handleGestaoFornecedores}/>
                         <BotaoClaro texto="Gestão de Funcionários" onClick={handleGestaoFuncionarios}/>
                         <BotaoClaro texto="Gestão de Clientes" onClick={handleGestaoClientes}/>
-                       
                     </div>
                 </div>
             </div>

@@ -79,7 +79,7 @@ export default function Login() {
       const dest = location.state?.from?.pathname || '/menu-inicial';
       setTimeout(() => {
         navigate(dest);
-      }, 800);
+      }, 600);
     } catch (error) {
       console.error("Erro no login:", error);
       if (error.response?.status === 401 || error.response?.status === 404) {
@@ -106,7 +106,7 @@ export default function Login() {
               className={styles.img}
             />
             <p>
-              Faça login para acessar sua conta e continuar gerenciando tudo com praticidade e segurança.
+              Faça login para acessar sua conta! <br />Primeiro acesso? <span onClick={handlePrimeiroAcesso}>Clique aqui!</span>
             </p>
           </div>
           <div className={styles.right}>
@@ -128,14 +128,12 @@ export default function Login() {
                 onChange={handleChange}
                 autoComplete="current-password"
               />
-              {erro && <div className={styles.erro}>{erro}</div>}
-              <div className={styles.link}>
-              Esqueceu sua senha? <span onClick={() => navigate("/mudar-senha")}>Clique aqui!</span>
-            </div>
+             
               <button type="submit" className={styles.btn}>Entrar</button>
             </form>
-            <div className={styles.link}>
-              Primeiro acesso? <span onClick={handlePrimeiroAcesso}>Clique aqui!</span>
+             {erro && <div className={styles.erro}>{erro}</div>}
+              <div className={styles.link}>
+              Esqueceu sua senha? <span onClick={() => navigate("/mudar-senha")}>Clique aqui!</span>
             </div>
            
           </div>

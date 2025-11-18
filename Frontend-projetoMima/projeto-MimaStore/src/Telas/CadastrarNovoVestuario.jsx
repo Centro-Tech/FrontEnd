@@ -59,6 +59,7 @@ export function CadastroNovoVestuario() {
                         id: item[ep.keyId],
                         nome: item[ep.keyNome]
                     }));
+                    listaNormalizada.sort((a, b) => a.nome?.localeCompare(b.nome || '', 'pt-BR', { sensitivity: 'base' }));
                     ep.setState(listaNormalizada);
                 }
             } catch (error) {
