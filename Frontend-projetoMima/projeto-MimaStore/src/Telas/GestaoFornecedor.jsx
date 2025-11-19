@@ -151,8 +151,8 @@ export function GestaoFornecedor() {
 
     // Função para cadastrar novo fornecedor
     const cadastrarFornecedor = async () => {
-        if (!novoFornecedor.nome || !novoFornecedor.email) {
-            setErro('Nome e email são obrigatórios.');
+        if (!novoFornecedor.nome || !novoFornecedor.email || !novoFornecedor.telefone ) {
+            setErro('Nome, email e telefone são obrigatórios.');
             return;
         }
 
@@ -232,7 +232,7 @@ export function GestaoFornecedor() {
                     </div>
                 )}
 
-                <MensagemErro mensagem={erro} />
+               
 
                 <div className={styles['tabela-container']}>
                     <div className={styles['info-total']}>
@@ -382,6 +382,7 @@ export function GestaoFornecedor() {
             {/* Modal de Cadastro */}
             {mostrarModalCadastro && (
                 <div className={styles['modal-overlay']}>
+                    
                     <div className={styles['modal-content']}>
                         <div className={styles['modal-header']}>
                             <h3>Novo Fornecedor</h3>
@@ -416,6 +417,8 @@ export function GestaoFornecedor() {
                                     value={novoFornecedor.telefone}
                                     onChange={(e) => setNovoFornecedor({...novoFornecedor, telefone: e.target.value})}
                                 />
+                                    <MensagemErro mensagem={erro} />
+                             
                             </div>
                             {/* <div className={styles['form-group']}>
                                 <label>CNPJ</label>
