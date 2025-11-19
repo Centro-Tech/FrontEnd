@@ -108,11 +108,9 @@ jobs:
         with:
           host: ${{ env.HOST_REAL }}
           username: ${{ secrets.REMOTE_USER }}
-          key: ${{ env.SSH_KEY_PATH }}
-
+          key: ${{ matrix.host == 'host_a' && secrets.EC2_SSH_KEY_A || secrets.EC2_SSH_KEY_B }}
           script: |
             set -e
-
             export IP_PORTA_API=${REMOTE_HOST_PRIVADO}:8080
             echo "Variável de IP e porta da API criada: $IP_PORTA_API"
             
