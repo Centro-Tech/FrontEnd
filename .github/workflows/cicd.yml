@@ -98,3 +98,27 @@ jobs:
 
           echo "✅ Deploy finalizado e container em execução!"
           ENDSSH
+
+          
+      # 9️⃣ Atualizar IP privado da API e reiniciar Docker do Nginx
+      - name: FE - Atualizar IP da API e reiniciar Nginx
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.HOST_REAL }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ env.SSH_KEY_PATH }}
+
+          script: |
+            set -e
+
+            export IP_PORTA_API=${{ secrets.REMOTE_HOST_PRIVADO }}:8080
+            echo "Variável de IP e porta da API criada: $IP_PORTA_API"
+            
+            envsubst '${IP_PORTA_API}' < /home/${{ secrets.REMOTE_USER }}/frontend/nginx/templates/default.conf.template > /home/${{ secrets.REMOTE_USER }}/frontend/nginx/conf.d/default.conf
+            echo "Arquivo default.conf do nginx criado"
+
+            docker compose -f /home/${{ secrets.REMOTE_USER }}/compose.yaml down
+            echo "Docker compose do Nginx parado"
+            
+            docker compose -f /home/${{ secrets.REMOTE_USER }}/compose.yaml up -d --build
+            echo "Docker compose do Nginx reiniciado"
