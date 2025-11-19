@@ -135,8 +135,8 @@ jobs:
             envsubst '${IP_PORTA_API}' < /home/${{ secrets.REMOTE_USER }}/frontend/nginx/templates/default.conf.template > /home/${{ secrets.REMOTE_USER }}/frontend/nginx/conf.d/default.conf
             echo "Arquivo default.conf do nginx criado"
 
-            docker compose -f /home/${{ secrets.REMOTE_USER }}/compose.yaml down
+            docker-compose -f /home/${{ secrets.REMOTE_USER }}/compose.yaml down
             echo "Docker compose do Nginx parado"
             
-            docker compose -f /home/${{ secrets.REMOTE_USER }}/compose.yaml up -d --build
+            docker-compose -f /home/${{ secrets.REMOTE_USER }}/compose.yaml up -d --build
             echo "Docker compose do Nginx reiniciado"
