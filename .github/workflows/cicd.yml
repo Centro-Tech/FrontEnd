@@ -52,9 +52,11 @@ jobs:
           if [ "${{ matrix.host }}" = "host_a" ]; then
             echo "HOST_REAL=${{ secrets.REMOTE_HOST }}" >> $GITHUB_ENV
             echo "SSH_KEY_PATH=$HOME/.ssh/private_key_a.pem" >> $GITHUB_ENV
+            echo "REMOTE_HOST_PRIVADO=${{ secrets.REMOTE_HOST_PRIVADO_A }}" >> $GITHUB_ENV
           else
             echo "HOST_REAL=${{ secrets.REMOTE_HOST_B }}" >> $GITHUB_ENV
             echo "SSH_KEY_PATH=$HOME/.ssh/private_key_b.pem" >> $GITHUB_ENV
+            echo "REMOTE_HOST_PRIVADO=${{ secrets.REMOTE_HOST_PRIVADO_B }}" >> $GITHUB_ENV
           fi
 
       # 7️⃣ Copiar arquivos do frontend via SSH (rsync)
@@ -111,7 +113,7 @@ jobs:
           script: |
             set -e
 
-            export IP_PORTA_API=${{ secrets.REMOTE_HOST_PRIVADO }}:8080
+            export IP_PORTA_API=${REMOTE_HOST_PRIVADO}:8080
             echo "Variável de IP e porta da API criada: $IP_PORTA_API"
             
             envsubst '${IP_PORTA_API}' < /home/${{ secrets.REMOTE_USER }}/frontend/nginx/templates/default.conf.template > /home/${{ secrets.REMOTE_USER }}/frontend/nginx/conf.d/default.conf
