@@ -101,8 +101,18 @@ jobs:
           echo "✅ Deploy finalizado e container em execução!"
           ENDSSH
 
-          
-      # 9️⃣ Atualizar IP privado da API e reiniciar Docker do Nginx
+      # 9️⃣ Copiar arquivos de configuração do Nginx
+      - name: FE - Copiar arquivos do Nginx
+        run: |
+          rsync -avz -e "ssh -i ${{ env.SSH_KEY_PATH }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
+            scripts/compose-nginx.yaml \
+            ${{ secrets.REMOTE_USER }}@${{ env.HOST_REAL }}:/home/${{ secrets.REMOTE_USER }}/compose.yaml
+
+          rsync -avz -e "ssh -i ${{ env.SSH_KEY_PATH }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
+            scripts/default.conf.template \
+            ${{ secrets.REMOTE_USER }}@${{ env.HOST_REAL }}:/home/${{ secrets.REMOTE_USER }}/frontend/nginx/templates/default.conf.template
+
+      # 🔟 Atualizar IP privado da API e reiniciar Docker do Nginx
       - name: FE - Atualizar IP da API e reiniciar Nginx
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -111,6 +121,8 @@ jobs:
           key: ${{ matrix.host == 'host_a' && secrets.EC2_SSH_KEY_A || secrets.EC2_SSH_KEY_B }}
           script: |
             set -e
+            mkdir -p /home/${{ secrets.REMOTE_USER }}/frontend/nginx/templates
+            mkdir -p /home/${{ secrets.REMOTE_USER }}/frontend/nginx/conf.d
             export IP_PORTA_API=${REMOTE_HOST_PRIVADO}:8080
             echo "Variável de IP e porta da API criada: $IP_PORTA_API"
             
@@ -122,3 +134,4 @@ jobs:
             
             docker compose -f /home/${{ secrets.REMOTE_USER }}/compose.yaml up -d --build
             echo "Docker compose do Nginx reiniciado"
+          
