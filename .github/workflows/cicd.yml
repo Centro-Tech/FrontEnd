@@ -105,11 +105,11 @@ jobs:
       - name: FE - Copiar arquivos do Nginx
         run: |
           rsync -avz -e "ssh -i ${{ env.SSH_KEY_PATH }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
-            scripts/compose-nginx.yaml \
+            Frontend-projetoMima/projeto-MimaStore/infra/nginx/compose-nginx.yaml \
             ${{ secrets.REMOTE_USER }}@${{ env.HOST_REAL }}:/home/${{ secrets.REMOTE_USER }}/compose.yaml
 
           rsync -avz -e "ssh -i ${{ env.SSH_KEY_PATH }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
-            scripts/default.conf.template \
+            Frontend-projetoMima/projeto-MimaStore/infra/nginx/default.conf.template \
             ${{ secrets.REMOTE_USER }}@${{ env.HOST_REAL }}:/home/${{ secrets.REMOTE_USER }}/frontend/nginx/templates/default.conf.template
 
       # 🔟 Atualizar IP privado da API e reiniciar Docker do Nginx
@@ -134,4 +134,3 @@ jobs:
             
             docker compose -f /home/${{ secrets.REMOTE_USER }}/compose.yaml up -d --build
             echo "Docker compose do Nginx reiniciado"
-          
