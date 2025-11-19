@@ -104,6 +104,12 @@ jobs:
       # 9️⃣ Copiar arquivos de configuração do Nginx
       - name: FE - Copiar arquivos do Nginx
         run: |
+          # Garante que as pastas existem na EC2 antes de copiar
+          ssh -i ${{ env.SSH_KEY_PATH }} \
+            -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            ${{ secrets.REMOTE_USER }}@${{ env.HOST_REAL }} "mkdir -p /home/${{ secrets.REMOTE_USER }}/frontend/nginx/templates"
+
           rsync -avz -e "ssh -i ${{ env.SSH_KEY_PATH }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
             Frontend-projetoMima/projeto-MimaStore/infra/nginx/compose-nginx.yaml \
             ${{ secrets.REMOTE_USER }}@${{ env.HOST_REAL }}:/home/${{ secrets.REMOTE_USER }}/compose.yaml
