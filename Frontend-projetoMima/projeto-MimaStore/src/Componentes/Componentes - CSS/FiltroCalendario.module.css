@@ -1,0 +1,419 @@
+.filtroCalendarioContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.controles {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.controlesIntervalo {
+    display: flex;
+    width: 100%;
+}
+
+.seletorGrupo {
+    flex: 1;
+}
+
+.select {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1.5px solid #ddd;
+    background-color: white;
+    color: #333;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    padding-right: 26px;
+}
+
+.select:hover {
+    border-color: #864176;
+    background-color: #fafafa;
+}
+
+.select:focus {
+    border-color: #864176;
+    box-shadow: 0 0 0 3px rgba(134, 65, 118, 0.1);
+}
+
+.botaoCalendario {
+    padding: 6px 10px;
+    border: 1.5px solid #ddd;
+    background-color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 32px;
+}
+
+.botaoCalendario:hover {
+    border-color: #864176;
+    background-color: #f8f0f5;
+    transform: scale(1.05);
+}
+
+.botaoCalendarioGrande {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1.5px solid #ddd;
+    background-color: white;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.botaoCalendarioGrande:hover {
+    border-color: #864176;
+    background-color: #f8f0f5;
+    color: #864176;
+}
+
+.dataSelecionada {
+    font-size: 11px;
+    color: #864176;
+    font-weight: 600;
+    padding: 4px 8px;
+    background-color: #f8f0f5;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.intervaloSelecionadoContainer {
+    position: relative;
+    width: 100%;
+}
+
+.intervaloSelecionado {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background-color: #f8f0f5;
+    border-radius: 6px;
+}
+
+.dataItem {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.dataItemClicavel {
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.dataItemClicavel:hover {
+    background-color: rgba(134, 65, 118, 0.1);
+    transform: scale(1.02);
+}
+
+.dataLabel {
+    font-size: 9px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dataValor {
+    font-size: 11px;
+    font-weight: 700;
+    color: #864176;
+}
+
+.dataSeparador {
+    font-size: 14px;
+    font-weight: 700;
+    color: #864176;
+    padding: 0 4px;
+}
+
+.calendarioPopup {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #864176;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(134, 65, 118, 0.2);
+    z-index: 1000;
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.calendarioHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f0f0f0;
+    gap: 8px;
+}
+
+.navegacaoMesAno {
+    display: flex;
+    gap: 6px;
+    flex: 1;
+}
+
+.selectCompacto {
+    padding: 6px 8px;
+    border: 1.5px solid #ddd;
+    background-color: white;
+    color: #333;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    padding-right: 26px;
+    flex: 1;
+}
+
+.selectCompacto:hover {
+    border-color: #864176;
+    background-color: #fafafa;
+}
+
+.selectCompacto:focus {
+    border-color: #864176;
+    box-shadow: 0 0 0 2px rgba(134, 65, 118, 0.1);
+}
+
+.calendarioTitulo {
+    font-size: 14px;
+    font-weight: 700;
+    color: #864176;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.subtitulo {
+    font-size: 11px;
+    font-weight: 500;
+    color: #864176;
+    text-align: center;
+    padding: 4px 8px;
+    background-color: #f8f0f5;
+    border-radius: 4px;
+}
+
+.botaoFechar {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #666;
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+}
+
+.botaoFechar:hover {
+    background-color: #f0f0f0;
+    color: #864176;
+}
+
+.diasSemana {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.diaSemanaHeader {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #666;
+    padding: 4px;
+    text-transform: uppercase;
+}
+
+.diasGrid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.dia {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: #333;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: white;
+    position: relative;
+}
+
+.dia:hover {
+    border-color: #864176;
+    background-color: #f8f0f5;
+    transform: scale(1.05);
+}
+
+.diaVazio {
+    aspect-ratio: 1;
+}
+
+.diaSelecionado {
+    background-color: #864176 !important;
+    color: white !important;
+    border-color: #864176 !important;
+    font-weight: 700;
+}
+
+.diaIntervalo {
+    background-color: rgba(134, 65, 118, 0.15) !important;
+    border-color: rgba(134, 65, 118, 0.3) !important;
+}
+
+.diaComVendas {
+    background-color: #e8f5e9;
+    border-color: #4caf50;
+}
+
+.diaFeriado {
+    background-color: #fff3e0;
+    border-color: #ff9800;
+    position: relative;
+}
+
+.diaFeriado::after {
+    content: '🎉';
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    font-size: 8px;
+}
+
+.diaHoje {
+    box-shadow: 0 0 0 2px #2196f3;
+    font-weight: 700;
+}
+
+/* Combinar estilos */
+.diaComVendas.diaFeriado {
+    background: linear-gradient(135deg, #e8f5e9 50%, #fff3e0 50%);
+}
+
+.diaSelecionado.diaFeriado::after,
+.diaSelecionado.diaComVendas::after {
+    filter: brightness(2);
+}
+
+.legenda {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+    justify-content: center;
+}
+
+.legendaItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: #666;
+}
+
+.legendaCor {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1.5px solid;
+}
+
+.legendaIntervalo {
+    background-color: rgba(134, 65, 118, 0.15);
+    border-color: rgba(134, 65, 118, 0.3);
+}
+
+.legendaFeriado {
+    background-color: #fff3e0;
+    border-color: #ff9800;
+}
+
+.legendaComVendas {
+    background-color: #e8f5e9;
+    border-color: #4caf50;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .calendarioPopup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 350px;
+        right: auto;
+    }
+
+    .dia {
+        font-size: 11px;
+    }
+
+    .diaSemanaHeader {
+        font-size: 9px;
+    }
+}

@@ -143,6 +143,7 @@ export const getAverageTicket = async (diasOuOpcoes = 30) => {
     try {
         let inicioAtual, fimAtual, inicioAnterior, fimAnterior;
         let mesesComVendasAnoAtual = [];
+        let diasComVendas = [];
         
         const hoje = new Date();
         const anoAtual = hoje.getFullYear();
@@ -172,15 +173,48 @@ export const getAverageTicket = async (diasOuOpcoes = 30) => {
 
         // Verificar se é modo avançado (objeto com mes e ano)
         if (typeof diasOuOpcoes === 'object' && diasOuOpcoes.mes && diasOuOpcoes.ano) {
-            const { mes, ano } = diasOuOpcoes;
+            const { mes, ano, dataInicio, dataFim } = diasOuOpcoes;
             
-            // O período "anterior" (selecionado) é o mês completo escolhido pelo usuário
-            inicioAnterior = new Date(ano, mes - 1, 1).toISOString().split('T')[0];
-            fimAnterior = new Date(ano, mes, 0).toISOString().split('T')[0];
+            // Modo intervalo: compara dois períodos personalizados
+            if (dataInicio && dataFim) {
+                // Período "início" (para comparação)
+                inicioAnterior = dataInicio;
+                fimAnterior = dataInicio; // Apenas o dia de início
+                
+                // Período "fim" (atual, que será exibido)
+                inicioAtual = dataFim;
+                fimAtual = dataFim; // Apenas o dia de fim
+                
+                console.log('[TICKET MÉDIO] Modo intervalo:', {
+                    periodoInicio: dataInicio,
+                    periodoFim: dataFim,
+                    logica: 'Variação = (Fim - Início) / Início'
+                });
+            } else {
+                // Modo mês completo (legado)
+                inicioAnterior = new Date(ano, mes - 1, 1).toISOString().split('T')[0];
+                fimAnterior = new Date(ano, mes, 0).toISOString().split('T')[0];
+                
+                fimAtual = hoje.toISOString().split('T')[0];
+                inicioAtual = new Date(anoAtual, mesAtual - 1, 1).toISOString().split('T')[0];
+            }
             
-            // O período "atual" é sempre o mês/ano de HOJE (do início do mês até hoje)
-            fimAtual = hoje.toISOString().split('T')[0];
-            inicioAtual = new Date(anoAtual, mesAtual - 1, 1).toISOString().split('T')[0];
+            // Buscar dias com vendas no mês selecionado para o calendário
+            const inicioMesCalendario = new Date(ano, mes - 1, 1).toISOString().split('T')[0];
+            const fimMesCalendario = new Date(ano, mes, 0).toISOString().split('T')[0];
+            const vendasMesCalendario = await API.get(`/vendas/filtrar-por-data?inicio=${inicioMesCalendario}&fim=${fimMesCalendario}`);
+            const vendasMesArray = extractArray(vendasMesCalendario);
+            
+            // Extrair datas únicas das vendas
+            const datasUnicas = new Set();
+            vendasMesArray.forEach(venda => {
+                if (venda.data) {
+                    const dataVenda = new Date(venda.data).toISOString().split('T')[0];
+                    datasUnicas.add(dataVenda);
+                }
+            });
+            diasComVendas = Array.from(datasUnicas).sort();
+            
         } else {
             // Modo básico (dias)
             const dias = diasOuOpcoes;
@@ -228,19 +262,37 @@ export const getAverageTicket = async (diasOuOpcoes = 30) => {
         });
 
         const modoAvancado = typeof diasOuOpcoes === 'object' && diasOuOpcoes.mes && diasOuOpcoes.ano;
+        const modoIntervalo = modoAvancado && diasOuOpcoes.dataInicio && diasOuOpcoes.dataFim;
         
         let valorDisplay, variacaoPercentual;
         
-        if (modoAvancado) {
-            // Modo avançado:
+        if (modoIntervalo) {
+            // Modo intervalo:
+            // - Mostrar valor do período FIM (ticketMedioAtual = valor na data fim)
+            // - Variação = (Fim - Início) / Início
+            // ticketMedioAtual = ticket médio no dia FIM
+            // ticketMedioAnterior = ticket médio no dia INÍCIO
+            valorDisplay = ticketMedioAtual;
+            
+            if (ticketMedioAnterior > 0 && !isNaN(ticketMedioAtual) && !isNaN(ticketMedioAnterior)) {
+                // Variação = (Fim - Início) / Início * 100
+                variacaoPercentual = ((ticketMedioAtual - ticketMedioAnterior) / ticketMedioAnterior) * 100;
+            } else {
+                variacaoPercentual = 0;
+            }
+            
+            console.log('[TICKET MÉDIO] Cálculo intervalo:', {
+                ticketInicio: ticketMedioAnterior.toFixed(2),
+                ticketFim: ticketMedioAtual.toFixed(2),
+                variacao: variacaoPercentual.toFixed(2) + '%'
+            });
+        } else if (modoAvancado) {
+            // Modo avançado mês completo (legado):
             // - Mostrar valor do período selecionado (ticketMedioAnterior)
             // - Variação sempre comparando período selecionado COM o mês/ano atual (hoje)
             valorDisplay = ticketMedioAnterior;
             
             if (ticketMedioAnterior > 0 && !isNaN(ticketMedioAtual) && !isNaN(ticketMedioAnterior)) {
-                // Variação = (Atual - Selecionado) / Selecionado
-                // Se atual > selecionado = positivo (cresceu)
-                // Se atual < selecionado = negativo (diminuiu)
                 variacaoPercentual = ((ticketMedioAtual - ticketMedioAnterior) / ticketMedioAnterior) * 100;
             } else {
                 variacaoPercentual = 0;
@@ -261,7 +313,8 @@ export const getAverageTicket = async (diasOuOpcoes = 30) => {
         return {
             valor: `R$ ${valorDisplay.toFixed(2).replace('.', ',')}`,
             variacao: variacaoFinal,
-            mesesComVendasAnoAtual // Incluir para filtrar dropdown
+            mesesComVendasAnoAtual, // Incluir para filtrar dropdown
+            diasComVendas // Incluir dias com vendas para o calendário
         };
     } catch (error) {
         console.error('Error fetching average ticket:', error);
@@ -544,6 +597,7 @@ export const getLoyalCustomersStats = async (mesesOuOpcoes = 12) => {
     try {
         let hoje, inicioHojeJanela, inicioMesAtual, inicioMesJanela;
         let mesesComVendasAnoAtual = [];
+        let diasComVendas = [];
         
         const hojeReal = new Date();
         const anoAtual = hojeReal.getFullYear();
@@ -573,18 +627,51 @@ export const getLoyalCustomersStats = async (mesesOuOpcoes = 12) => {
 
         // Verificar se é modo avançado (objeto com mes e ano)
         if (typeof mesesOuOpcoes === 'object' && mesesOuOpcoes.mes && mesesOuOpcoes.ano) {
-            const { mes, ano } = mesesOuOpcoes;
+            const { mes, ano, dataInicio, dataFim } = mesesOuOpcoes;
             
-            // Período "hoje" é sempre HOJE com janela de 12 meses
-            hoje = hojeReal;
-            inicioHojeJanela = new Date(hoje);
-            inicioHojeJanela.setMonth(inicioHojeJanela.getMonth() - 12);
+            // Modo intervalo: compara fidelização em dois períodos
+            if (dataInicio && dataFim) {
+                // Período "fim" - janela de 12 meses até a data FIM
+                hoje = new Date(dataFim);
+                inicioHojeJanela = new Date(hoje);
+                inicioHojeJanela.setMonth(inicioHojeJanela.getMonth() - 12);
+                
+                // Período "início" - janela de 12 meses até a data INÍCIO
+                inicioMesAtual = new Date(dataInicio);
+                inicioMesJanela = new Date(inicioMesAtual);
+                inicioMesJanela.setMonth(inicioMesJanela.getMonth() - 12);
+                
+                console.log('[FIDELIZAÇÃO] Modo intervalo:', {
+                    periodoFim: `12 meses até ${dataFim}`,
+                    periodoInicio: `12 meses até ${dataInicio}`,
+                    logica: 'Variação = (Fim - Início) / Início'
+                });
+            } else {
+                // Modo mês completo (legado)
+                hoje = hojeReal;
+                inicioHojeJanela = new Date(hoje);
+                inicioHojeJanela.setMonth(inicioHojeJanela.getMonth() - 12);
 
-            // Período "selecionado" é o mês/ano escolhido pelo usuário com janela de 12 meses
-            // Usar último dia do mês selecionado como referência
-            inicioMesAtual = new Date(ano, mes, 0); // Último dia do mês selecionado
-            inicioMesJanela = new Date(inicioMesAtual);
-            inicioMesJanela.setMonth(inicioMesJanela.getMonth() - 12);
+                inicioMesAtual = new Date(ano, mes, 0);
+                inicioMesJanela = new Date(inicioMesAtual);
+                inicioMesJanela.setMonth(inicioMesJanela.getMonth() - 12);
+            }
+            
+            // Buscar dias com vendas no mês selecionado para o calendário
+            const inicioMesCalendario = new Date(ano, mes - 1, 1).toISOString().split('T')[0];
+            const fimMesCalendario = new Date(ano, mes, 0).toISOString().split('T')[0];
+            const vendasMesCalendario = await API.get(`/vendas/filtrar-por-data?inicio=${inicioMesCalendario}&fim=${fimMesCalendario}`);
+            const vendasMesArray = extractArray(vendasMesCalendario);
+            
+            // Extrair datas únicas das vendas
+            const datasUnicas = new Set();
+            vendasMesArray.forEach(venda => {
+                if (venda.data) {
+                    const dataVenda = new Date(venda.data).toISOString().split('T')[0];
+                    datasUnicas.add(dataVenda);
+                }
+            });
+            diasComVendas = Array.from(datasUnicas).sort();
         } else {
             // Modo básico (meses) - MESMA LÓGICA DA DASHBOARD COMPLETA
             // Sempre usar janela de 12 meses, mas em períodos diferentes
@@ -718,15 +805,30 @@ export const getLoyalCustomersStats = async (mesesOuOpcoes = 12) => {
             delta: currentCount - startOfMonthCount
         });
 
-        const delta = currentCount - startOfMonthCount;
-        const variationPercent = startOfMonthCount > 0 ? ((delta) / startOfMonthCount) * 100 : null;
+        // startOfMonthCount = fidelização no período INÍCIO (janela 12 meses até dataInicio)
+        // currentCount = fidelização no período FIM (janela 12 meses até dataFim)
+        const fidelizacaoInicio = startOfMonthCount;
+        const fidelizacaoFim = currentCount;
+        
+        // Valor exibido = fidelização do período FIM
+        // Variação = (Fim - Início) / Início * 100
+        const delta = fidelizacaoFim - fidelizacaoInicio;
+        const variationPercent = fidelizacaoInicio > 0 ? (delta / fidelizacaoInicio) * 100 : null;
+        
+        console.log('[FIDELIZAÇÃO] Cálculo final:', {
+            fidelizacaoInicio,
+            fidelizacaoFim,
+            delta,
+            variacao: variationPercent !== null ? variationPercent.toFixed(2) + '%' : 'N/A'
+        });
 
         return {
-            currentCount,
-            startOfMonthCount,
+            currentCount: fidelizacaoFim, // Valor exibido = período FIM
+            startOfMonthCount: fidelizacaoInicio, // Apenas para referência
             variationPercent: variationPercent !== null ? Math.round(variationPercent) : null,
             addedSinceStart: delta,
-            mesesComVendasAnoAtual // Incluir para filtrar dropdown
+            mesesComVendasAnoAtual, // Incluir para filtrar dropdown
+            diasComVendas // Incluir dias com vendas para o calendário
         };
     } catch (error) {
         console.error('Error computing loyal customers stats:', error);
