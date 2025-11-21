@@ -79,7 +79,7 @@ export default function Login() {
       const dest = location.state?.from?.pathname || '/menu-inicial';
       setTimeout(() => {
         navigate(dest);
-      }, 600);
+      }, 900);
     } catch (error) {
       console.error("Erro no login:", error);
       if (error.response?.status === 401 || error.response?.status === 404) {

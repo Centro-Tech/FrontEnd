@@ -620,7 +620,7 @@
 }
 
 .tabela-wrapper :global(.MuiButton-outlined:last-of-type:hover) {
-    background: linear-gradient(135deg, #c82333, #c0392b) !important;
+      background: linear-gradient(135deg, #875C6A, #864176);
     transform: scale(1.1) !important;
     box-shadow: 0 3px 8px rgba(220, 53, 69, 0.4) !important;
 }
