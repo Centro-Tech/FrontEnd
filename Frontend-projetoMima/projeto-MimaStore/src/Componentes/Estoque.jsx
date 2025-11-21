@@ -331,7 +331,7 @@ export default function Estoque() {
     }
   };
 
- const dadosTabela = itens.map((i, index) => {
+  const dadosTabela = itens.map((i, index) => {
   const safeId = i.id !== undefined && i.id !== null ? i.id : (i.codigo ?? `row-${index}`);
   const quantidade = getQtd(i);
 
@@ -342,7 +342,7 @@ export default function Estoque() {
     tamanho: i.tamanho?.descricao || 'Sem tamanho',
     cor: i.cor?.nome || 'Sem cor',
     qtd_estoque: quantidade,
-    preco: i.preco ? Number(i.preco).toFixed(2) : '-',
+    preco: (i.preco !== undefined && i.preco !== null) ? Number(Math.max(0, i.preco)).toFixed(2) : '-',
     codigo: i.codigo,
     __original: i
   };
@@ -524,7 +524,7 @@ export default function Estoque() {
               <div className={styles['modal-card']}>
                 <p><strong>Nome:</strong> {itemParaExcluir.nome}</p>
                 {itemParaExcluir.codigo && (<p><strong>Código:</strong> {itemParaExcluir.codigo}</p>)}
-                {itemParaExcluir.preco !== undefined && (<p><strong>Preço:</strong> {Number(itemParaExcluir.preco).toFixed(2)}</p>)}
+                {itemParaExcluir.preco !== undefined && (<p><strong>Preço:</strong> {Number(Math.max(0, itemParaExcluir.preco)).toFixed(2)}</p>)}
                 {(itemParaExcluir.qtd_estoque !== undefined || itemParaExcluir.qtdEstoque !== undefined) && (<p><strong>Quantidade:</strong> {getQtd(itemParaExcluir)}</p>)}
               </div>
               <p className={styles['modal-warning']}>⚠️ Esta ação não pode ser desfeita!</p>

@@ -80,13 +80,24 @@ if (
     !nome ||
     !fornecedor ||
     !preco ||
-    !quantidade ||
+    (quantidade === '' || quantidade === null) ||
     !categoria ||
     !cor ||
     !tamanho ||
     !material
 ) {
     setErro('Preencha todos os campos.');
+    return;
+}
+
+// bloqueia quantidade negativa
+if (Number(quantidade) < 0) {
+    setErro('Quantidade não pode ser negativa.');
+    return;
+}
+// bloqueia preço negativo
+if (Number(preco) < 0) {
+    setErro('Preço não pode ser negativo.');
     return;
 }
 
@@ -175,7 +186,20 @@ if (
                         {/* Preço */}
                         <div className={styles['form-group']}>
                             <label>Preço unitário</label>
-                            <input type="number" step="0.01" value={preco} onChange={e => setPreco(e.target.value)}  />
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={preco}
+                                onChange={e => {
+                                    const v = e.target.value;
+                                    if (v === '') { setPreco(''); return; }
+                                    // aceita vírgula ou ponto, transforma em number
+                                    const n = Number(String(v).replace(',', '.'));
+                                    if (isNaN(n)) { setPreco(''); return; }
+                                    setPreco(String(Math.max(0, n)));
+                                }}
+                            />
                         </div>
 
                         {/* Tamanho */}
@@ -190,7 +214,19 @@ if (
                         {/* Quantidade */}
                         <div className={styles['form-group']}>
                             <label>Quantidade adquirida</label>
-                            <input type="number" value={quantidade} onChange={e => setQuantidade(e.target.value)}  />
+                            <input
+                                type="number"
+                                min="0"
+                                value={quantidade}
+                                onChange={e => {
+                                    const v = e.target.value;
+                                    if (v === '') { setQuantidade(''); return; }
+                                    const n = Number(v);
+                                    if (isNaN(n)) { setQuantidade(''); return; }
+                                    // força mínimo 0
+                                    setQuantidade(String(Math.max(0, n)));
+                                }}
+                            />
                         </div>
 
                         {/* Material */}

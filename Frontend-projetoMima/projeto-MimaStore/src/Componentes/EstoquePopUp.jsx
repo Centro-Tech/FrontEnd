@@ -17,7 +17,7 @@ export default function EstoquePopUp({ mostrar, itens, onConfirmar, onCancelar }
         <table className={styles["popup-estoque-table"]}>
           <thead>
             <tr>
-              {isVendaItem ? (
+                    {isVendaItem ? (
                 <>
                   <th>NOME</th>
                   <th>FORNECEDOR</th>
@@ -44,7 +44,7 @@ export default function EstoquePopUp({ mostrar, itens, onConfirmar, onCancelar }
                   <td>{item.quantidade}</td>
                   <td>
                     {item.preco !== undefined
-                      ? `R$${Number(item.preco).toLocaleString("pt-BR", {
+                      ? `R$${Math.max(0, Number(item.preco)).toLocaleString("pt-BR", {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })}`
@@ -59,7 +59,7 @@ export default function EstoquePopUp({ mostrar, itens, onConfirmar, onCancelar }
                   <td>{item.qtd_estoque}</td>
                   <td>
                     {item.preco !== undefined
-                      ? `R$${Number(item.preco).toLocaleString("pt-BR", {
+                      ? `R$${Math.max(0, Number(item.preco)).toLocaleString("pt-BR", {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })}`

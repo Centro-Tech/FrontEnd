@@ -63,6 +63,9 @@ export function RealizarVenda() {
             valor = Number(valor) || 0;
         }
 
+        // nunca retornar valor negativo — clamp para 0
+        valor = Math.max(0, valor);
+
         return { ...data, id, codigo, nome, tamanho, disponivel, valor };
     };
 
