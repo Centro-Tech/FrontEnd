@@ -265,7 +265,7 @@ export function GestaoClientes() {
                         <div className={styles['busca-container']}>
                             <input 
                                 type="text"
-                                placeholder="Buscar por nome, email ou CPF..."
+                                placeholder="Buscar por nome"
                                 value={busca}
                                 onChange={(e) => setBusca(e.target.value)}
                                 className={styles['input-busca']}
@@ -301,6 +301,12 @@ export function GestaoClientes() {
                     <div className={styles['tabela-wrapper']}>
                         <Tabela 
                             itens={dadosTabela}
+                            columns={[
+                                { key: 'id', label: 'ID Cliente' },
+                                { key: 'nome', label: 'Nome' },
+                                { key: 'email', label: 'Email' },
+                                { key: 'telefone', label: 'Telefone' },
+                            ]}
                             botaoEditar={true}
                                 onEditar={(item) => {
                                     const cliente = clientesFiltrados.find(c => c.id === item.id);

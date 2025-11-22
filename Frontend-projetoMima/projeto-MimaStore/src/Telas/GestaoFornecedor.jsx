@@ -141,12 +141,49 @@ export function GestaoFornecedor() {
 
     // Função para salvar edição
     const salvarEdicao = async () => {
-        // Observação: o backend fornecido não expõe um endpoint PUT/atualizar no controlador
-        // portanto a edição não está disponível aqui. Fechamos o modal e mostramos uma mensagem.
-        setErro('Edição não suportada pelo backend.');
-        setTimeout(() => setErro(''), 3000);
-        setMostrarModal(false);
-        setFornecedorEditando(null);
+        if (!fornecedorEditando || !fornecedorEditando.nome || !fornecedorEditando.email) {
+            setErro('Nome e email são obrigatórios.');
+            return;
+        }
+
+        setCarregando(true);
+        setErro('');
+        try {
+            const payload = {
+                nome: fornecedorEditando.nome,
+                email: fornecedorEditando.email,
+                telefone: fornecedorEditando.telefone || '',
+                cnpj: fornecedorEditando.cnpj || null,
+                endereco: fornecedorEditando.endereco || null
+            };
+
+            const id = fornecedorEditando.id;
+            // Chamada PUT para atualizar o fornecedor
+            const response = await API.put(`/fornecedores/${id}`, payload);
+
+            if (response && (response.status === 200 || response.status === 204)) {
+                // Recarregar lista para refletir alterações (mantendo paginação)
+                await carregarFornecedores(paginaAtual);
+                setMensagem('Fornecedor atualizado com sucesso!');
+                setTimeout(() => setMensagem(''), 3000);
+                setMostrarModal(false);
+                setFornecedorEditando(null);
+            } else {
+                setErro('Erro inesperado ao atualizar fornecedor.');
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar fornecedor:', error);
+            if (error.response?.status === 404) {
+                setErro('Fornecedor não encontrado para atualização.');
+            } else if (error.response?.status === 400) {
+                const detail = error.response?.data?.message || JSON.stringify(error.response.data);
+                setErro(`Dados inválidos: ${detail}`);
+            } else {
+                setErro('Erro ao atualizar fornecedor.');
+            }
+        } finally {
+            setCarregando(false);
+        }
     };
 
     // Função para cadastrar novo fornecedor
@@ -196,7 +233,7 @@ export function GestaoFornecedor() {
                         <div className={styles['busca-container']}>
                             <input 
                                 type="text"
-                                placeholder="Buscar por nome, email ou CNPJ..."
+                                placeholder="Buscar por nome"
                                 value={busca}
                                 onChange={(e) => setBusca(e.target.value)}
                                 className={styles['input-busca']}
@@ -242,6 +279,12 @@ export function GestaoFornecedor() {
                     <div className={styles['tabela-wrapper']}>
                         <Tabela 
                             itens={dadosTabela}
+                            columns={[
+                                { key: 'id', label: 'ID' },
+                                { key: 'nome', label: 'Nome' },
+                                { key: 'telefone', label: 'Telefone' },
+                                { key: 'email', label: 'Email' },
+                            ]}
                             botaoEditar={true}
                             onEditar={(item) => {
                                 const fornecedor = fornecedoresFiltrados.find(f => f.id === item.id);

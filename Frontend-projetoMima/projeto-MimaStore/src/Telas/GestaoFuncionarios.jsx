@@ -156,8 +156,11 @@ export function GestaoFuncionarios() {
     const dadosTabela = funcionariosFiltrados.map(usuario => ({
         id: usuario.id,
         nome: usuario.nome || '',
+        cargo: usuario.cargo || '',
+        imagem: usuario.imagem ?? usuario.imagemUrl ?? usuario.avatar ?? null,
         email: usuario.email || '',
-        cargo: usuario.cargo || ''
+        telefone: usuario.telefone || '',
+        endereco: usuario.endereco || ''
     }));
 
     // Função para salvar edição
@@ -316,6 +319,15 @@ export function GestaoFuncionarios() {
                     <div className={styles['tabela-wrapper']}>
                         <Tabela 
                             itens={dadosTabela}
+                            columns={[
+                                { key: 'id', label: 'ID' },
+                                { key: 'nome', label: 'Nome' },
+                                { key: 'cargo', label: 'Cargo' },
+                                { key: 'imagem', label: 'Imagem' },
+                                { key: 'email', label: 'Email' },
+                                { key: 'telefone', label: 'Telefone' },
+                                { key: 'endereco', label: 'Endereço' },
+                            ]}
                             botaoEditar={true}
                             onEditar={(item) => {
                                 const funcionario = funcionariosFiltrados.find(f => f.id === item.id);
