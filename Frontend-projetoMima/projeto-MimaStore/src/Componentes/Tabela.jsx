@@ -27,19 +27,18 @@ export function Tabela({
   renderBotaoEditar,
   renderBotaoRemover,
   theme = "default",
+  columns = null, // optional custom columns: [{ key, label }]
 }) {
   const styles = theme === "fornecedor" ? fornecedorStyles : estiloStyles;
 
-  // ✅ MAPEAMENTO FIXO DAS COLUNAS (controla nome visual e ordem)
-  const colunas = [
+  // ✅ MAPEAMENTO PADRÃO DAS COLUNAS (pode ser sobrescrito via prop `columns`)
+  const defaultColunas = [
     { key: "nome", label: "NOME" },
-    // { key: "tamanho", label: "TAMANHO" },
-    // { key: "cor", label: "COR" },
-    // { key: "categoria", label: "CATEGORIA" },
     { key: "preco", label: "PREÇO" },
     { key: "qtd_estoque", label: "QTD_ESTOQUE" },
-    { key: "codigo", label: "CÓDIGO" }
+    { key: "codigo", label: "CÓDIGO" },
   ];
+  const colunas = Array.isArray(columns) && columns.length > 0 ? columns : defaultColunas;
 
   /* ========================
      TEMA FORNECEDOR (tabela HTML simples)
