@@ -7,6 +7,7 @@ import { KpiCard } from '../Componentes/KpiCard';
 import { ChartCard } from '../Componentes/ChartCard';
 import { FiltroTemporal } from '../Componentes/FiltroTemporal';
 import FiltroSazional from '../Componentes/FiltroSazional';
+import FiltroCalendario from '../Componentes/FiltroCalendario';
 import DashboardService from '../Provider/DashboardService';
 
 export default function DashboardSimples() {
@@ -38,6 +39,9 @@ export default function DashboardSimples() {
     const [filtroTicket, setFiltroTicket] = useState(30); // dias: 7, 30, 90
     const [filtroFidelizacao, setFiltroFidelizacao] = useState(24); // meses: 24, 36, 48
     const [filtroCategorias, setFiltroCategorias] = useState(3); // meses: 1, 3, 6
+    const [dataEstoqueRuptura, setDataEstoqueRuptura] = useState(new Date().toISOString().split('T')[0]); // data para cálculo de ruptura
+    const [mesEstoqueRuptura, setMesEstoqueRuptura] = useState(new Date().getMonth() + 1); // 1-12
+    const [anoEstoqueRuptura, setAnoEstoqueRuptura] = useState(new Date().getFullYear());
     
     // Filtros Sazionais (4 dropdowns: estação1, ano1, estação2, ano2)
     const [filtroEstacao1, setFiltroEstacao1] = useState(null); // null = auto (estação atual)
@@ -46,13 +50,33 @@ export default function DashboardSimples() {
     const [filtroSazionalBasico, setFiltroSazionalBasico] = useState(1); // 1, 2 ou 3 estações atrás
     const [filtroAno2, setFiltroAno2] = useState(null); // null = auto (ano da estação anterior)
 
+    // Atualizar dataEstoqueRuptura quando mês ou ano mudarem
+    useEffect(() => {
+        // Obter o último dia do mês selecionado
+        const ultimoDia = new Date(anoEstoqueRuptura, mesEstoqueRuptura, 0).getDate();
+        const dataAtual = new Date();
+        const mesAtual = dataAtual.getMonth() + 1;
+        const anoAtual = dataAtual.getFullYear();
+        const diaAtual = dataAtual.getDate();
+        
+        // Se for o mês/ano atual, usar o dia atual como limite
+        let dia = ultimoDia;
+        if (mesEstoqueRuptura === mesAtual && anoEstoqueRuptura === anoAtual) {
+            dia = Math.min(diaAtual, ultimoDia);
+        }
+        
+        const novaData = `${anoEstoqueRuptura}-${String(mesEstoqueRuptura).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+        setDataEstoqueRuptura(novaData);
+    }, [mesEstoqueRuptura, anoEstoqueRuptura]);
+
     useEffect(() => {
         loadDashboardData();
     }, [
         filtroTicket,
         filtroFidelizacao,
         filtroCategorias, 
-        filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2
+        filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2,
+        dataEstoqueRuptura
     ]);
 
     // Load only the estoque x vendas chart when page changes
@@ -74,7 +98,7 @@ export default function DashboardSimples() {
                 DashboardService.getAverageTicket(filtroTicket),
                 DashboardService.getSeasonalIndex(filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2),
                 DashboardService.getLoyalCustomersStats(filtroFidelizacao),
-                DashboardService.getStockSalesRelation({ page: 1, pageSize: estoqueMeta.pageSize || 4, order: 'desc' }),
+                DashboardService.getStockSalesRelation({ page: 1, pageSize: estoqueMeta.pageSize || 4, order: 'desc', data: dataEstoqueRuptura }),
                 DashboardService.getCategoriesTopPerLast3Months(filtroCategorias)
             ]);
 
@@ -171,7 +195,7 @@ export default function DashboardSimples() {
 
     const loadEstoqueChart = async (page) => {
         try {
-            const estoqueVendas = await DashboardService.getStockSalesRelation({ page: page || 1, pageSize: estoqueMeta.pageSize || 4, order: 'desc' });
+            const estoqueVendas = await DashboardService.getStockSalesRelation({ page: page || 1, pageSize: estoqueMeta.pageSize || 4, order: 'desc', data: dataEstoqueRuptura });
             if (estoqueVendas && estoqueVendas.labels) {
                 setEstoqueVendasData({
                     labels: estoqueVendas.labels,
@@ -331,6 +355,24 @@ export default function DashboardSimples() {
                                 tipo="bar"
                                 dados={estoqueVendasData}
                                 explicacao="Identifica produtos com alta demanda em relação ao estoque atual. Produtos no topo vendem rápido e precisam de reposição urgente para evitar ruptura."
+                                filtroTemporal={
+                                    <FiltroCalendario
+                                        dataSelecionada={dataEstoqueRuptura}
+                                        onDataChange={(novaData) => {
+                                            setDataEstoqueRuptura(novaData);
+                                            // Atualizar também mês e ano
+                                            const [ano, mes] = novaData.split('-');
+                                            setAnoEstoqueRuptura(Number(ano));
+                                            setMesEstoqueRuptura(Number(mes));
+                                        }}
+                                        mesSelecionado={mesEstoqueRuptura}
+                                        anoSelecionado={anoEstoqueRuptura}
+                                        onMesChange={setMesEstoqueRuptura}
+                                        onAnoChange={setAnoEstoqueRuptura}
+                                        diasComVendas={[]}
+                                        modoIntervalo={false}
+                                    />
+                                }
                                 opcoes={{
                                     indexAxis: 'y',
                                     responsive: true,

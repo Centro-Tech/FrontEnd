@@ -844,13 +844,16 @@ export const getStockSalesRelation = async (options = {}) => {
         const page = Math.max(1, parseInt(options.page || 1, 10));
         const pageSize = Math.max(1, parseInt(options.pageSize || 10, 10));
         const order = (options.order || 'desc').toLowerCase();
-        const hoje = new Date();
+        
+        // Se data foi fornecida, usar ela como fim do período
+        const hoje = options.data ? new Date(options.data) : new Date();
         const seteDiasAtras = new Date(hoje);
         seteDiasAtras.setDate(seteDiasAtras.getDate() - 7);
 
         console.log('[ESTOQUE X VENDAS] Período:', {
             inicio: seteDiasAtras.toISOString().split('T')[0],
-            fim: hoje.toISOString().split('T')[0]
+            fim: hoje.toISOString().split('T')[0],
+            dataPersonalizada: options.data || 'não (usando hoje)'
         });
 
         const [itensResponse, vendasSemana] = await Promise.all([
