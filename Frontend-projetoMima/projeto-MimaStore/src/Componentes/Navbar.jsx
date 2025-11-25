@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import styles from './Componentes - CSS/Navbar.module.css';
 import Logo from './assets/Group 2.png';
@@ -51,9 +52,38 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
         setMenuOpen(false);
     };
 
-    const handlePerfilClick = () => {
-        setPerfilMenuOpen((open) => !open);
+    const perfilRef = useRef(null);
+    const [perfilMenuStyle, setPerfilMenuStyle] = useState({});
+
+    const computePerfilMenuPosition = () => {
+        if (!perfilRef.current) return;
+        const rect = perfilRef.current.getBoundingClientRect();
+        const menuWidth = 160; // largura mínima esperada
+        // aproxima bastante: 4px de espaçamento abaixo e alinhado à direita do avatar
+        const top = rect.bottom + 4;
+        const left = Math.max(8, rect.right - menuWidth + 8);
+        setPerfilMenuStyle({ position: 'fixed', top: `${top}px`, left: `${left}px`, minWidth: `${menuWidth}px` });
     };
+
+    const handlePerfilClick = () => {
+        setPerfilMenuOpen((open) => {
+            const willOpen = !open;
+            if (willOpen) setTimeout(computePerfilMenuPosition, 0);
+            return willOpen;
+        });
+    };
+
+    useEffect(() => {
+        if (!perfilMenuOpen) return;
+        const onResize = () => computePerfilMenuPosition();
+        const onScroll = () => computePerfilMenuPosition();
+        window.addEventListener('resize', onResize);
+        window.addEventListener('scroll', onScroll, true);
+        return () => {
+            window.removeEventListener('resize', onResize);
+            window.removeEventListener('scroll', onScroll, true);
+        };
+    }, [perfilMenuOpen]);
 
     const auth = useContext(AuthContext);
     const handleLogout = () => {
@@ -129,18 +159,19 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
                             {mostrarPerfil && (
                                 <li className={styles["item"]} style={{ position: 'relative' }}>
                                     <div
+                                        ref={perfilRef}
                                         className={styles.perfilWrapper}
                                         onClick={handlePerfilClick}
                                         style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
                                     >
                                         <Perfil nome={usuario?.nome || 'Usuário'} fotoId={usuario?.imagem || fotoId} />
-                                        
                                     </div>
-                                    {perfilMenuOpen && (
-                                        <div className={styles.perfilMenu} >
+                                    {perfilMenuOpen && createPortal(
+                                        <div className={styles.perfilMenu} style={perfilMenuStyle}>
                                             <button onClick={handleConfig}>Configurações</button>
                                             <button onClick={handleLogout}>Logout</button>
-                                        </div>
+                                        </div>,
+                                        document.body
                                     )}
                                 </li>
                             )}
