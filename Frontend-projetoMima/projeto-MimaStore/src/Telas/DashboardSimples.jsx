@@ -42,6 +42,12 @@ export default function DashboardSimples() {
     const [dataEstoqueRuptura, setDataEstoqueRuptura] = useState(new Date().toISOString().split('T')[0]); // data para cálculo de ruptura
     const [mesEstoqueRuptura, setMesEstoqueRuptura] = useState(new Date().getMonth() + 1); // 1-12
     const [anoEstoqueRuptura, setAnoEstoqueRuptura] = useState(new Date().getFullYear());
+    // Calendário para o gráfico de Categorias
+    const [dataCategorias, setDataCategorias] = useState(new Date().toISOString().split('T')[0]);
+    const [mesCategorias, setMesCategorias] = useState(new Date().getMonth() + 1); // 1-12
+    const [anoCategorias, setAnoCategorias] = useState(new Date().getFullYear());
+    const [categoriasModoDia, setCategoriasModoDia] = useState(false); // false = mês inteiro, true = dia específico
+    const [categoriasPagination, setCategoriasPagination] = useState({ page: 1, totalPages: 1, pageSize: estoqueMeta.pageSize || 4 });
     
     // Filtros Sazionais (4 dropdowns: estação1, ano1, estação2, ano2)
     const [filtroEstacao1, setFiltroEstacao1] = useState(null); // null = auto (estação atual)
@@ -69,6 +75,23 @@ export default function DashboardSimples() {
         setDataEstoqueRuptura(novaData);
     }, [mesEstoqueRuptura, anoEstoqueRuptura]);
 
+    // Atualizar dataCategorias quando mês ou ano das categorias mudarem
+    useEffect(() => {
+        const ultimoDia = new Date(anoCategorias, mesCategorias, 0).getDate();
+        const dataAtual = new Date();
+        const mesAtual = dataAtual.getMonth() + 1;
+        const anoAtual = dataAtual.getFullYear();
+        const diaAtual = dataAtual.getDate();
+
+        let dia = ultimoDia;
+        if (mesCategorias === mesAtual && anoCategorias === anoAtual) {
+            dia = Math.min(diaAtual, ultimoDia);
+        }
+
+        const novaData = `${anoCategorias}-${String(mesCategorias).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+        setDataCategorias(novaData);
+    }, [mesCategorias, anoCategorias]);
+
     useEffect(() => {
         loadDashboardData();
     }, [
@@ -76,7 +99,9 @@ export default function DashboardSimples() {
         filtroFidelizacao,
         filtroCategorias, 
         filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2,
-        dataEstoqueRuptura
+        dataEstoqueRuptura,
+        dataCategorias,
+        categoriasPagination.page
     ]);
 
     // Load only the estoque x vendas chart when page changes
@@ -94,13 +119,29 @@ export default function DashboardSimples() {
                 fidelizacao: filtroFidelizacao 
             });
 
-            const [ticketData, sazonalData, fidelizacaoData, estoqueVendas, categoriasTop3] = await Promise.all([
+            const [ticketData, sazonalData, fidelizacaoData, estoqueVendas] = await Promise.all([
                 DashboardService.getAverageTicket(filtroTicket),
                 DashboardService.getSeasonalIndex(filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2),
                 DashboardService.getLoyalCustomersStats(filtroFidelizacao),
-                DashboardService.getStockSalesRelation({ page: 1, pageSize: estoqueMeta.pageSize || 4, order: 'desc', data: dataEstoqueRuptura }),
-                DashboardService.getCategoriesTopPerLast3Months(filtroCategorias)
+                DashboardService.getStockSalesRelation({ page: 1, pageSize: estoqueMeta.pageSize || 4, order: 'desc', data: dataEstoqueRuptura })
             ]);
+
+            // Carregar categorias separadamente (depende do modo: mês inteiro ou dia específico) — agora paginado
+            let categoriasResp = null;
+            try {
+                if (categoriasModoDia) {
+                    // dia específico
+                    categoriasResp = await DashboardService.getCategoriesForPeriod(dataCategorias, dataCategorias, categoriasPagination.page, categoriasPagination.pageSize);
+                } else {
+                    // mês inteiro baseado em mesCategorias/anoCategorias
+                    const primeiroDia = `${anoCategorias}-${String(mesCategorias).padStart(2, '0')}-01`;
+                    const ultimoDiaNum = new Date(anoCategorias, mesCategorias, 0).getDate();
+                    const ultimoDia = `${anoCategorias}-${String(mesCategorias).padStart(2, '0')}-${String(ultimoDiaNum).padStart(2, '0')}`;
+                    categoriasResp = await DashboardService.getCategoriesForPeriod(primeiroDia, ultimoDia, categoriasPagination.page, categoriasPagination.pageSize);
+                }
+            } catch (errCat) {
+                console.error('Erro carregando categorias paginadas:', errCat);
+            }
 
             console.log('[DASHBOARD] ticketData recebido:', ticketData);
             console.log('[DASHBOARD] fidelizacaoData recebido:', fidelizacaoData);
@@ -177,14 +218,17 @@ export default function DashboardSimples() {
                 console.warn('[DASHBOARD UI] estoqueVendas sem labels:', estoqueVendas);
             }
 
-            if (categoriasTop3 && categoriasTop3.labels) {
+            if (categoriasResp && categoriasResp.labels) {
                 setCategoriasData({
-                    labels: categoriasTop3.labels,
+                    labels: categoriasResp.labels,
                     datasets: [
-                        { label: 'Categoria campeã por mês', data: categoriasTop3.values || [], backgroundColor: categoriasTop3.colors || [], borderRadius: 6, barPercentage: 0.7, categoryPercentage: 0.8 }
+                        { label: 'Categorias mais vendidas', data: categoriasResp.values || [], backgroundColor: categoriasResp.colors || [], borderRadius: 6, barPercentage: 0.7, categoryPercentage: 0.8 }
                     ]
                 });
-                setCategoriasMeta(categoriasTop3.meta || []);
+                setCategoriasMeta(categoriasResp.meta || []);
+                if (categoriasResp.metaPagination) {
+                    setCategoriasPagination(prev => ({ ...prev, totalPages: categoriasResp.metaPagination.totalPages, page: categoriasResp.metaPagination.page, pageSize: categoriasResp.metaPagination.pageSize }));
+                }
             }
         } catch (error) {
             console.error('Error loading dashboard data:', error);
@@ -216,6 +260,13 @@ export default function DashboardSimples() {
     };
     const gotoNextEstoquePage = () => {
         setEstoqueMeta(prev => ({ ...prev, page: Math.min(prev.totalPages || 1, prev.page + 1) }));
+    };
+
+    const gotoPrevCategoriasPage = () => {
+        setCategoriasPagination(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }));
+    };
+    const gotoNextCategoriasPage = () => {
+        setCategoriasPagination(prev => ({ ...prev, page: Math.min(prev.totalPages || 1, prev.page + 1) }));
     };
 
     const handleVoltar = () => {
@@ -371,6 +422,7 @@ export default function DashboardSimples() {
                                         onAnoChange={setAnoEstoqueRuptura}
                                         diasComVendas={[]}
                                         modoIntervalo={false}
+                                        compact={true}
                                     />
                                 }
                                 opcoes={{
@@ -442,15 +494,28 @@ export default function DashboardSimples() {
                             dados={categoriasData}
                             explicacao="Para cada mês, mostramos a categoria campeã em vendas e sua quantidade. A cor da barra indica a categoria vencedora."
                             filtroTemporal={
-                                <FiltroTemporal
-                                    opcoes={[
-                                        { valor: 1, label: '1m', descricao: 'Último mês' },
-                                        { valor: 3, label: '3m', descricao: 'Últimos 3 meses' },
-                                        { valor: 6, label: '6m', descricao: 'Últimos 6 meses' }
-                                    ]}
-                                    valorSelecionado={filtroCategorias}
-                                    onChange={setFiltroCategorias}
-                                    tamanho="pequeno"
+                                <FiltroCalendario
+                                    dataSelecionada={dataCategorias}
+                                    onDataChange={(novaData) => {
+                                        setDataCategorias(novaData);
+                                        const [ano, mes] = novaData.split('-');
+                                        setAnoCategorias(Number(ano));
+                                        setMesCategorias(Number(mes));
+                                        setCategoriasModoDia(true);
+                                    }}
+                                    mesSelecionado={mesCategorias}
+                                    anoSelecionado={anoCategorias}
+                                    onMesChange={(m) => {
+                                        setMesCategorias(m);
+                                        setCategoriasModoDia(false);
+                                    }}
+                                    onAnoChange={(a) => {
+                                        setAnoCategorias(a);
+                                        setCategoriasModoDia(false);
+                                    }}
+                                    diasComVendas={[]}
+                                    modoIntervalo={false}
+                                    compact={true}
                                 />
                             }
                             opcoes={{
@@ -523,6 +588,12 @@ export default function DashboardSimples() {
                             }}
                             rodape={
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                                        <button onClick={gotoPrevCategoriasPage} disabled={(categoriasPagination?.page || 1) <= 1} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #B08AAA', background: '#fff', color: '#6B3563' }}>Anterior</button>
+                                        <span style={{ fontFamily: 'Average Sans, sans-serif', fontSize: 13, color: '#333' }}>Página {categoriasPagination?.page || 1} de {categoriasPagination?.totalPages || 1}</span>
+                                        <button onClick={gotoNextCategoriasPage} disabled={(categoriasPagination?.page || 1) >= (categoriasPagination?.totalPages || 1)} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #B08AAA', background: '#fff', color: '#6B3563' }}>Próxima</button>
+                                    </div>
+
                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
                                         {categoriasMeta.map((m, i) => (
                                             <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'Average Sans, sans-serif', fontSize: 12 }}>
@@ -534,7 +605,7 @@ export default function DashboardSimples() {
                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                                         {categoriasMeta.map((m, i) => (
                                             <span key={`b-${i}`} style={{ background: '#f5f0f4', color: '#6B3563', border: '1px solid #B08AAA', borderRadius: 12, padding: '2px 8px', fontFamily: 'Average Sans, sans-serif', fontSize: 12 }}>
-                                                {m.monthLabel}: {m.categoryName} ({m.count})
+                                                {m.monthLabel ? `${m.monthLabel}: ` : ''}{m.categoryName} ({m.count})
                                             </span>
                                         ))}
                                     </div>

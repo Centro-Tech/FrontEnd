@@ -1400,6 +1400,150 @@ export const getCategoriesTopPerLast3Months = async (numMeses = 3) => {
     }
 };
 
+// Retorna as top N categorias vendidas dentro de um período (inclusive)
+export const getTopCategoriesForPeriod = async (inicio, fim, topN = 3) => {
+    try {
+        // Buscar categorias e catálogo de itens para resolver categoria via knownItem quando necessário
+        const [itensResp, respCats] = await Promise.all([
+            API.get('/itens?size=10000').catch(e => e),
+            API.get('/categorias?size=1000').catch(e => e)
+        ]);
+        let itens = extractArray(itensResp);
+        if (!itens.length) {
+            for (const ep of ['/itens?size=10000', '/itens', '/item', '/produtos', '/vestuarios']) {
+                try { const r = await API.get(ep); itens = extractArray(r); if (itens.length) break; } catch {}
+            }
+        }
+        const categoriasArr = extractArray(respCats);
+
+        const itemById = new Map();
+        itens.forEach(it => itemById.set(String(it.id), it));
+        const catById = new Map();
+        categoriasArr.forEach(c => catById.set(String(c.id), { id: Number(c.id), nome: c.nome }));
+
+        const vendasResp = await API.get(`/vendas/filtrar-por-data?inicio=${inicio}&fim=${fim}`);
+        const vendas = extractArray(vendasResp);
+
+        const counts = new Map(); // catId -> qtd
+        vendas.forEach(v => {
+            const itensVenda = getItensVenda(v);
+            if (!Array.isArray(itensVenda)) return;
+            itensVenda.forEach(iv => {
+                const io = iv.item || {};
+                const itemId = String(io.id ?? getItemId(iv) ?? '');
+                const knownItem = itemById.get(itemId);
+                const catIdRaw = io.fkCategoria ?? io.idCategoria ?? io.categoria?.id ?? knownItem?.fkCategoria ?? knownItem?.idCategoria ?? knownItem?.categoria?.id ?? null;
+                const catId = catIdRaw != null ? String(catIdRaw) : 'sem-categoria';
+                const qtd = getItemQtdVendida(iv) || 1;
+                counts.set(catId, (counts.get(catId) || 0) + qtd);
+            });
+        });
+
+        const arr = Array.from(counts.entries()).map(([catId, qtd]) => ({ catId, qtd }));
+        arr.sort((a, b) => b.qtd - a.qtd);
+        const top = arr.slice(0, topN);
+
+        const palette = ['#6B3563', '#864176', '#B08AAA', '#F2C9E0', '#FFD166', '#06D6A0', '#118AB2', '#EF476F', '#073B4C', '#8ECAE6'];
+        const colorForIndex = (i) => palette[i % palette.length];
+
+        const labels = [];
+        const values = [];
+        const colors = [];
+        const meta = [];
+
+        top.forEach((t, i) => {
+            const info = catById.get(t.catId) || { id: t.catId === 'sem-categoria' ? null : Number(t.catId), nome: t.catId === 'sem-categoria' ? 'Sem categoria' : `Categoria ${t.catId}` };
+            labels.push(info.nome || `Categoria ${info.id}`);
+            values.push(t.qtd);
+            const cor = colorForIndex(i);
+            colors.push(cor);
+            meta.push({ categoryId: info.id, categoryName: info.nome, count: t.qtd, color: cor });
+        });
+
+        return { labels, values, colors, meta };
+    } catch (error) {
+        console.error('Error fetching top categories for period:', error);
+        return { labels: [], values: [], colors: [], meta: [] };
+    }
+};
+
+// Retorna todas as categorias ordenadas por quantidade vendida dentro do período, com paginação
+export const getCategoriesForPeriod = async (inicio, fim, page = 1, pageSize = 4) => {
+    try {
+        // Buscar catálogo de itens e categorias para robustez na resolução
+        const [itensResp, respCats] = await Promise.all([
+            API.get('/itens?size=10000').catch(e => e),
+            API.get('/categorias?size=1000').catch(e => e)
+        ]);
+        let itens = extractArray(itensResp);
+        if (!itens.length) {
+            for (const ep of ['/itens?size=10000', '/itens', '/item', '/produtos', '/vestuarios']) {
+                try { const r = await API.get(ep); itens = extractArray(r); if (itens.length) break; } catch {}
+            }
+        }
+        const categoriasArr = extractArray(respCats);
+
+        const itemById = new Map();
+        itens.forEach(it => itemById.set(String(it.id), it));
+        const catById = new Map();
+        categoriasArr.forEach(c => catById.set(String(c.id), { id: Number(c.id), nome: c.nome }));
+
+        const vendasResp = await API.get(`/vendas/filtrar-por-data?inicio=${inicio}&fim=${fim}`);
+        const vendas = extractArray(vendasResp);
+
+        const counts = new Map(); // catId -> qtd
+        vendas.forEach(v => {
+            const itensVenda = getItensVenda(v);
+            if (!Array.isArray(itensVenda)) return;
+            itensVenda.forEach(iv => {
+                const io = iv.item || {};
+                const itemId = String(io.id ?? getItemId(iv) ?? '');
+                const knownItem = itemById.get(itemId);
+                const catIdRaw = io.fkCategoria ?? io.idCategoria ?? io.categoria?.id ?? knownItem?.fkCategoria ?? knownItem?.idCategoria ?? knownItem?.categoria?.id ?? null;
+                const catId = catIdRaw != null ? String(catIdRaw) : 'sem-categoria';
+                const qtd = getItemQtdVendida(iv) || 1;
+                counts.set(catId, (counts.get(catId) || 0) + qtd);
+            });
+        });
+
+        // Also include categories with zero sales so they appear in inventory listing
+        categoriasArr.forEach(c => {
+            const key = String(c.id);
+            if (!counts.has(key)) counts.set(key, 0);
+        });
+
+        const arr = Array.from(counts.entries()).map(([catId, qtd]) => ({ catId, qtd }));
+        arr.sort((a, b) => b.qtd - a.qtd);
+
+        const total = arr.length;
+        const totalPages = Math.max(1, Math.ceil(total / pageSize));
+        const p = Math.max(1, Math.min(page, totalPages));
+        const start = (p - 1) * pageSize;
+        const slice = arr.slice(start, start + pageSize);
+
+        const palette = ['#6B3563', '#864176', '#B08AAA', '#F2C9E0', '#FFD166', '#06D6A0', '#118AB2', '#EF476F', '#073B4C', '#8ECAE6'];
+
+        const labels = [];
+        const values = [];
+        const colors = [];
+        const meta = [];
+
+        slice.forEach((t, i) => {
+            const info = catById.get(t.catId) || { id: t.catId === 'sem-categoria' ? null : Number(t.catId), nome: t.catId === 'sem-categoria' ? 'Sem categoria' : `Categoria ${t.catId}` };
+            labels.push(info.nome || `Categoria ${info.id}`);
+            values.push(t.qtd);
+            const cor = palette[(start + i) % palette.length];
+            colors.push(cor);
+            meta.push({ categoryId: info.id, categoryName: info.nome, count: t.qtd, color: cor });
+        });
+
+        return { labels, values, colors, meta, metaPagination: { page: p, totalPages, pageSize, total } };
+    } catch (error) {
+        console.error('Error fetching categories for period:', error);
+        return { labels: [], values: [], colors: [], meta: [], metaPagination: { page: 1, totalPages: 1, pageSize: 4, total: 0 } };
+    }
+};
+
 // ═══════════════════════════════════════════════════════════════
 // GRÁFICO 3: COMPARAÇÃO MENSAL
 // ═══════════════════════════════════════════════════════════════
@@ -1735,6 +1879,8 @@ const DashboardService = {
     getStockSalesRelation,
     getTopCategoriesByMonth,
     getCategoriesTopPerLast3Months,
+    getTopCategoriesForPeriod,
+    getCategoriesForPeriod,
     getMonthlySalesComparison,
     getCustomersEvolution,
     getRevenueTrend,

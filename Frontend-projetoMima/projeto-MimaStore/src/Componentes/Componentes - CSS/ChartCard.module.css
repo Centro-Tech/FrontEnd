@@ -7,7 +7,7 @@
     flex-direction: column;
     width: 100%;
     max-width: 100%;
-    overflow: visible;
+    overflow: hidden;
     box-sizing: border-box;
 }
 
@@ -59,8 +59,9 @@
     width: 100%;
     max-width: 100%;
     height: 300px;
-    overflow: visible;
+    overflow: hidden;
     margin-top: 8px;
+    margin-bottom: 12px;
 }
 
 .chartContainer canvas {
@@ -75,10 +76,12 @@
 }
 
 .cardFooter {
-    height: 40px; /* reserva para paginação/legendas adicionais */
+    min-height: 40px; /* reserva para paginação/legendas adicionais */
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-top: 8px;
+    gap: 8px;
 }
 
 @media (max-width: 768px) {

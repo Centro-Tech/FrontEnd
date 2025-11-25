@@ -13,7 +13,8 @@ const FiltroCalendario = ({
     anoSelecionado,
     onMesChange,
     onAnoChange,
-    diasComVendas = [] // Array de strings no formato 'YYYY-MM-DD'
+    diasComVendas = [], // Array de strings no formato 'YYYY-MM-DD'
+    compact = false
 }) => {
     const [calendarioAberto, setCalendarioAberto] = useState(false);
     const [calendarioInicioAberto, setCalendarioInicioAberto] = useState(false);
@@ -274,7 +275,7 @@ const FiltroCalendario = ({
     const diasDoMes = !modoIntervalo ? getDiasDoMes() : [];
 
     return (
-        <div className={styles.filtroCalendarioContainer}>
+        <div className={`${styles.filtroCalendarioContainer} ${compact ? styles.compact : ''}`}>
             {/* Controles de Mês/Ano */}
             {!modoIntervalo ? (
                 <div className={styles.controles}>
