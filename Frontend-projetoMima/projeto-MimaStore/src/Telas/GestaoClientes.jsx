@@ -275,6 +275,7 @@ export function GestaoClientes() {
                         <button 
                             onClick={abrirModalCadastro}
                             className={styles['btn-novo']}
+                            style={{ background: 'linear-gradient(135deg, #875C6A, #864176)', color: 'white', border: 'none', padding: '8px 12px', borderRadius: 8, fontWeight: 700 }}
                         >
                             + Novo Cliente
                         </button>
@@ -308,6 +309,38 @@ export function GestaoClientes() {
                                 { key: 'telefone', label: 'Telefone' },
                             ]}
                             botaoEditar={true}
+                                renderBotaoEditar={(item, cb) => (
+                                    <button
+                                        onClick={cb}
+                                        style={{
+                                            background: 'linear-gradient(135deg, #875C6A, #864176)',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '6px 10px',
+                                            borderRadius: 6,
+                                            cursor: 'pointer',
+                                            fontWeight: 700,
+                                        }}
+                                    >
+                                        Editar
+                                    </button>
+                                )}
+                                renderBotaoRemover={(item, cb) => (
+                                    <button
+                                        onClick={cb}
+                                        style={{
+                                            background: '#6e7074',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '6px 10px',
+                                            borderRadius: 6,
+                                            cursor: 'pointer',
+                                            fontWeight: 700,
+                                        }}
+                                    >
+                                        Remover
+                                    </button>
+                                )}
                                 onEditar={(item) => {
                                     const cliente = clientesFiltrados.find(c => c.id === item.id);
                                     abrirEdicao(cliente);
