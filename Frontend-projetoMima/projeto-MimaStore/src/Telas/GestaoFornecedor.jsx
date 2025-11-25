@@ -243,6 +243,7 @@ export function GestaoFornecedor() {
                         <button 
                             onClick={() => setMostrarModalCadastro(true)}
                             className={styles['btn-novo']}
+                            style={{ background: 'linear-gradient(135deg, #875C6A, #864176)', color: 'white', border: 'none', padding: '8px 12px', borderRadius: 8, fontWeight: 700 }}
                         >
                             + Novo Fornecedor
                         </button>
@@ -286,15 +287,47 @@ export function GestaoFornecedor() {
                                 { key: 'email', label: 'Email' },
                             ]}
                             botaoEditar={true}
-                            onEditar={(item) => {
-                                const fornecedor = fornecedoresFiltrados.find(f => f.id === item.id);
-                                abrirEdicao(fornecedor);
-                            }}
+                                renderBotaoEditar={(item, cb) => (
+                                    <button
+                                        onClick={cb}
+                                        style={{
+                                            background: 'linear-gradient(135deg, #875C6A, #864176)',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '6px 10px',
+                                            borderRadius: 6,
+                                            cursor: 'pointer',
+                                            fontWeight: 700,
+                                        }}
+                                    >
+                                        Editar
+                                    </button>
+                                )}
+                                onEditar={(item) => {
+                                    const fornecedor = fornecedoresFiltrados.find(f => f.id === item.id);
+                                    abrirEdicao(fornecedor);
+                                }}
                             botaoRemover={true}
-                            onRemover={(item) => {
-                                const fornecedor = fornecedoresFiltrados.find(f => f.id === item.id);
-                                abrirConfirmacaoExclusao(fornecedor);
-                            }}
+                                renderBotaoRemover={(item, cb) => (
+                                    <button
+                                        onClick={cb}
+                                        style={{
+                                            background: '#6e7074',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '6px 10px',
+                                            borderRadius: 6,
+                                            cursor: 'pointer',
+                                            fontWeight: 700,
+                                        }}
+                                    >
+                                        Remover
+                                    </button>
+                                )}
+                                onRemover={(item) => {
+                                    const fornecedor = fornecedoresFiltrados.find(f => f.id === item.id);
+                                    abrirConfirmacaoExclusao(fornecedor);
+                                }}
                         />
                     </div>
                     {/* Paginação (igual ao Estoque) - aparece quando NÃO está em modo de busca */}
