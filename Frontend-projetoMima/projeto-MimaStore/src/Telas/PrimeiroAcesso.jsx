@@ -69,11 +69,22 @@ export default function PrimeiroAcesso() {
       });
 
       setSucesso(true);
-      // redireciona para login após curto delay
-      setTimeout(() => navigate("/login"), 2000);
+      // redireciona para login após delay maior para permitir leitura
+      setTimeout(() => navigate("/login"), 7000);
     } catch (error) {
+      // Tratamento específico para 401: usuário inexistente
+      if (error?.response?.status === 401) {
+        setErro("Usuário inexistente");
+        return;
+      }
+
       const serverMessage =
-        error?.response?.data || error?.response?.data?.message || error?.message;
+        (error?.response?.data &&
+          (typeof error.response.data === "string"
+            ? error.response.data
+            : error.response.data.message)) ||
+        error?.message;
+
       setErro(
         typeof serverMessage === "string"
           ? serverMessage
@@ -135,7 +146,21 @@ export default function PrimeiroAcesso() {
                 onChange={handleChange}
                 autoComplete="new-password"
               />
-              {erro && <div className={styles.erro}>{erro}</div>}
+              {erro && (
+                <div className={styles.erro}>
+                  {erro}
+                  {erro !== "Usuário inexistente" && (
+                    <button
+                      type="button"
+                      className={styles.closeErro}
+                      onClick={() => setErro("")}
+                      aria-label="Fechar mensagem de erro"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              )}
               <button type="submit" className={styles.btn}>
                 Entrar
               </button>
