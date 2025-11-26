@@ -43,9 +43,16 @@ export default function MudarSenha() {
             setEtapa(2);
             setMensagemSucesso('Se o email existir, você receberá instruções em breve.');
         } catch (error) {
-            // Tenta extrair uma mensagem do backend
-            const mensagem = error?.response?.data || error?.response?.data?.message || error?.message;
-            setErro(mensagem || 'Erro ao enviar código. Verifique o email.');
+            // Tenta extrair e normalizar uma mensagem do backend
+            const backendData = error?.response?.data;
+            const possibleMessage = error?.response?.data?.message || (typeof backendData === 'string' ? backendData : null) || error?.message;
+
+            // Mensagem personalizada quando o backend retorna o stacktrace com 'Email não encontrado'
+            if (typeof possibleMessage === 'string' && possibleMessage.includes('Email não encontrado')) {
+                setErro('E-mail não encontrado. Verifique o endereço digitado e tente novamente.');
+            } else {
+                setErro(possibleMessage || 'Erro ao enviar código. Verifique o email.');
+            }
         } finally {
             setCarregando(false);
         }
@@ -64,8 +71,14 @@ export default function MudarSenha() {
             await API.post('/usuarios/recuperar-senha', { email });
             setMensagemSucesso('E-mail reenviado (se existir). Verifique sua caixa de entrada e spam.');
         } catch (error) {
-            const mensagem = error?.response?.data || error?.response?.data?.message || error?.message;
-            setErro(mensagem || 'Erro ao reenviar código. Tente novamente mais tarde.');
+            const backendData = error?.response?.data;
+            const possibleMessage = error?.response?.data?.message || (typeof backendData === 'string' ? backendData : null) || error?.message;
+
+            if (typeof possibleMessage === 'string' && possibleMessage.includes('Email não encontrado')) {
+                setErro('E-mail não encontrado. Verifique o endereço digitado ou cadastre-se.');
+            } else {
+                setErro(possibleMessage || 'Erro ao reenviar código. Tente novamente mais tarde.');
+            }
         } finally {
             setCarregando(false);
         }
