@@ -172,6 +172,59 @@
     background-color: #724165;
 }
 
+/* Botão menor para ações de seleção (usado no modal e no resumo do carrinho) */
+.botaoSelecionar {
+    background-color: #864176;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.botaoAdicionar:hover {
+    background-color: #724165;
+}
+
+/* Botão menor para ações de seleção */
+.botaoSelecionar {
+    background-color: #864176;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-family: 'Average Sans', sans-serif;
+}
+
+.botaoSelecionar:hover {
+    background-color: #724165;
+}
+
+/* Botão cinza para ações secundárias */
+.botaoCinza {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-family: 'Average Sans', sans-serif;
+}
+
+.botaoCinza:hover {
+    background-color: #545b62;
+}
+
 /* Painel Direito - Carrinho */
 .painelDireito {
     flex: 1;

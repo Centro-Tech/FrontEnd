@@ -18,6 +18,7 @@ export function RealizarVenda() {
     const [carregandoClientes, setCarregandoClientes] = useState(false);
     const [buscaCliente, setBuscaCliente] = useState('');
     const [clienteSelecionado, setClienteSelecionado] = useState(null);
+    const [clientesFiltrados, setClientesFiltrados] = useState([]);
     const [mostrarModalConfirmacao, setMostrarModalConfirmacao] = useState(false);
     const [finalizando, setFinalizando] = useState(false);
     const [vendaFinalizada, setVendaFinalizada] = useState(null);
@@ -82,12 +83,41 @@ export function RealizarVenda() {
             }
             const normalizados = (todos || []).map(normalizeCliente);
             setClientes(normalizados);
+            setClientesFiltrados(normalizados);
         } catch (err) {
             console.error('Erro ao carregar clientes:', err);
             setClientes([]);
+            setClientesFiltrados([]);
         } finally {
             setCarregandoClientes(false);
         }
+    };
+
+    const pesquisarClientes = () => {
+        if (!buscaCliente.trim()) {
+            setClientesFiltrados(clientes);
+            return;
+        }
+        const q = buscaCliente.toLowerCase();
+        const filtrados = clientes.filter(c => 
+            (c.nome || '').toLowerCase().includes(q) || 
+            (c.email || '').toLowerCase().includes(q) || 
+            (c.cpf || '').includes(q)
+        );
+        setClientesFiltrados(filtrados);
+    };
+
+    const limparFiltro = () => {
+        setBuscaCliente('');
+        setClientesFiltrados(clientes);
+    };
+
+    const limparCarrinho = () => {
+        setCarrinho([]);
+        setValorTotal(0);
+        setMostrarModalConfirmacao(false);
+        setVendaFinalizada(null);
+        setVendaId(null);
     };
 
     
@@ -231,11 +261,22 @@ export function RealizarVenda() {
             };
 
                 let response;
-                // Chamar endpoint de finalizar carrinho — se existir cliente selecionado, incluir no path
-                if (clienteSelecionado) {
+                // Obter funcionarioId do sessionStorage (armazenado no login)
+                let funcionarioId = null;
+                try {
+                    const funcId = sessionStorage.getItem('funcionarioId');
+                    if (funcId) funcionarioId = Number(funcId);
+                } catch (e) {}
+
+                // Chamar endpoint de finalizar carrinho — inclui clienteId e funcionarioId no path
+                if (clienteSelecionado && funcionarioId) {
+                    response = await API.post(`/item-venda/carrinho/finalizar/${clienteSelecionado}/${funcionarioId}`, vendaPayload);
+                } else if (clienteSelecionado) {
                     response = await API.post(`/item-venda/carrinho/finalizar/${clienteSelecionado}`, vendaPayload);
+                } else if (funcionarioId) {
+                    response = await API.post(`/item-venda/carrinho/finalizar/null/${funcionarioId}`, vendaPayload);
                 } else {
-                    // tentar endpoint sem cliente
+                    // tentar endpoint sem cliente nem funcionário
                     response = await API.post('/item-venda/carrinho/finalizar', vendaPayload);
                 }
 
@@ -287,11 +328,7 @@ export function RealizarVenda() {
             await API.post(`/vendas/finalizar/${idToUse}`);
             alert('Comprovante enviado com sucesso.');
             // limpar estado
-            setCarrinho([]);
-            setValorTotal(0);
-            setMostrarModalConfirmacao(false);
-            setVendaFinalizada(null);
-            setVendaId(null);
+            limparCarrinho();
         } catch (error) {
             console.error('Erro ao enviar comprovante:', error);
             const msg = error?.response?.data?.message || error?.message || 'Erro ao enviar comprovante. Tente novamente.';
@@ -300,6 +337,9 @@ export function RealizarVenda() {
             setEnviandoComprovante(false);
         }
         };
+
+    // Cliente selecionado (objeto completo) — usado para exibir no UI
+    const clienteSelecionadoObj = clientes.find(c => c.id === clienteSelecionado) ?? null;
 
 
     return (
@@ -391,6 +431,33 @@ export function RealizarVenda() {
                     {/* Painel do Carrinho */}
                     <div className={styles.painelDireito}>
                         <h2 className={styles.tituloCarrinho}>Carrinho</h2>
+
+                        {/* Exibir cliente selecionado */}
+                        <div style={{ marginBottom: 12 }}>
+                            {clienteSelecionadoObj ? (
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                                    <div>Cliente selecionado: <strong>{clienteSelecionadoObj.nome}</strong></div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setMostrarModalCliente(true)}
+                                        className={styles.botaoSelecionar}
+                                    >
+                                        Alterar
+                                    </button>
+                                </div>
+                            ) : (
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                                    <div>Nenhum cliente selecionado</div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setMostrarModalCliente(true)}
+                                        className={styles.botaoSelecionar}
+                                    >
+                                        Selecionar cliente
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                         
                         <div className={styles.tabelaCarrinho}>
                             <table className={styles.tabela}>
@@ -414,7 +481,7 @@ export function RealizarVenda() {
                                             <td>R$ {Number(item.valorTotal || (item.valor * item.quantidade) || 0).toFixed(2)}</td>
                                             <td>
                                                 <button 
-                                                    className={styles.botaoRemover}
+                                                    className={styles.botaoCinza}
                                                     onClick={() => removerDoCarrinho(item.codigo)}
                                                 >
                                                     Remover
@@ -450,20 +517,22 @@ export function RealizarVenda() {
                     <div style={{ width: '90%', maxWidth: 900, background: 'white', borderRadius: 8, padding: 20, boxShadow: '0 8px 30px rgba(0,0,0,0.2)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                             <h2 style={{ margin: 0 }}>Selecionar Cliente</h2>
-                            <div>
-                                <button onClick={() => { setMostrarModalCliente(false); }} style={{ marginRight: 8 }}>Fechar</button>
-                                <button onClick={() => { 
-                                    // continuar sem cliente
-                                    try { sessionStorage.removeItem('clienteId'); } catch(e){}
-                                    setClienteSelecionado(null);
-                                    setMostrarModalCliente(false);
-                                }}>Continuar sem cliente</button>
-                            </div>
                         </div>
 
-                        <div style={{ marginBottom: 12, display: 'flex', gap: 8 }}>
-                            <input placeholder="Buscar cliente por nome, email ou CPF" value={buscaCliente} onChange={(e) => setBuscaCliente(e.target.value)} style={{ flex: 1, padding: 8, border: '1px solid #ddd', borderRadius: 6 }} />
-                            <button onClick={carregarClientes} style={{ padding: '8px 12px' }}>Atualizar</button>
+                        <div style={{ marginBottom: 12, display: 'flex', gap: 8, alignItems: 'center' }}>
+                            <input 
+                                placeholder="Buscar cliente por nome, email ou CPF" 
+                                value={buscaCliente} 
+                                onChange={(e) => setBuscaCliente(e.target.value)} 
+                                onKeyPress={(e) => e.key === 'Enter' && pesquisarClientes()}
+                                style={{ flex: 1, padding: 8, border: '1px solid #ddd', borderRadius: 6 }} 
+                            />
+                            <button className={styles.botaoSelecionar} onClick={pesquisarClientes}>
+                                Pesquisar
+                            </button>
+                            <button className={styles.botaoCinza} onClick={limparFiltro}>
+                                Limpar
+                            </button>
                         </div>
 
                         <div style={{ maxHeight: '50vh', overflow: 'auto' }}>
@@ -480,17 +549,13 @@ export function RealizarVenda() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {clientes.filter(c => {
-                                            if (!buscaCliente) return true;
-                                            const q = buscaCliente.toLowerCase();
-                                            return (c.nome || '').toLowerCase().includes(q) || (c.email || '').toLowerCase().includes(q) || (c.cpf || '').includes(q);
-                                        }).map((c, idx) => (
+                                        {clientesFiltrados.map((c, idx) => (
                                             <tr key={idx} style={{ borderBottom: '1px solid #f0f0f0' }}>
                                                 <td style={{ padding: 8 }}>{c.nome}</td>
                                                 <td style={{ padding: 8 }}>{c.email}</td>
                                                 <td style={{ padding: 8 }}>{c.cpf}</td>
                                                 <td style={{ padding: 8 }}>
-                                                    <button onClick={() => {
+                                                    <button className={styles.botaoSelecionar} onClick={() => {
                                                         const id = c.id ?? null;
                                                         try { sessionStorage.setItem('clienteId', String(id)); } catch(e){}
                                                         setClienteSelecionado(id);
@@ -520,8 +585,20 @@ export function RealizarVenda() {
                                 {/* debug details removed */}
                                 <p style={{ marginTop: 8 }}>Deseja enviar o comprovante agora?</p>
                                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
-                                    <button onClick={() => { setMostrarModalConfirmacao(false); setVendaFinalizada(null); setVendaId(null); }} disabled={enviandoComprovante} style={{ padding: '8px 12px' }}>Fechar</button>
-                                    <button onClick={enviarComprovante} disabled={enviandoComprovante} style={{ padding: '8px 12px' }}>{enviandoComprovante ? 'Enviando...' : 'Enviar comprovante'}</button>
+                                    <button 
+                                        onClick={limparCarrinho} 
+                                        disabled={enviandoComprovante} 
+                                        className={styles.botaoCinza}
+                                    >
+                                        Fechar
+                                    </button>
+                                    <button 
+                                        onClick={enviarComprovante} 
+                                        disabled={enviandoComprovante} 
+                                        className={styles.botaoSelecionar}
+                                    >
+                                        {enviandoComprovante ? 'Enviando...' : 'Enviar comprovante'}
+                                    </button>
                                 </div>
                             </>
                         ) : (
@@ -529,7 +606,13 @@ export function RealizarVenda() {
                                 <h3 style={{ marginTop: 0 }}>Processando finalização</h3>
                                 <p>Aguarde, estamos finalizando a venda...</p>
                                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
-                                    <button onClick={() => setMostrarModalConfirmacao(false)} disabled={finalizando} style={{ padding: '8px 12px' }}>Cancelar</button>
+                                    <button 
+                                        onClick={() => setMostrarModalConfirmacao(false)} 
+                                        disabled={finalizando} 
+                                        className={styles.botaoCinza}
+                                    >
+                                        Cancelar
+                                    </button>
                                 </div>
                             </>
                         )}
