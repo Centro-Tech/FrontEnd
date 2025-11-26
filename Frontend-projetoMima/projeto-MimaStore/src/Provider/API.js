@@ -15,35 +15,29 @@ API.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// API.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     if (error.response?.status === 401 || 
-//         error.response?.data?.message?.includes('JWT signature does not match')) {
-//       localStorage.removeItem("token");
-//       window.location.href = "/login";
-//     }
-//     return Promise.reject(error);
-//   }
-// );
-
 API.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (
-      error.response?.status === 401 || 
-      error.response?.data?.message?.includes("JWT signature does not match")
-    ) {
+    if (error.response?.status === 401) {
       localStorage.removeItem("token");
 
-      // espera 5 segundos antes de redirecionar
-      setTimeout(() => {
-        window.location.href = "/primeiro-acesso";
-      }, 2000);
-    }
+      // Verifica de onde veio a requisição
+      const requestUrl = error.config?.url || "";
+      const currentPath = window.location.pathname;
+
+    if (currentPath === "/login") {
+  setTimeout(() => window.location.href = "/login", 2000);
+    } else if (currentPath === "/primeiro-acesso") {
+  setTimeout(() => window.location.href = "/primeiro-acesso", 2000);
+  }
+}
+
     return Promise.reject(error);
   }
 );
+
+
+
 
 
 export default API;
