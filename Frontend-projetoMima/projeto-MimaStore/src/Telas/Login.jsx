@@ -37,10 +37,8 @@ export default function Login() {
       );
 
       const token = response.data.token;
-      // usar AuthContext para setar token
       try { auth.login(token); } catch(e) { localStorage.setItem("token", token); API.defaults.headers.common["Authorization"] = `Bearer ${token}`; }
 
-      // tentar obter o email do token e buscar o usuário para guardar o id do funcionário
       try {
         const getEmailFromToken = (token) => {
           try {
@@ -64,18 +62,16 @@ export default function Login() {
           const lista = res.data || [];
           const encontrado = lista.find(u => (u.email || '').toLowerCase() === (email || '').toLowerCase());
           if (encontrado && (encontrado.id || encontrado.id === 0)) {
-            // armazenar no sessionStorage para uso em telas (ex: RealizarVenda)
             try { sessionStorage.setItem('funcionarioId', String(encontrado.id)); } catch(e) { /* no-op */ }
           }
         }
       } catch (err) {
-        // não bloquear o login se algo falhar aqui
+        
         console.warn('Não foi possível armazenar funcionarioId no sessionStorage', err);
       }
 
       setSucesso(true);
 
-      // redirecionar de volta para rota solicitada ou menu-inicial
       const dest = location.state?.from?.pathname || '/menu-inicial';
       setTimeout(() => {
         navigate(dest);

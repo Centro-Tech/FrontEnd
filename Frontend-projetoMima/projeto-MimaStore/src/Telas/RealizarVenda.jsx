@@ -40,57 +40,29 @@ export function RealizarVenda() {
         } catch (e) {}
     }, []);
 
-    const normalizeCliente = (c) => {
-        const id = c.idCliente ?? c.id ?? c.id_cliente ?? c.codigo ?? c.uuid ?? null;
-        const nome = c.nome ?? c.nomeCompleto ?? c.nomeCliente ?? c.nome_cliente ?? '';
-        const email = c.emailCliente ?? c.email ?? c.email_cliente ?? '';
-        const cpf = c.cpf ?? c.cpfCliente ?? c.cpf_cliente ?? '';
-        return { ...c, id, nome, email, cpf };
-    };
-
-    const normalizeProduto = (data, fallbackCodigo = '') => {
-        const id = data.id ?? data.itemId ?? data.produtoId ?? null;
-        const codigo = data.codigo ?? data.cod ?? fallbackCodigo ?? '';
-        const nome = data.nome ?? data.descricao ?? '';
-        const tamanho = data.tamanho?.nome || data.tamanho || '-';
-        // tentar extrair quantidade/estoque
-        const disponivel = Number(data.qtdEstoque ?? data.disponivel ?? data.estoque ?? 0) || 0;
-        // garantir que valor seja numérico
-        let valor = data.preco ?? data.valor ?? data.price ?? 0;
-        // algumas APIs retornam valor como string com vírgula
-        if (typeof valor === 'string') {
-            valor = Number(String(valor).replace(',', '.')) || 0;
-        } else {
-            valor = Number(valor) || 0;
-        }
-
-        // nunca retornar valor negativo — clamp para 0
-        valor = Math.max(0, valor);
-
-        return { ...data, id, codigo, nome, tamanho, disponivel, valor };
-    };
+    const normalizeProduto = (data) => ({
+        id: data.id,
+        codigo: data.codigo,
+        nome: data.nome,
+        tamanho: data.tamanho?.nome || '-',
+        disponivel: data.qtdEstoque,
+        valor: data.preco
+    });
 
     const carregarClientes = async () => {
         setCarregandoClientes(true);
-        try {
-            const res = await API.get('/clientes');
-            const body = res.data;
-            let todos = [];
-            if (body && body.content && Array.isArray(body.content)) {
-                todos = body.content;
-            } else if (Array.isArray(body)) {
-                todos = body;
-            }
-            const normalizados = (todos || []).map(normalizeCliente);
-            setClientes(normalizados);
-            setClientesFiltrados(normalizados);
-        } catch (err) {
-            console.error('Erro ao carregar clientes:', err);
-            setClientes([]);
-            setClientesFiltrados([]);
-        } finally {
-            setCarregandoClientes(false);
-        }
+        
+        const res = await API.get('/clientes');
+        const clientesData = res.data.content.map(cliente => ({
+            id: cliente.idCliente,
+            nome: cliente.nome,
+            email: cliente.email,
+            telefone: cliente.telefone
+        }));
+        
+        setClientes(clientesData);
+        setClientesFiltrados(clientesData);
+        setCarregandoClientes(false);
     };
 
     const pesquisarClientes = () => {
@@ -100,9 +72,8 @@ export function RealizarVenda() {
         }
         const q = buscaCliente.toLowerCase();
         const filtrados = clientes.filter(c => 
-            (c.nome || '').toLowerCase().includes(q) || 
-            (c.email || '').toLowerCase().includes(q) || 
-            (c.cpf || '').includes(q)
+            c.nome.toLowerCase().includes(q) || 
+            c.email.toLowerCase().includes(q)
         );
         setClientesFiltrados(filtrados);
     };
@@ -121,45 +92,20 @@ export function RealizarVenda() {
     };
 
     
-
-    // Função para pesquisar produto por código (usa endpoint: /itens/codigo/{codigo})
     const pesquisarProduto = async () => {
         if (!codigoPeca.trim()) return;
 
-        try {
-            const response = await API.get(`/itens/codigo/${codigoPeca}`);
-            const data = response.data;
+        const response = await API.get(`/itens/codigo/${codigoPeca}`);
+        const data = response.data;
 
-            if (!data) {
-                setProdutosPesquisa([]);
-                alert('Produto não encontrado.');
-                return;
-            }
-
-            // Caso o backend retorne uma lista
-            if (Array.isArray(data)) {
-                setProdutosPesquisa(data.map(d => normalizeProduto(d, codigoPeca)));
-                return;
-            }
-
-            // Caso venha paginado (content)
-            if (data.content && Array.isArray(data.content)) {
-                setProdutosPesquisa(data.content.map(d => normalizeProduto(d, codigoPeca)));
-                return;
-            }
-
-            // Caso venha um único objeto, normalizar campos esperados pela UI
-            const produtoEncontrado = normalizeProduto(data, codigoPeca);
-            setProdutosPesquisa([produtoEncontrado]);
-        } catch (error) {
-            console.error('Erro ao pesquisar produto:', error);
-            setProdutosPesquisa([]);
-            if (error.response?.status === 404) {
-                alert('Produto não encontrado.');
-            } else {
-                alert('Erro na pesquisa. Tente novamente.');
-            }
+        if (Array.isArray(data)) {
+            setProdutosPesquisa(data.map(normalizeProduto));
+            return;
         }
+
+        // Caso venha um único objeto
+        const produtoEncontrado = normalizeProduto(data);
+        setProdutosPesquisa([produtoEncontrado]);
     };
 
 
@@ -173,62 +119,45 @@ export function RealizarVenda() {
         const itemCarrinho = {
             ...produto,
             quantidade: quantidadeProduto,
-            valorTotal: (produto.valor || 0) * quantidadeProduto
+            valorTotal: produto.valor * quantidadeProduto
         };
 
-        // Preparar payload para o backend - preferir itemId quando disponível
         const payload = {
-            codigoProduto: produto.codigo ?? null,
+            codigoProduto: produto.codigo,
             qtdParaVender: quantidadeProduto,
             funcionarioId: null,
-            clienteId: null
+            clienteId: null,
+            itemId: produto.id
         };
 
-        // só anexar itemId se existir
-        if (produto.id) {
-            payload.itemId = produto.id;
-        }
-
-        // buscar ids de cliente/funcionário do sessionStorage (se foram armazenados em alguma tela)
+        // buscar ids de cliente/funcionário do sessionStorage
         try {
             const funcId = sessionStorage.getItem('funcionarioId');
             const cliId = sessionStorage.getItem('clienteId');
             if (funcId) payload.funcionarioId = Number(funcId);
             if (cliId) payload.clienteId = Number(cliId);
-            // se não existir, mantemos explicitamente null para o backend saber que o campo existe
-        } catch (e) {
-            // se sessionStorage não estiver disponível, ignorar silenciosamente
+        } catch (e) {}
+
+        setAdicionando(true);
+        await API.post('/item-venda/carrinho', payload);
+
+        // Atualizar carrinho local
+        const produtoExistente = carrinho.find(item => item.codigo === produto.codigo);
+        if (produtoExistente) {
+            setCarrinho(prev => prev.map(item => 
+                item.codigo === produto.codigo 
+                    ? { ...item, quantidade: item.quantidade + quantidadeProduto, valorTotal: (item.quantidade + quantidadeProduto) * item.valor }
+                    : item
+            ));
+        } else {
+            setCarrinho(prev => [...prev, itemCarrinho]);
         }
 
-        try {
-            setAdicionando(true);
-            await API.post('/item-venda/carrinho', payload);
-
-            // Atualizar carrinho local para refletir na UI
-            const produtoExistente = carrinho.find(item => item.codigo === produto.codigo);
-            if (produtoExistente) {
-                setCarrinho(prev => prev.map(item => 
-                    item.codigo === produto.codigo 
-                        ? { ...item, quantidade: item.quantidade + quantidadeProduto, valorTotal: (item.quantidade + quantidadeProduto) * item.valor }
-                        : item
-                ));
-            } else {
-                setCarrinho(prev => [...prev, itemCarrinho]);
-            }
-
-            // Atualiza valor total de forma segura
-            setValorTotal(prev => prev + itemCarrinho.valorTotal);
-
-            // Limpa a pesquisa
-            setCodigoPeca('');
-            setProdutosPesquisa([]);
-            setQuantidadeProduto(1);
-        } catch (error) {
-            console.error('Erro ao adicionar ao carrinho:', error);
-            alert('Erro ao adicionar item ao carrinho. Tente novamente.');
-        } finally {
-            setAdicionando(false);
-        }
+        setValorTotal(prev => prev + itemCarrinho.valorTotal);
+        setCodigoPeca('');
+        setProdutosPesquisa([]);
+        setQuantidadeProduto(1);
+        setAdicionando(false);
     };
 
     // Função para remover produto do carrinho
@@ -248,94 +177,50 @@ export function RealizarVenda() {
             return;
         }
 
+        setFinalizando(true);
+        const vendaPayload = {
+            itens: carrinho.map(item => ({
+                codigoProduto: item.codigo,
+                quantidade: item.quantidade,
+                valorUnitario: item.valor,
+                valorTotal: item.valorTotal
+            })),
+            valorTotal
+        };
+
+        // Obter funcionarioId do sessionStorage
+        let funcionarioId = null;
         try {
-            setFinalizando(true);
-            const vendaPayload = {
-                itens: carrinho.map(item => ({
-                    codigoProduto: item.codigo,
-                    quantidade: item.quantidade,
-                    valorUnitario: item.valor,
-                    valorTotal: item.valorTotal
-                })),
-                valorTotal
-            };
+            const funcId = sessionStorage.getItem('funcionarioId');
+            if (funcId) funcionarioId = Number(funcId);
+        } catch (e) {}
 
-                let response;
-                // Obter funcionarioId do sessionStorage (armazenado no login)
-                let funcionarioId = null;
-                try {
-                    const funcId = sessionStorage.getItem('funcionarioId');
-                    if (funcId) funcionarioId = Number(funcId);
-                } catch (e) {}
-
-                // Chamar endpoint de finalizar carrinho — inclui clienteId e funcionarioId no path
-                if (clienteSelecionado && funcionarioId) {
-                    response = await API.post(`/item-venda/carrinho/finalizar/${clienteSelecionado}/${funcionarioId}`, vendaPayload);
-                } else if (clienteSelecionado) {
-                    response = await API.post(`/item-venda/carrinho/finalizar/${clienteSelecionado}`, vendaPayload);
-                } else if (funcionarioId) {
-                    response = await API.post(`/item-venda/carrinho/finalizar/null/${funcionarioId}`, vendaPayload);
-                } else {
-                    // tentar endpoint sem cliente nem funcionário
-                    response = await API.post('/item-venda/carrinho/finalizar', vendaPayload);
-                }
-
-                    // armazenar a resposta (espera-se que retorne dados da venda com algum id)
-                    // log para debug: mostrar body e headers retornados pelo backend
-                    try {
-                        console.log('finalizarCarrinho response.data:', response?.data);
-                        console.log('finalizarCarrinho response.headers:', response?.headers);
-                    } catch (e) {
-                        // ignorar se console não estiver disponível
-                    }
-                    setVendaFinalizada(response?.data ?? null);
-                // tentar extrair id da venda de várias fontes: body ou header Location
-                const body = response?.data ?? {};
-                let id = body.id ?? body.vendaId ?? body.idVenda ?? body.codigoVenda ?? null;
-                // se ainda não encontrou, tentar extrair do header Location (ex: Location: /vendas/123)
-                const locationHeader = response?.headers?.location || response?.headers?.Location || null;
-                if (!id && locationHeader) {
-                    try {
-                        const parts = String(locationHeader).split('/').filter(Boolean);
-                        id = parts[parts.length - 1] || null;
-                    } catch (e) {
-                        console.warn('Não foi possível extrair id da Location header:', locationHeader);
-                    }
-                }
-                if (id) setVendaId(id);
-                // abrir modal perguntando se deseja enviar comprovante
-                setMostrarModalConfirmacao(true);
-        } catch (error) {
-            console.error('Erro ao finalizar carrinho:', error);
-            const msg = error?.response?.data?.message || error?.message || 'Erro ao finalizar venda. Verifique os dados ou tente novamente.';
-            alert(msg);
-        } finally {
-            setFinalizando(false);
+        // Chamar endpoint de finalizar carrinho
+        let response;
+        if (clienteSelecionado && funcionarioId) {
+            response = await API.post(`/item-venda/carrinho/finalizar/${clienteSelecionado}/${funcionarioId}`, vendaPayload);
+        } else if (clienteSelecionado) {
+            response = await API.post(`/item-venda/carrinho/finalizar/${clienteSelecionado}`, vendaPayload);
+        } else {
+            response = await API.post('/item-venda/carrinho/finalizar', vendaPayload);
         }
+
+        setVendaFinalizada(response.data);
+        const vendaId = response.data.id;
+        setVendaId(vendaId);
+        setMostrarModalConfirmacao(true);
+        setFinalizando(false);
     };
 
-        // Step 2: enviar comprovante (assumo endpoint: POST /vendas/enviar-comprovante/{vendaId})
+        // Step 2: enviar comprovante
         const enviarComprovante = async () => {
-        // preferir vendaId extraído dos headers/body; fallback para vendaFinalizada
-        const idToUse = vendaId ?? vendaFinalizada?.id ?? vendaFinalizada?.vendaId ?? vendaFinalizada?.idVenda ?? vendaFinalizada?.codigoVenda ?? null;
-        if (!idToUse) {
-            alert('ID da venda não retornado pelo servidor. Não é possível enviar comprovante automaticamente.');
-            return;
-        }
-
-        try {
-            setEnviandoComprovante(true);
-            await API.post(`/vendas/finalizar/${idToUse}`);
-            alert('Comprovante enviado com sucesso.');
-            // limpar estado
-            limparCarrinho();
-        } catch (error) {
-            console.error('Erro ao enviar comprovante:', error);
-            const msg = error?.response?.data?.message || error?.message || 'Erro ao enviar comprovante. Tente novamente.';
-            alert(msg);
-        } finally {
-            setEnviandoComprovante(false);
-        }
+        const idToUse = vendaId || vendaFinalizada?.id;
+        
+        setEnviandoComprovante(true);
+        await API.post(`/vendas/finalizar/${idToUse}`);
+        alert('Comprovante enviado com sucesso.');
+        limparCarrinho();
+        setEnviandoComprovante(false);
         };
 
     // Cliente selecionado (objeto completo) — usado para exibir no UI
@@ -521,7 +406,7 @@ export function RealizarVenda() {
 
                         <div style={{ marginBottom: 12, display: 'flex', gap: 8, alignItems: 'center' }}>
                             <input 
-                                placeholder="Buscar cliente por nome, email ou CPF" 
+                                placeholder="Buscar cliente por nome ou email" 
                                 value={buscaCliente} 
                                 onChange={(e) => setBuscaCliente(e.target.value)} 
                                 onKeyPress={(e) => e.key === 'Enter' && pesquisarClientes()}
@@ -544,7 +429,7 @@ export function RealizarVenda() {
                                         <tr style={{ textAlign: 'left', borderBottom: '1px solid #eee' }}>
                                             <th style={{ padding: '8px' }}>Nome</th>
                                             <th style={{ padding: '8px' }}>Email</th>
-                                            <th style={{ padding: '8px' }}>CPF</th>
+                                            <th style={{ padding: '8px' }}>Telefone</th>
                                             <th style={{ padding: '8px' }}>Ação</th>
                                         </tr>
                                     </thead>
@@ -553,10 +438,10 @@ export function RealizarVenda() {
                                             <tr key={idx} style={{ borderBottom: '1px solid #f0f0f0' }}>
                                                 <td style={{ padding: 8 }}>{c.nome}</td>
                                                 <td style={{ padding: 8 }}>{c.email}</td>
-                                                <td style={{ padding: 8 }}>{c.cpf}</td>
+                                                <td style={{ padding: 8 }}>{c.telefone}</td>
                                                 <td style={{ padding: 8 }}>
                                                     <button className={styles.botaoSelecionar} onClick={() => {
-                                                        const id = c.id ?? null;
+                                                        const id = c.id;
                                                         try { sessionStorage.setItem('clienteId', String(id)); } catch(e){}
                                                         setClienteSelecionado(id);
                                                         setMostrarModalCliente(false);

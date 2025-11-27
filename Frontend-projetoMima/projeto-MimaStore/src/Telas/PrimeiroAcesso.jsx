@@ -39,7 +39,6 @@ export default function PrimeiroAcesso() {
     }
 
     try {
-      // 1) Autentica com email + senha provisória para obter JWT
       const loginResp = await API.post("/usuarios/login", {
         email: form.email,
         senha: form.senhaProvisoria,
@@ -47,7 +46,6 @@ export default function PrimeiroAcesso() {
 
       const loginData = loginResp?.data || {};
 
-      // tenta extrair o token por alguns nomes comuns MUDAR ------------------------------------------------------------------------------------
       const token =
         loginData.token ||
         loginData.jwt ||
@@ -62,17 +60,14 @@ export default function PrimeiroAcesso() {
         return;
       }
 
-      // 2) Chama endpoint de redefinir senha passando o JWT no corpo
       await API.post("/usuarios/redefinir-senha", {
         token: token,
         novaSenha: form.novaSenha,
       });
 
       setSucesso(true);
-      // redireciona para login após delay maior para permitir leitura
       setTimeout(() => navigate("/login"), 7000);
     } catch (error) {
-      // Tratamento específico para 401: usuário inexistente
       if (error?.response?.status === 401) {
         setErro("Usuário inexistente");
         return;
