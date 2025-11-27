@@ -36,9 +36,9 @@
 
 .kpisRow {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 18px;
-    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(226.2px, 1fr)); /* 13% menor que 260px */
+    gap: 15.66px; /* 13% menor que 18px */
+    margin-bottom: 17.4px; /* 13% menor que 20px */
 }
 
 .chartsSection {
@@ -48,6 +48,7 @@
     margin-bottom: 16px;
     width: 100%;
     max-width: 100%;
+    align-items: stretch; /* Ensure both charts align vertically */
 }
 
 .chartFull {
@@ -87,6 +88,17 @@
     font-family: 'Average Sans', sans-serif;
     font-size: 1.2rem;
     color: #864176;
+}
+
+.chartCard {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 20px;
+    min-height: 400px; /* Ensure consistent height */
 }
 
 @media (max-width: 1024px) {

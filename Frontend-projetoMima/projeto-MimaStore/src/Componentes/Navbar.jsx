@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Componentes - CSS/Navbar.module.css';
 import Logo from './assets/Group 2.png';
@@ -22,11 +22,15 @@ import PeopleIcon from '@mui/icons-material/People';
 import LockIcon from '@mui/icons-material/Lock';
 import API from '../Provider/API';
 import { useContext } from 'react';
+import { createPortal } from 'react-dom';
 import { AuthContext } from '../Provider/AuthProvider';
 
 export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil: mostrarPerfilProp }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [perfilMenuOpen, setPerfilMenuOpen] = useState(false);
+    const [perfilMenuStyle, setPerfilMenuStyle] = useState(null);
+    const perfilWrapperRef = useRef(null);
+    const perfilMenuRef = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -52,8 +56,55 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
     };
 
     const handlePerfilClick = () => {
-        setPerfilMenuOpen((open) => !open);
+        setPerfilMenuOpen((open) => {
+            const next = !open;
+            if (next && perfilWrapperRef.current) {
+                const rect = perfilWrapperRef.current.getBoundingClientRect();
+                // position menu slightly below the avatar wrapper
+                const top = rect.bottom + 6;
+                const left = rect.left;
+                setPerfilMenuStyle({ position: 'fixed', top: `${top}px`, left: `${left}px` });
+            }
+            return next;
+        });
     };
+
+    useEffect(() => {
+        if (!perfilMenuOpen) return;
+
+        function updatePosition() {
+            if (!perfilWrapperRef.current || !perfilMenuRef.current) return;
+            const rect = perfilWrapperRef.current.getBoundingClientRect();
+            const menuEl = perfilMenuRef.current;
+            const top = rect.bottom + 6;
+            let left = rect.left;
+            const menuWidth = menuEl.offsetWidth || 200;
+            const margin = 8;
+            if (left + menuWidth > window.innerWidth - margin) {
+                left = window.innerWidth - menuWidth - margin;
+            }
+            if (left < margin) left = margin;
+            setPerfilMenuStyle({ position: 'fixed', top: `${top}px`, left: `${left}px`, zIndex: 1000000 });
+        }
+
+        function handleDocClick(e) {
+            const target = e.target;
+            if (perfilWrapperRef.current && perfilWrapperRef.current.contains(target)) return;
+            if (perfilMenuRef.current && perfilMenuRef.current.contains(target)) return;
+            setPerfilMenuOpen(false);
+        }
+
+        updatePosition();
+        window.addEventListener('resize', updatePosition);
+        window.addEventListener('scroll', updatePosition, true);
+        document.addEventListener('mousedown', handleDocClick);
+
+        return () => {
+            window.removeEventListener('resize', updatePosition);
+            window.removeEventListener('scroll', updatePosition, true);
+            document.removeEventListener('mousedown', handleDocClick);
+        };
+    }, [perfilMenuOpen]);
 
     const auth = useContext(AuthContext);
     const handleLogout = () => {
@@ -129,6 +180,7 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
                             {mostrarPerfil && (
                                 <li className={styles["item"]} style={{ position: 'relative' }}>
                                     <div
+                                        ref={perfilWrapperRef}
                                         className={styles.perfilWrapper}
                                         onClick={handlePerfilClick}
                                         style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
@@ -136,12 +188,6 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
                                         <Perfil nome={usuario?.nome || 'Usuário'} fotoId={usuario?.imagem || fotoId} />
                                         
                                     </div>
-                                    {perfilMenuOpen && (
-                                        <div className={styles.perfilMenu} >
-                                            <button onClick={handleConfig}>Configurações</button>
-                                            <button onClick={handleLogout}>Logout</button>
-                                        </div>
-                                    )}
                                 </li>
                             )}
                             <li className={styles["logo"]}>
@@ -205,6 +251,15 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
                     </nav>
                 </div>
             </div>
+            {perfilMenuOpen && createPortal(
+                <div ref={perfilMenuRef} className={styles.perfilMenu} style={perfilMenuStyle} role="menu" aria-hidden={!perfilMenuOpen}>
+                    <button onClick={handleConfig}>Configurações</button>
+                    <button onClick={handleLogout}>Logout</button>
+                </div>,
+                document.body
+            )}
         </>
     );
 }
+
+// Note: profile menu is rendered into document.body via portal to avoid stacking-context issues

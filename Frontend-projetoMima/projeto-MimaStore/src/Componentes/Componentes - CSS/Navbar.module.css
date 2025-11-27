@@ -269,16 +269,15 @@ h3 {
 }
 
 .perfilMenu {
-    position: absolute;
-    top: 48px;
-    right: 0;
+    /* Positioning is set inline by the Navbar (portal) to align with the avatar */
+    position: fixed;
     background: #fff;
     border: 1px solid #e0c3e3;
     border-radius: 8px;
     box-shadow: 0 2px 12px rgba(215,191,211,0.18);
     padding: 0.5rem 0;
     min-width: 140px;
-    z-index: 2000;
+    z-index: 99999; /* ensure it's above the FaixaVoltar and overlays */
     display: flex;
     flex-direction: column;
 }

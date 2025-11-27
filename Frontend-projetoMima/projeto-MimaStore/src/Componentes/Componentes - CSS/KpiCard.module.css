@@ -92,9 +92,9 @@
 
 .subtitulo {
     font-family: 'Average Sans', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.783rem; /* 13% menor que 0.9rem */
     color: #666;
-    margin-top: 8px;
+    margin-top: 6.96px; /* 13% menor que 8px */
 }
 
 @media (max-width: 768px) {

@@ -16,16 +16,16 @@
 
 .kpis-row {
   display: flex;
-  gap: 20px;
-  width: 90%;
+  gap: 17.4px; /* 13% menor que 20px */
+  width: 78.3%; /* 13% menor que 90% */
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 20.88px; /* 13% menor que 24px */
 }
 
 .kpi-card {
   background: white;
   border-radius: 12px;
-  padding: 22px;
+  padding: 19.14px; /* 13% menor que 22px */
   flex: 1 1 0;
   box-shadow: 0 6px 20px rgba(0,0,0,0.06);
   display: flex;
