@@ -36,72 +36,32 @@ export function GestaoClientes() {
         navigate('/menu-inicial');
     };
 
-    // Normaliza diferentes formatos de cliente retornados pelo backend
-    const normalizeCliente = (c) => {
-        if (!c || typeof c !== 'object') return { id: null, nome: '', email: '', telefone: '', cpf: '', endereco: '' };
-        // suportar camelCase, snake_case e outras variações
-        const id = c.idCliente ?? c.id ?? c.id_cliente ?? c.codigo ?? c.uuid ?? null;
-        const nome = c.nome ?? c.nomeCompleto ?? c.nomeCliente ?? c.nome_cliente ?? '';
-        const telefone = c.telefone ?? c.telefoneContato ?? c.contato?.telefone ?? c.telefone_contato ?? '';
-
-        // Tentativas comuns para encontrar email em várias estruturas
-        const email =
-            c.email ??
-            c.emailCliente ??
-            c.email_cliente ??
-            c.usuario?.email ??
-            c.contato?.email ??
-            (Array.isArray(c.emails) && (c.emails[0]?.email || c.emails[0]?.value)) ??
-            '';
-
-        const cpf = c.cpf ?? c.cpfCliente ?? c.cpf_cliente ?? '';
-        const endereco = c.endereco ?? c.enderecoResidencial ?? c.endereco_residencial ?? c.endereco ?? '';
-
-        return { ...c, id, nome, email, telefone, cpf, endereco };
-    };
-
     // Carregar clientes na inicialização
     useEffect(() => {
         carregarClientes(paginaAtual);
     }, [paginaAtual]);
 
     const carregarClientes = async (page = 0) => {
-        // mostrar loading grande apenas na primeira página (evita piscar ao navegar entre páginas)
         setCarregando(true);
         setMostrarLoading(page === 0);
         setErro('');
-        try {
-            // Chama API paginada; tamanho fixo em 10
-            const tamanho = 10;
-            const response = await API.get('/clientes', { params: { page, size: tamanho } });
-            const body = response.data || {};
-
-            // Se backend usar Page<T>, espera campos: content, totalPages, totalElements
-            const todosClientes = Array.isArray(body.content)
-                ? body.content
-                : Array.isArray(body)
-                    ? body
-                    : [];
-
-            const clientesNormalizados = todosClientes.map(normalizeCliente);
-            setClientes(clientesNormalizados);
-
-            // Atualiza info de paginação quando disponível
-            if (typeof body.totalPages === 'number') setTotalPaginas(body.totalPages);
-            if (typeof body.totalElements === 'number') setTotalElementos(body.totalElements);
-            setPaginaAtual(Number(page));
-        } catch (error) {
-            console.error('Erro ao carregar clientes:', error);
-            if (error.response?.status === 404) {
-                setClientes([]);
-                setErro('Nenhum cliente encontrado.');
-            } else {
-                setErro('Erro ao carregar clientes.');
-            }
-        } finally {
-            setCarregando(false);
-            setMostrarLoading(false);
-        }
+        
+        const tamanho = 10;
+        const response = await API.get('/clientes', { params: { page, size: tamanho } });
+        
+        const clientesData = response.data.content.map(cliente => ({
+            id: cliente.idCliente,
+            nome: cliente.nome,
+            email: cliente.email,
+            telefone: cliente.telefone
+        }));
+        
+        setClientes(clientesData);
+        setTotalPaginas(response.data.totalPages);
+        setTotalElementos(response.data.totalElements);
+        setPaginaAtual(Number(page));
+        setCarregando(false);
+        setMostrarLoading(false);
     };
 
     const irParaPagina = (p) => {
@@ -115,9 +75,8 @@ export function GestaoClientes() {
 
     // Filtrar clientes pela busca
     const clientesFiltrados = clientes.filter(cliente => 
-        cliente.nome?.toLowerCase().includes(busca.toLowerCase()) ||
-        (cliente.email || '').toLowerCase().includes(busca.toLowerCase()) ||
-        (cliente.cpf || '').includes(busca)
+        cliente.nome.toLowerCase().includes(busca.toLowerCase()) ||
+        cliente.email.toLowerCase().includes(busca.toLowerCase())
     );
 
     // Função para abrir confirmação de exclusão
@@ -178,9 +137,9 @@ export function GestaoClientes() {
     // Preparar dados para a tabela
     const dadosTabela = clientesFiltrados.map(cliente => ({
         id: cliente.id,
-        nome: cliente.nome || '',
-        email: cliente.email || '',
-        telefone: cliente.telefone || ''
+        nome: cliente.nome,
+        email: cliente.email,
+        telefone: cliente.telefone
     }));
 
     // Função para salvar edição
@@ -191,30 +150,26 @@ export function GestaoClientes() {
         }
 
         setCarregando(true);
-        try {
-            const clienteId = clienteEditando.id;
-            const response = await API.put(`/clientes/${clienteId}`, {
-                nome: clienteEditando.nome,
-                email: clienteEditando.email,
-                telefone: clienteEditando.telefone || '',
-                cpf: clienteEditando.cpf || '',
-                endereco: clienteEditando.endereco || ''
-            });
+        const clienteId = clienteEditando.id;
+        const response = await API.put(`/clientes/${clienteId}`, {
+            nome: clienteEditando.nome,
+            email: clienteEditando.email,
+            telefone: clienteEditando.telefone
+        });
 
-            // Normalizar o cliente retornado e atualizar na lista
-            const clienteAtualizado = normalizeCliente(response.data || {});
-            setClientes(prev => prev.map(c => (c.id === clienteId ? clienteAtualizado : c)));
-            
-            setMostrarModal(false);
-            setClienteEditando(null);
-            setMensagem('Cliente atualizado com sucesso!');
-            setTimeout(() => setMensagem(''), 3000);
-        } catch (error) {
-            console.error('Erro ao atualizar cliente:', error);
-            setErro('Erro ao atualizar cliente.');
-        } finally {
-            setCarregando(false);
-        }
+        const clienteAtualizado = {
+            id: response.data.idCliente,
+            nome: response.data.nome,
+            email: response.data.email,
+            telefone: response.data.telefone
+        };
+        
+        setClientes(prev => prev.map(c => (c.id === clienteId ? clienteAtualizado : c)));
+        setMostrarModal(false);
+        setClienteEditando(null);
+        setMensagem('Cliente atualizado com sucesso!');
+        setTimeout(() => setMensagem(''), 3000);
+        setCarregando(false);
     };
 
     // Função para cadastrar novo cliente
@@ -225,31 +180,27 @@ export function GestaoClientes() {
         }
 
         setCarregando(true);
-        try {
-            console.log('Dados sendo enviados:', novoCliente);
-            const response = await API.post('/clientes', novoCliente);
-            const novo = normalizeCliente(response.data || {});
-            setClientes(prev => [...prev, novo]);
-            setMostrarModalCadastro(false);
-            setNovoCliente({
-                nome: '',
-                email: '',
-                telefone: '',
-                cpf: '',
-                endereco: ''
-            });
-            setMensagem('Cliente cadastrado com sucesso!');
-            setTimeout(() => setMensagem(''), 3000);
-        } catch (error) {
-            console.error('Erro ao cadastrar cliente:', error);
-            if (error.response?.status === 409) {
-                setErro('Cliente com este CPF já existe.');
-            } else {
-                setErro('Erro ao cadastrar cliente.');
-            }
-        } finally {
-            setCarregando(false);
-        }
+        const response = await API.post('/clientes', novoCliente);
+        
+        const novoClienteData = {
+            id: response.data.idCliente,
+            nome: response.data.nome,
+            email: response.data.email,
+            telefone: response.data.telefone
+        };
+        
+        setClientes(prev => [...prev, novoClienteData]);
+        setMostrarModalCadastro(false);
+        setNovoCliente({
+            nome: '',
+            email: '',
+            telefone: '',
+            cpf: '',
+            endereco: ''
+        });
+        setMensagem('Cliente cadastrado com sucesso!');
+        setTimeout(() => setMensagem(''), 3000);
+        setCarregando(false);
     };
 
     return (

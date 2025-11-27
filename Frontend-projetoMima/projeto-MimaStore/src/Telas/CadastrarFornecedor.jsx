@@ -4,7 +4,7 @@ import styles from '../Componentes/Componentes - CSS/Cadastro.module.css';
 import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
 import { useNavigate } from 'react-router-dom';
-import API from '../Provider/API';// importa axios configurado
+import API from '../Provider/API';
 import {MensagemErro} from "../Componentes/MensagemErro";
 
 export function CadastrarFornecedor() {
