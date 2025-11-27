@@ -16,7 +16,6 @@ export function Tooltip({ texto, children }) {
                 left: rect.left + window.scrollX + rect.width / 2
             });
             setPronto(true);
-            // Pequeno delay para garantir que a posição foi aplicada antes de mostrar
             requestAnimationFrame(() => {
                 setMostrar(true);
             });
