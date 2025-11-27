@@ -62,7 +62,7 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
         // aproxima bastante: 4px de espaçamento abaixo e alinhado à direita do avatar
         const top = rect.bottom + 4;
         const left = Math.max(8, rect.right - menuWidth + 8);
-        setPerfilMenuStyle({ position: 'fixed', top: `${top}px`, left: `${left}px`, minWidth: `${menuWidth}px` });
+        // setPerfilMenuStyle({ position: 'fixed', left: `${left}px`, minWidth: `${menuWidth}px` });
     };
 
     const handlePerfilClick = () => {
