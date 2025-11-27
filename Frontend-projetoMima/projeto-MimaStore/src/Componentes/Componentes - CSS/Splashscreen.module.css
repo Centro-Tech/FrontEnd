@@ -8,6 +8,7 @@
   align-items: center;
   justify-content: center;
 }
+
 .splashscreenCard {
   background: #fff;
   border-radius: 8px;
@@ -19,6 +20,7 @@
   width: 100%;
   min-height: 350px;
 }
+
 .splashscreenLeft {
   flex: 1;
   display: flex;
@@ -26,6 +28,7 @@
   justify-content: center;
 font-family: 'Average Sans', sans-serif;
 }
+
 .splashscreenTitle {
   font-size: 8rem;
   font-weight: bold;
@@ -33,14 +36,17 @@ font-family: 'Average Sans', sans-serif;
   font-family: 'Inria Serif', serif;
   line-height: 1;
 }
+
 .splashscreenDesc {
   font-size: 1.1rem;
   margin-bottom: 32px;
 }
+
 .splashscreenButtons {
   display: flex;
   gap: 24px;
 }
+
 .splashscreenBtn {
   background: #864176;
   color: #fff;
@@ -52,15 +58,18 @@ font-family: 'Average Sans', sans-serif;
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .splashscreenBtn:hover {
   background: #724165;
 }
+
 .splashscreenRight {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .splashscreenImg {
   width: 390px;
   max-width: 100%;

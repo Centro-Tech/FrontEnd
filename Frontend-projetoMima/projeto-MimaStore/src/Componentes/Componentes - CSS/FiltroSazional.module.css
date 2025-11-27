@@ -87,7 +87,6 @@
     padding-bottom: 6px;
 }
 
-/* Mobile responsiveness */
 @media (max-width: 968px) {
     .comparacaoRow {
         flex-direction: column;

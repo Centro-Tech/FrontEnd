@@ -17,7 +17,7 @@
     justify-content: center;
     gap: 8px;
     margin-bottom: 12px;
-    min-height: 56px; /* garante altura consistente (até 2 linhas) */
+    min-height: 56px; 
 }
 
 .filtroContainer {
@@ -70,13 +70,12 @@
     display: block;
 }
 
-/* Tooltip externo do Chart */
 .chartjs-ext-tooltip {
     pointer-events: none;
 }
 
 .cardFooter {
-    min-height: 40px; /* reserva para paginação/legendas adicionais */
+    min-height: 40px; 
     display: flex;
     align-items: center;
     justify-content: center;

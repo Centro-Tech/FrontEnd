@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,100..900;1,100..900&family=Press+Start+2P&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Average&family=Average+Sans&family=Petrona:ital,wght@0,100..900;1,100..900&family=Press+Start+2P&display=swap');
 
-/* ---------- CONTAINER EXTERNO (ALINHADO COM GESTÃO) ---------- */
 .container-cadastro {
   margin: 0;
   padding: 80px 20px 40px 20px;
@@ -13,7 +12,6 @@
   align-items: center;
 }
 
-/* ---------- BOX PRINCIPAL (visual parecido com GestaoFornecedor) ---------- */
 .box-cadastro {
   width: 86%;
   max-width: 1000px;
@@ -36,7 +34,6 @@
   text-align: center;
 }
 
-/* ---------- FORMULÁRIO ---------- */
 .form-group {
   width: 100%;
   max-width: 720px;
@@ -72,7 +69,6 @@
   box-shadow: 0 0 0 3px rgba(135,92,106,0.08);
 }
 
-/* ---------- BARRA DE AÇÕES / MENSAGENS ---------- */
 .barra-acoes {
   width: 100%;
   display: flex;
@@ -143,7 +139,6 @@
   max-width: 720px;
 }
 
-/* ---------- MODAL (mesma aparência do fornecedor) ---------- */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -182,7 +177,6 @@
 
 .btn-excluir { background: linear-gradient(135deg, #dc3545, #e74c3c); color:white; padding:12px 18px; border-radius:8px; border:none; }
 
-/* ---------- RESPONSIVIDADE ---------- */
 @media (max-width: 768px) {
   .box-cadastro { width: 95%; padding: 20px; }
   .form-group { max-width: 100%; }

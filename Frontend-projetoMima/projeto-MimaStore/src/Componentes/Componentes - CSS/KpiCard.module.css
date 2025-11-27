@@ -55,12 +55,11 @@
     margin: 6px 0;
 }
 
-/* Áreas com altura reservada para alinhar verticalmente entre cartões */
 .valorArea {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 48px; /* reserva para 1 ou 2 linhas curtas */
+    min-height: 48px; 
 }
 
 .variacao {
@@ -77,7 +76,6 @@
     min-height: 40px;
 }
 
-/* Quando não há 'valor' exibido, a variação ganha mais destaque */
 .variacaoSolo {
     font-size: 2rem;
 }

@@ -71,7 +71,6 @@
     opacity: 1;
 }
 
-/* Mobile responsiveness */
 @media (max-width: 768px) {
     .filtroAvancadoContainer {
         flex-direction: column;

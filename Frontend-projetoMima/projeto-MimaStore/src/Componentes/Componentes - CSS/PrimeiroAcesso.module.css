@@ -121,17 +121,18 @@ input:focus {
   color: #333;
   background: #e6d2e6;
   border-radius: 8px;
-  padding: 32px 40px;      /* Aumente o padding horizontal */
+  padding: 32px 40px;      
   font-size: 1.25rem;
   text-align: center;
   font-weight: bold;
-  min-width: 350px;        /* Garante largura mínima */
+  min-width: 350px;        
   max-width: 90vw;
   min-height: 120px;
   box-shadow: 0 4px 24px rgba(80, 0, 50, 0.10);
-  display: block;          /* Remova flex para não forçar coluna */
+  display: block;          
   margin: 0 auto;
 }
+
 .sucessoWrapper {
   position: fixed;
   top: 0;

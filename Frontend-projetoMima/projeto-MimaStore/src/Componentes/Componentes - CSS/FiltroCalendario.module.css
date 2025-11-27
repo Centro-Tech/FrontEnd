@@ -65,7 +65,6 @@
     height: 32px;
 }
 
-/* Versão compacta usada em KPIs / dashboards onde o espaço é reduzido */
 .compact .botaoCalendario {
     padding: 4px 8px;
     min-width: 34px;
@@ -180,7 +179,6 @@
     animation: slideDown 0.2s ease;
 }
 
-/* Compact popup: não ocupa toda a largura do container, tem largura limitada e alinha à direita */
 .compact .calendarioPopup {
     left: auto;
     right: 0;
@@ -189,7 +187,6 @@
     padding: 8px;
 }
 
-/* Further compact adjustments: smaller grid, fonts and spacing */
 .compact .calendarioHeader { padding-bottom: 8px; margin-bottom: 8px; }
 .compact .subtitulo { font-size: 10px; padding: 3px 6px; }
 .compact .selectCompacto { font-size: 11px; padding: 4px 6px; }
@@ -199,8 +196,6 @@
 .compact .diasGrid { gap: 3px; }
 .compact .diaVazio { aspect-ratio: 1; }
 .compact .calendarioPopup .legenda { margin-top: 8px; padding-top: 8px; }
-
-/* Reduce calendar overall width in container when compact */
 .compact { width: auto; max-width: 260px; }
 
 @keyframes slideDown {
@@ -379,7 +374,6 @@
     font-weight: 700;
 }
 
-/* Combinar estilos */
 .diaComVendas.diaFeriado {
     background: linear-gradient(135deg, #e8f5e9 50%, #fff3e0 50%);
 }
@@ -428,7 +422,6 @@
     border-color: #4caf50;
 }
 
-/* Mobile responsiveness */
 @media (max-width: 768px) {
     .calendarioPopup {
         position: fixed;
