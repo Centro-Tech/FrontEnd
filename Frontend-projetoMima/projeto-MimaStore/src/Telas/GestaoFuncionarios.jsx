@@ -35,26 +35,6 @@ export function GestaoFuncionarios() {
         navigate('/menu-inicial');
     };
 
-    // Normaliza diferentes formatos de usuário retornados pelo backend
-    const normalizeUsuario = (u) => {
-        if (!u || typeof u !== 'object') return { id: null, nome: '', email: '', telefone: '', cargo: '', cpf: '', endereco: '' };
-        const id = u.id ?? u.idUsuario ?? u.id_usuario ?? u.usuarioId ?? null;
-        const nome = u.nome ?? u.nomeCompleto ?? u.nome_usuario ?? u.nomeUsuario ?? '';
-        const telefone = u.telefone ?? u.telefoneContato ?? u.contato?.telefone ?? u.telefone_contato ?? '';
-        const email =
-            u.email ??
-            u.emailUsuario ??
-            u.email_usuario ??
-            u.usuario?.email ??
-            u.contato?.email ??
-            (Array.isArray(u.emails) && (u.emails[0]?.email || u.emails[0]?.value)) ??
-            '';
-        const cargo = u.cargo ?? u.role ?? u.perfil ?? '';
-        const cpf = u.cpf ?? u.cpf_usuario ?? u.cpfUsuario ?? '';
-        const endereco = u.endereco ?? u.endereco_residencial ?? u.enderecoResidencial ?? '';
-        return { ...u, id, nome, email, telefone, cargo, cpf, endereco };
-    };
-
 
 
     // Carregar funcionários na inicialização
@@ -65,36 +45,26 @@ export function GestaoFuncionarios() {
     const carregarFuncionarios = async () => {
         setCarregando(true);
         setErro('');
-        try {
-            const response = await API.get('/usuarios');
-            const body = response.data || {};
-            const todos = Array.isArray(body.content) ? body.content : Array.isArray(body) ? body : [];
-            const normalizados = todos.map(normalizeUsuario);
-            setFuncionarios(normalizados);
-        } catch (error) {
-            console.error('Erro ao carregar funcionários:', error);
-            // Mostrar erro detalhado para ajudar diagnóstico (401, 403, CORS, etc.)
-            setFuncionarios([]);
-            const status = error.response?.status;
-            const data = error.response?.data;
-            if (status === 404) {
-                setErro('Nenhum funcionário encontrado.');
-            } else if (status) {
-                const detail = typeof data === 'string' ? data : JSON.stringify(data);
-                setErro(`Erro ${status}: ${detail}`);
-            } else {
-                setErro(error.message || 'Erro ao carregar funcionários.');
-            }
-        } finally {
-            setCarregando(false);
-        }
+        
+        const response = await API.get('/usuarios');
+        const funcionariosData = response.data.content.map(funcionario => ({
+            id: funcionario.id,
+            nome: funcionario.nome,
+            cargo: funcionario.cargo,
+            imagem: funcionario.imagem,
+            email: funcionario.email,
+            telefone: funcionario.telefone,
+            endereco: funcionario.endereco
+        }));
+        
+        setFuncionarios(funcionariosData);
+        setCarregando(false);
     };
 
     // Filtrar funcionários pela busca
     const funcionariosFiltrados = funcionarios.filter(func => 
-        (func.nome || '').toLowerCase().includes(busca.toLowerCase()) ||
-        (func.email || '').toLowerCase().includes(busca.toLowerCase()) ||
-        (func.cpf || '').includes(busca)
+        func.nome.toLowerCase().includes(busca.toLowerCase()) ||
+        func.email.toLowerCase().includes(busca.toLowerCase())
     );
 
     // Função para abrir confirmação de exclusão
@@ -108,30 +78,18 @@ export function GestaoFuncionarios() {
         if (!funcionarioParaExcluir) return;
 
         setCarregando(true);
-        try {
-            const id = funcionarioParaExcluir.id;
-            await API.delete(`/usuarios/${id}`);
-            setFuncionarios(prev => prev.filter(f => f.id !== id));
-            setMensagem(`Funcionário "${funcionarioParaExcluir.nome}" excluído com sucesso!`);
-            setTimeout(() => setMensagem(''), 3000);
-            setMostrarModalConfirmacao(false);
-            setFuncionarioParaExcluir(null);
-        } catch (error) {
-            console.error('Erro ao deletar funcionário:', error);
-            if (error.response?.status === 404) {
-                setErro('Funcionário não encontrado.');
-            } else {
-                setErro('Erro ao excluir funcionário.');
-            }
-        } finally {
-            setCarregando(false);
-        }
+        const id = funcionarioParaExcluir.id;
+        await API.delete(`/usuarios/${id}`);
+        setFuncionarios(prev => prev.filter(f => f.id !== id));
+        setMensagem(`Funcionário "${funcionarioParaExcluir.nome}" excluído com sucesso!`);
+        setTimeout(() => setMensagem(''), 3000);
+        setMostrarModalConfirmacao(false);
+        setFuncionarioParaExcluir(null);
+        setCarregando(false);
     };
 
     // Função para abrir modal de edição
     const abrirEdicao = (funcionario) => {
-        setErro('');
-        // incluir campo imagemFile para possível upload
         setFuncionarioEditando({...funcionario, imagemFile: null});
         setMostrarModal(true);
     };
@@ -152,15 +110,15 @@ export function GestaoFuncionarios() {
         setMostrarModalCadastro(true);
     };
 
-    // Preparar dados para a tabela (usando campos normalizados)
+    // Preparar dados para a tabela
     const dadosTabela = funcionariosFiltrados.map(usuario => ({
         id: usuario.id,
-        nome: usuario.nome || '',
-        cargo: usuario.cargo || '',
-        imagem: usuario.imagem ?? usuario.imagemUrl ?? usuario.avatar ?? null,
-        email: usuario.email || '',
-        telefone: usuario.telefone || '',
-        endereco: usuario.endereco || ''
+        nome: usuario.nome,
+        cargo: usuario.cargo,
+        imagem: usuario.imagem,
+        email: usuario.email,
+        telefone: usuario.telefone,
+        endereco: usuario.endereco
     }));
 
     // Função para salvar edição
@@ -171,38 +129,29 @@ export function GestaoFuncionarios() {
         }
 
         setCarregando(true);
-        try {
-            // Atualização: o endpoint PUT /usuarios/{id} espera multipart/form-data
-            const formData = new FormData();
-            formData.append('nome', funcionarioEditando.nome);
-            formData.append('email', funcionarioEditando.email);
-            formData.append('telefone', funcionarioEditando.telefone || '');
-            formData.append('cargo', funcionarioEditando.cargo);
-            formData.append('endereco', funcionarioEditando.endereco || '');
-            if (funcionarioEditando.imagemFile) {
-                formData.append('imagem', funcionarioEditando.imagemFile);
-            }
-
-            const response = await API.put(`/usuarios/${funcionarioEditando.id}`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
-
-            // Recarregar lista a partir do servidor para garantir consistência
-            await carregarFuncionarios();
-
-            setMostrarModal(false);
-            setFuncionarioEditando(null);
-            setMensagem('Funcionário atualizado com sucesso!');
-            setTimeout(() => setMensagem(''), 3000);
-        } catch (error) {
-            console.error('Erro ao atualizar funcionário:', error);
-            setErro('Erro ao atualizar funcionário.');
-        } finally {
-            setCarregando(false);
+        const formData = new FormData();
+        formData.append('nome', funcionarioEditando.nome);
+        formData.append('email', funcionarioEditando.email);
+        formData.append('telefone', funcionarioEditando.telefone);
+        formData.append('cargo', funcionarioEditando.cargo);
+        formData.append('endereco', funcionarioEditando.endereco);
+        if (funcionarioEditando.imagemFile) {
+            formData.append('imagem', funcionarioEditando.imagemFile);
         }
+
+        await API.put(`/usuarios/${funcionarioEditando.id}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+
+        await carregarFuncionarios();
+        setMostrarModal(false);
+        setFuncionarioEditando(null);
+        setMensagem('Funcionário atualizado com sucesso!');
+        setTimeout(() => setMensagem(''), 3000);
+        setCarregando(false);
     };
 
-    // Função para cadastrar novo funcionário (senha opcional)
+    // Função para cadastrar novo funcionário
     const cadastrarFuncionario = async () => {
         if (!novoFuncionario.nome || !novoFuncionario.email || !novoFuncionario.telefone || 
             !novoFuncionario.cargo || !novoFuncionario.endereco) {
@@ -211,63 +160,48 @@ export function GestaoFuncionarios() {
         }
 
         setCarregando(true);
-        try {
-            // Se existe imagemFile, enviar como multipart para o endpoint /usuarios/funcionarios/com-imagem
-            if (novoFuncionario.imagemFile) {
-                const fd = new FormData();
-                fd.append('nome', novoFuncionario.nome);
-                fd.append('email', novoFuncionario.email);
-                fd.append('telefone', novoFuncionario.telefone);
-                fd.append('cargo', novoFuncionario.cargo);
-                fd.append('endereco', novoFuncionario.endereco);
-                fd.append('imagem', novoFuncionario.imagemFile);
-                // anexar senha somente se fornecida
-                if (novoFuncionario.senha) fd.append('senha', novoFuncionario.senha);
+        
+        if (novoFuncionario.imagemFile) {
+            const fd = new FormData();
+            fd.append('nome', novoFuncionario.nome);
+            fd.append('email', novoFuncionario.email);
+            fd.append('telefone', novoFuncionario.telefone);
+            fd.append('cargo', novoFuncionario.cargo);
+            fd.append('endereco', novoFuncionario.endereco);
+            fd.append('imagem', novoFuncionario.imagemFile);
+            if (novoFuncionario.senha) fd.append('senha', novoFuncionario.senha);
 
-                const response = await API.post('/usuarios/funcionarios/com-imagem', fd, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                });
-                await carregarFuncionarios();
-                // capturar senha provisória se backend retornar
-                const respData = response?.data;
-                const possiblePwd = respData?.senha || respData?.password || respData?.tempPassword || respData?.temporaryPassword || respData?.senhaProvisoria || respData?.temporary_password;
-                console.log('create (with image) response:', respData, 'detectedPwd:', possiblePwd);
-                setSenhaProvisoria(possiblePwd || '');
-                setMostrarModalSenhaProvisoria(true);
-            } else {
-                const payload = {
-                    nome: novoFuncionario.nome,
-                    email: novoFuncionario.email,
-                    telefone: novoFuncionario.telefone,
-                    cargo: novoFuncionario.cargo,
-                    endereco: novoFuncionario.endereco,
-                    imagem: null,
-                    senha: novoFuncionario.senha ? novoFuncionario.senha : null
-                };
+            const response = await API.post('/usuarios/funcionarios/com-imagem', fd, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            
+            const senhaTemp = response?.data?.senha || '';
+            setSenhaProvisoria(senhaTemp);
+            setMostrarModalSenhaProvisoria(true);
+        } else {
+            const payload = {
+                nome: novoFuncionario.nome,
+                email: novoFuncionario.email,
+                telefone: novoFuncionario.telefone,
+                cargo: novoFuncionario.cargo,
+                endereco: novoFuncionario.endereco,
+                imagem: null,
+                senha: novoFuncionario.senha || null
+            };
 
-                const response = await API.post('/usuarios/funcionarios', payload);
-                await carregarFuncionarios();
-                const respData = response?.data;
-                const possiblePwd = respData?.senha || respData?.password || respData?.tempPassword || respData?.temporaryPassword || respData?.senhaProvisoria || respData?.temporary_password;
-                console.log('create (json) response:', respData, 'detectedPwd:', possiblePwd);
-                setSenhaProvisoria(possiblePwd || '');
-                setMostrarModalSenhaProvisoria(true);
-            }
-
-            setMostrarModalCadastro(false);
-            setNovoFuncionario({ nome: '', email: '', telefone: '', endereco: '', cargo: '', senha: '', imagemFile: null });
-            setMensagem('Funcionário cadastrado com sucesso!');
-            setTimeout(() => setMensagem(''), 3000);
-        } catch (error) {
-            console.error('Erro ao cadastrar funcionário:', error);
-            if (error.response?.status === 400) {
-                setErro('Dados inválidos ou email já cadastrado.');
-            } else {
-                setErro('Erro ao cadastrar funcionário.');
-            }
-        } finally {
-            setCarregando(false);
+            const response = await API.post('/usuarios/funcionarios', payload);
+            
+            const senhaTemp = response?.data?.senha || '';
+            setSenhaProvisoria(senhaTemp);
+            setMostrarModalSenhaProvisoria(true);
         }
+
+        await carregarFuncionarios();
+        setMostrarModalCadastro(false);
+        setNovoFuncionario({ nome: '', email: '', telefone: '', endereco: '', cargo: '', senha: '', imagemFile: null });
+        setMensagem('Funcionário cadastrado com sucesso!');
+        setTimeout(() => setMensagem(''), 3000);
+        setCarregando(false);
     };
 
     return (
@@ -293,6 +227,7 @@ export function GestaoFuncionarios() {
                         <button 
                             onClick={abrirModalCadastro}
                             className={styles['btn-novo']}
+                            style={{ background: 'linear-gradient(135deg, #875C6A, #864176)', color: 'white', border: 'none', padding: '8px 12px', borderRadius: 8, fontWeight: 700 }}
                         >
                             + Novo Funcionário
                         </button>
@@ -329,11 +264,43 @@ export function GestaoFuncionarios() {
                                 { key: 'endereco', label: 'Endereço' },
                             ]}
                             botaoEditar={true}
+                            renderBotaoEditar={(item, cb) => (
+                                <button
+                                    onClick={cb}
+                                    style={{
+                                        background: 'linear-gradient(135deg, #875C6A, #864176)',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '6px 10px',
+                                        borderRadius: 6,
+                                        cursor: 'pointer',
+                                        fontWeight: 700,
+                                    }}
+                                >
+                                    Editar
+                                </button>
+                            )}
                             onEditar={(item) => {
                                 const funcionario = funcionariosFiltrados.find(f => f.id === item.id);
                                 abrirEdicao(funcionario);
                             }}
                             botaoRemover={true}
+                            renderBotaoRemover={(item, cb) => (
+                                <button
+                                    onClick={cb}
+                                    style={{
+                                        background: '#6e7074',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '6px 10px',
+                                        borderRadius: 6,
+                                        cursor: 'pointer',
+                                        fontWeight: 700,
+                                    }}
+                                >
+                                    Remover
+                                </button>
+                            )}
                             onRemover={(item) => {
                                 const funcionario = funcionariosFiltrados.find(f => f.id === item.id);
                                 abrirConfirmacaoExclusao(funcionario);
@@ -440,9 +407,7 @@ export function GestaoFuncionarios() {
                             ) : (
                                 <>
                                     <p>Usuário criado com sucesso.</p>
-                                    <p style={{ marginTop: 8 }}><em>O backend não retornou a senha provisória no corpo da resposta.</em></p>
-                                    {/* <p style={{ marginTop: 12 }}>Verifique o e-mail do usuário (ou confira os logs do servidor para a senha provisória).</p> */}
-                                </>
+                                    <p style={{ marginTop: 8 }}><em>O backend não retornou a senha provisória no corpo da resposta.</em></p>                                </>
                             )}
                         </div>
                         <div className={styles['modal-senha-footer']}>
@@ -503,14 +468,6 @@ export function GestaoFuncionarios() {
                                     onChange={(e) => setNovoFuncionario({...novoFuncionario, telefone: e.target.value})}
                                 />
                             </div>
-                            {/* <div className={styles['form-group']}>
-                                <label>Imagem (opcional)</label>
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={(e) => setNovoFuncionario({...novoFuncionario, imagemFile: e.target.files?.[0] || null})}
-                                />
-                            </div> */}
                             <div className={styles['form-group']}>
                                 <label>Endereço *</label>
                                 <input 
@@ -526,23 +483,8 @@ export function GestaoFuncionarios() {
                                     value={novoFuncionario.cargo}
                                     onChange={(e) => setNovoFuncionario({...novoFuncionario, cargo: e.target.value})}
                                 />
-                                {/* <div className={styles['form-group']}>
-                                    <label>Imagem (opcional)</label>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={(e) => setFuncionarioEditando({...funcionarioEditando, imagemFile: e.target.files?.[0] || null})}
-                                    />
-                                </div> */}
                             </div>
                             <div className={styles['form-group']}>
-                                {/* <label>Senha (opcional)</label>
-                                <input 
-                                    type="password"
-                                    value={novoFuncionario.senha}
-                                    onChange={(e) => setNovoFuncionario({...novoFuncionario, senha: e.target.value})}
-                                    placeholder="Deixe em branco para gerar senha provisória"
-                                /> */}
                             </div>
                         </div>
                         <div className={styles['modal-footer']}>

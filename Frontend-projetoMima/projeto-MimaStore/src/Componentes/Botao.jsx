@@ -1,5 +1,3 @@
-// Botao.jsx
-import React from "react";
 import styles from "../../Componentes/Componentes - CSS/estiloTabelas.module.css";
 
 export function Botao({ termoPesquisa, setTermoPesquisa, handlePesquisar, handleFiltrarPorM, handleLimpar }) {

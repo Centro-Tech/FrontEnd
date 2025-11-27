@@ -44,38 +44,23 @@ export function GestaoFornecedor() {
         setCarregando(true);
         setMostrarLoading(page === 0);
         setErro('');
-        try {
-            // Backend retorna um Page<FornecedorResponseDto>
-            const tamanho = 10;
-            const response = await API.get('/fornecedores', { params: { page, size: tamanho } });
-            if (response.status === 200 && response.data) {
-                const data = response.data;
-                // Compatível com Page (content) ou lista direta
-                if (Array.isArray(data)) {
-                    setFornecedores(data);
-                    setTotalFornecedores(data.length);
-                    setTotalPaginas(null);
-                } else if (data.content) {
-                    setFornecedores(data.content);
-                    setTotalFornecedores(typeof data.totalElements === 'number' ? data.totalElements : data.content.length);
-                    setTotalPaginas(typeof data.totalPages === 'number' ? data.totalPages : null);
-                } else {
-                    setFornecedores([]);
-                    setTotalFornecedores(0);
-                }
-            }
-        } catch (error) {
-            console.error('Erro ao carregar fornecedores:', error);
-            if (error.response?.status === 404) {
-                setFornecedores([]);
-                setErro('Nenhum fornecedor encontrado.');
-            } else {
-                setErro('Erro ao carregar fornecedores.');
-            }
-        } finally {
-            setCarregando(false);
-            setMostrarLoading(false);
-        }
+        
+        const tamanho = 10;
+        const response = await API.get('/fornecedores', { params: { page, size: tamanho } });
+        
+        const fornecedoresData = response.data.content.map(fornecedor => ({
+            id: fornecedor.id,
+            nome: fornecedor.nome,
+            email: fornecedor.email,
+            telefone: fornecedor.telefone
+        }));
+        
+        setFornecedores(fornecedoresData);
+        setTotalFornecedores(response.data.totalElements);
+        setTotalPaginas(response.data.totalPages);
+        setPaginaAtual(Number(page));
+        setCarregando(false);
+        setMostrarLoading(false);
     };
 
     const irParaPagina = (p) => {
@@ -89,9 +74,8 @@ export function GestaoFornecedor() {
 
     // Filtrar fornecedores pela busca
     const fornecedoresFiltrados = fornecedores.filter(forn => 
-        forn.nome?.toLowerCase().includes(busca.toLowerCase()) ||
-        forn.email?.toLowerCase().includes(busca.toLowerCase()) ||
-        forn.cnpj?.includes(busca)
+        forn.nome.toLowerCase().includes(busca.toLowerCase()) ||
+        forn.email.toLowerCase().includes(busca.toLowerCase())
     );
 
     // Função para abrir confirmação de exclusão
@@ -105,23 +89,13 @@ export function GestaoFornecedor() {
         if (!fornecedorParaExcluir) return;
 
         setCarregando(true);
-        try {
-            await API.delete(`/fornecedores/${fornecedorParaExcluir.id}`);
-            setFornecedores(prev => prev.filter(f => f.id !== fornecedorParaExcluir.id));
-            setMensagem(`Fornecedor "${fornecedorParaExcluir.nome}" excluído com sucesso!`);
-            setTimeout(() => setMensagem(''), 3000);
-            setMostrarModalConfirmacao(false);
-            setFornecedorParaExcluir(null);
-        } catch (error) {
-            console.error('Erro ao deletar fornecedor:', error);
-            if (error.response?.status === 404) {
-                setErro('Fornecedor não encontrado.');
-            } else {
-                setErro('Erro ao excluir fornecedor.');
-            }
-        } finally {
-            setCarregando(false);
-        }
+        await API.delete(`/fornecedores/${fornecedorParaExcluir.id}`);
+        setFornecedores(prev => prev.filter(f => f.id !== fornecedorParaExcluir.id));
+        setMensagem(`Fornecedor "${fornecedorParaExcluir.nome}" excluído com sucesso!`);
+        setTimeout(() => setMensagem(''), 3000);
+        setMostrarModalConfirmacao(false);
+        setFornecedorParaExcluir(null);
+        setCarregando(false);
     };
 
     // Função para abrir modal de edição
@@ -135,89 +109,71 @@ export function GestaoFornecedor() {
         id: fornecedor.id,
         nome: fornecedor.nome,
         email: fornecedor.email,
-        telefone: fornecedor.telefone || '-',
-        // cnpj: fornecedor.cnpj || '-' - Se add cnpj: descomentar essa linha
+        telefone: fornecedor.telefone
     }));
 
     // Função para salvar edição
     const salvarEdicao = async () => {
-        if (!fornecedorEditando || !fornecedorEditando.nome || !fornecedorEditando.email) {
+        if (!fornecedorEditando.nome || !fornecedorEditando.email) {
             setErro('Nome e email são obrigatórios.');
             return;
         }
 
         setCarregando(true);
-        setErro('');
-        try {
-            const payload = {
-                nome: fornecedorEditando.nome,
-                email: fornecedorEditando.email,
-                telefone: fornecedorEditando.telefone || '',
-                cnpj: fornecedorEditando.cnpj || null,
-                endereco: fornecedorEditando.endereco || null
-            };
+        
+        const payload = {
+            nome: fornecedorEditando.nome,
+            email: fornecedorEditando.email,
+            telefone: fornecedorEditando.telefone
+        };
 
-            const id = fornecedorEditando.id;
-            // Chamada PUT para atualizar o fornecedor
-            const response = await API.put(`/fornecedores/${id}`, payload);
-
-            if (response && (response.status === 200 || response.status === 204)) {
-                // Recarregar lista para refletir alterações (mantendo paginação)
-                await carregarFornecedores(paginaAtual);
-                setMensagem('Fornecedor atualizado com sucesso!');
-                setTimeout(() => setMensagem(''), 3000);
-                setMostrarModal(false);
-                setFornecedorEditando(null);
-            } else {
-                setErro('Erro inesperado ao atualizar fornecedor.');
-            }
-        } catch (error) {
-            console.error('Erro ao atualizar fornecedor:', error);
-            if (error.response?.status === 404) {
-                setErro('Fornecedor não encontrado para atualização.');
-            } else if (error.response?.status === 400) {
-                const detail = error.response?.data?.message || JSON.stringify(error.response.data);
-                setErro(`Dados inválidos: ${detail}`);
-            } else {
-                setErro('Erro ao atualizar fornecedor.');
-            }
-        } finally {
-            setCarregando(false);
-        }
+        const response = await API.put(`/fornecedores/${fornecedorEditando.id}`, payload);
+        
+        const fornecedorAtualizado = {
+            id: response.data.id,
+            nome: response.data.nome,
+            email: response.data.email,
+            telefone: response.data.telefone
+        };
+        
+        setFornecedores(prev => prev.map(f => (f.id === fornecedorEditando.id ? fornecedorAtualizado : f)));
+        setMensagem('Fornecedor atualizado com sucesso!');
+        setTimeout(() => setMensagem(''), 3000);
+        setMostrarModal(false);
+        setFornecedorEditando(null);
+        setCarregando(false);
     };
 
     // Função para cadastrar novo fornecedor
     const cadastrarFornecedor = async () => {
-        if (!novoFornecedor.nome || !novoFornecedor.email || !novoFornecedor.telefone ) {
+        if (!novoFornecedor.nome || !novoFornecedor.email || !novoFornecedor.telefone) {
             setErro('Nome, email e telefone são obrigatórios.');
             return;
         }
 
         setCarregando(true);
-        try {
-            // Enviar apenas os campos que o backend espera (nome, telefone, email)
-            const payload = {
-                nome: novoFornecedor.nome,
-                telefone: novoFornecedor.telefone || '',
-                email: novoFornecedor.email
-            };
-            const response = await API.post('/fornecedores', payload);
-            // Recarregar lista a partir do backend para manter consistência com paginação
-            await carregarFornecedores();
-            setMostrarModalCadastro(false);
-            setNovoFornecedor({ nome: '', email: '', telefone: '', cnpj: '', endereco: '' });
-            setMensagem('Fornecedor cadastrado com sucesso!');
-            setTimeout(() => setMensagem(''), 3000);
-        } catch (error) {
-            console.error('Erro ao cadastrar fornecedor:', error);
-            if (error.response?.status === 409) {
-                setErro('Fornecedor com este CNPJ já existe.');
-            } else {
-                setErro('Erro ao cadastrar fornecedor.');
-            }
-        } finally {
-            setCarregando(false);
-        }
+        
+        const payload = {
+            nome: novoFornecedor.nome,
+            telefone: novoFornecedor.telefone,
+            email: novoFornecedor.email
+        };
+        
+        const response = await API.post('/fornecedores', payload);
+        
+        const novoFornecedorData = {
+            id: response.data.id,
+            nome: response.data.nome,
+            email: response.data.email,
+            telefone: response.data.telefone
+        };
+        
+        setFornecedores(prev => [...prev, novoFornecedorData]);
+        setMostrarModalCadastro(false);
+        setNovoFornecedor({ nome: '', email: '', telefone: '', cnpj: '', endereco: '' });
+        setMensagem('Fornecedor cadastrado com sucesso!');
+        setTimeout(() => setMensagem(''), 3000);
+        setCarregando(false);
     };
 
     return (
@@ -243,17 +199,11 @@ export function GestaoFornecedor() {
                         <button 
                             onClick={() => setMostrarModalCadastro(true)}
                             className={styles['btn-novo']}
+                            style={{ background: 'linear-gradient(135deg, #875C6A, #864176)', color: 'white', border: 'none', padding: '8px 12px', borderRadius: 8, fontWeight: 700 }}
                         >
                             + Novo Fornecedor
                         </button>
                         
-                        {/* <button 
-                            onClick={carregarFornecedores}
-                            className={styles['btn-atualizar']}
-                            disabled={carregando}
-                        >
-                            🔄 Atualizar
-                        </button> */}
                     </div>
                 </div>
 
@@ -265,7 +215,7 @@ export function GestaoFornecedor() {
 
                 {mensagem && (
                     <div className={styles['mensagem-sucesso']}>
-                        ✅ {mensagem}
+                        {mensagem}
                     </div>
                 )}
 
@@ -286,15 +236,47 @@ export function GestaoFornecedor() {
                                 { key: 'email', label: 'Email' },
                             ]}
                             botaoEditar={true}
-                            onEditar={(item) => {
-                                const fornecedor = fornecedoresFiltrados.find(f => f.id === item.id);
-                                abrirEdicao(fornecedor);
-                            }}
+                                renderBotaoEditar={(item, cb) => (
+                                    <button
+                                        onClick={cb}
+                                        style={{
+                                            background: 'linear-gradient(135deg, #875C6A, #864176)',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '6px 10px',
+                                            borderRadius: 6,
+                                            cursor: 'pointer',
+                                            fontWeight: 700,
+                                        }}
+                                    >
+                                        Editar
+                                    </button>
+                                )}
+                                onEditar={(item) => {
+                                    const fornecedor = fornecedoresFiltrados.find(f => f.id === item.id);
+                                    abrirEdicao(fornecedor);
+                                }}
                             botaoRemover={true}
-                            onRemover={(item) => {
-                                const fornecedor = fornecedoresFiltrados.find(f => f.id === item.id);
-                                abrirConfirmacaoExclusao(fornecedor);
-                            }}
+                                renderBotaoRemover={(item, cb) => (
+                                    <button
+                                        onClick={cb}
+                                        style={{
+                                            background: '#6e7074',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '6px 10px',
+                                            borderRadius: 6,
+                                            cursor: 'pointer',
+                                            fontWeight: 700,
+                                        }}
+                                    >
+                                        Remover
+                                    </button>
+                                )}
+                                onRemover={(item) => {
+                                    const fornecedor = fornecedoresFiltrados.find(f => f.id === item.id);
+                                    abrirConfirmacaoExclusao(fornecedor);
+                                }}
                         />
                     </div>
                     {/* Paginação (igual ao Estoque) - aparece quando NÃO está em modo de busca */}
@@ -386,22 +368,6 @@ export function GestaoFornecedor() {
                                     onChange={(e) => setFornecedorEditando({...fornecedorEditando, telefone: e.target.value})}
                                 />
                             </div>
-                            {/* <div className={styles['form-group']}>
-                                <label>CNPJ</label>
-                                <input 
-                                    type="text"
-                                    value={fornecedorEditando.cnpj || ''}
-                                    onChange={(e) => setFornecedorEditando({...fornecedorEditando, cnpj: e.target.value})}
-                                />
-                            </div>
-                            <div className={styles['form-group']}>
-                                <label>Endereço</label>
-                                <input 
-                                    type="text"
-                                    value={fornecedorEditando.endereco || ''}
-                                    onChange={(e) => setFornecedorEditando({...fornecedorEditando, endereco: e.target.value})}
-                                />
-                            </div> */}
                         </div>
                         <div className={styles['modal-footer']}>
                             <button 
@@ -463,22 +429,6 @@ export function GestaoFornecedor() {
                                     <MensagemErro mensagem={erro} />
                              
                             </div>
-                            {/* <div className={styles['form-group']}>
-                                <label>CNPJ</label>
-                                <input 
-                                    type="text"
-                                    value={novoFornecedor.cnpj}
-                                    onChange={(e) => setNovoFornecedor({...novoFornecedor, cnpj: e.target.value})}
-                                />
-                            </div>
-                            <div className={styles['form-group']}>
-                                <label>Endereço</label>
-                                <input 
-                                    type="text"
-                                    value={novoFornecedor.endereco}
-                                    onChange={(e) => setNovoFornecedor({...novoFornecedor, endereco: e.target.value})}
-                                />
-                            </div> */}
                         </div>
                         <div className={styles['modal-footer']}>
                             <button 

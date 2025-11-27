@@ -9,7 +9,7 @@ import ilustracao from '../Componentes/assets/Mudar-Senha.png';
 
 export default function MudarSenha() {
     const navigate = useNavigate();
-    const [etapa, setEtapa] = useState(1); // 1: Email, 2: Confirmação, 3: Redefinir, 4: Sucesso
+    const [etapa, setEtapa] = useState(1); 
     const [email, setEmail] = useState('');
     const [codigo, setCodigo] = useState('');
     const [novaSenha, setNovaSenha] = useState('');
@@ -38,20 +38,23 @@ export default function MudarSenha() {
 
         setCarregando(true);
         try {
-            // Chamada real ao backend para solicitar recuperação de senha
             await API.post('/usuarios/recuperar-senha', { email });
             setEtapa(2);
             setMensagemSucesso('Se o email existir, você receberá instruções em breve.');
         } catch (error) {
-            // Tenta extrair uma mensagem do backend
-            const mensagem = error?.response?.data || error?.response?.data?.message || error?.message;
-            setErro(mensagem || 'Erro ao enviar código. Verifique o email.');
+            const backendData = error?.response?.data;
+            const possibleMessage = error?.response?.data?.message || (typeof backendData === 'string' ? backendData : null) || error?.message;
+
+            if (typeof possibleMessage === 'string' && possibleMessage.includes('Email não encontrado')) {
+                setErro('E-mail não encontrado. Verifique o endereço digitado e tente novamente.');
+            } else {
+                setErro(possibleMessage || 'Erro ao enviar código. Verifique o email.');
+            }
         } finally {
             setCarregando(false);
         }
     };
 
-    // Reenviar código (usado na etapa de confirmação)
     const reenviarCodigo = async () => {
         setErro('');
         setMensagemSucesso('');
@@ -64,8 +67,14 @@ export default function MudarSenha() {
             await API.post('/usuarios/recuperar-senha', { email });
             setMensagemSucesso('E-mail reenviado (se existir). Verifique sua caixa de entrada e spam.');
         } catch (error) {
-            const mensagem = error?.response?.data || error?.response?.data?.message || error?.message;
-            setErro(mensagem || 'Erro ao reenviar código. Tente novamente mais tarde.');
+            const backendData = error?.response?.data;
+            const possibleMessage = error?.response?.data?.message || (typeof backendData === 'string' ? backendData : null) || error?.message;
+
+            if (typeof possibleMessage === 'string' && possibleMessage.includes('Email não encontrado')) {
+                setErro('E-mail não encontrado. Verifique o endereço digitado ou cadastre-se.');
+            } else {
+                setErro(possibleMessage || 'Erro ao reenviar código. Tente novamente mais tarde.');
+            }
         } finally {
             setCarregando(false);
         }
@@ -76,7 +85,6 @@ export default function MudarSenha() {
         setEtapa(3);
     };
 
-    // Se a página for aberta com ?token=XXX, auto-preencher e ir para etapa 3
     useEffect(() => {
         try {
             const params = new URLSearchParams(window.location.search);
@@ -86,7 +94,6 @@ export default function MudarSenha() {
                 setEtapa(3);
             }
         } catch (e) {
-            // não faz nada se URLSearchParams falhar
         }
     }, []);
 
@@ -111,12 +118,9 @@ export default function MudarSenha() {
 
         setCarregando(true);
         try {
-            // Chamada real ao endpoint de redefinição de senha
-            // O backend aceita { token, novaSenha } onde token pode ser UUID de recuperação ou JWT
             await API.post('/usuarios/redefinir-senha', { token: codigo, novaSenha });
             setEtapa(4);
 
-            // Redirecionar após 3 segundos
             setTimeout(() => {
                 navigate('/login');
             }, 3000);
@@ -132,7 +136,6 @@ export default function MudarSenha() {
         navigate('/login');
     };
 
-    // Etapa 1: Solicitar Email
     if (etapa === 1) {
         return (
             <div className={styles.container}>
@@ -172,7 +175,6 @@ export default function MudarSenha() {
         );
     }
 
-    // Etapa 2: Confirmação - Email Enviado
     if (etapa === 2) {
         return (
             <div className={styles.container}>
@@ -180,11 +182,6 @@ export default function MudarSenha() {
                     <div className={styles.cardConfirmacao}>
                         <div className={styles.ilustracao}>
                             <img src={ilustracao} alt="Ilustração de mudança de senha" />
-                            {/* <div className={styles.phoneIcon}>
-                                <div className={styles.emailIcon}>
-                                    <img src="" alt="" /></div>
-                            </div>
-                            <div className={styles.personIcon}>👤</div> */}
                         </div>
                         
                         <h1 className={styles.titleConfirmacao}>Confira sua caixa de entrada para redefinir sua senha</h1>
@@ -217,14 +214,12 @@ export default function MudarSenha() {
                                 IR PARA A PÁGINA INICIAL
                             </button>
                         </div>
-                        {/* {mensagemSucesso && <MensagemErro mensagem={mensagemSucesso} />} */}
                     </div>
                 </div>
             </div>
         );
     }
 
-    // Etapa 3: Redefinir Senha
     if (etapa === 3) {
         return (
             <div className={styles.container}>
@@ -285,7 +280,6 @@ export default function MudarSenha() {
         );
     }
 
-    // Etapa 4: Sucesso
     if (etapa === 4) {
         return (
             <div className={styles.container}>

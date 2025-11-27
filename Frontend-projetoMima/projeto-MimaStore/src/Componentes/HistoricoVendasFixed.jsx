@@ -29,55 +29,41 @@ export default function HistoricoVendasFixed() {
   useEffect(() => {
     const vendasSize = 10;
     setCarregando(true);
-    // Se existe um filtro ativo por datas, não sobrescrever a lista filtrada
+    
     if (filtroInicio && filtroFim) {
       setCarregando(false);
       return;
     }
 
-    // backend espera paginação por page/size (Spring Pageable)
     API.get(`/vendas`, { params: { page: vendasPage, size: vendasSize } })
       .then((res) => {
-        const body = res.data ?? {};
+        const content = res.data.content;
 
-        // conteúdo esperado: Page<VendaResponseDto> -> body.content
-        const content = Array.isArray(body.content) ? body.content : [];
-
-        const clientesComId = content.map((c, idx) => ({
-          vendaId: c.vendaId ?? c.id ?? c.idVenda ?? c.codigo ?? idx,
-          cliente: (c.cliente && (typeof c.cliente === 'string' ? c.cliente : c.cliente.nome)) ?? c.nomeCliente ?? c.clienteNome ?? c.nome ?? "",
-          valor_total: c.valor_total ?? c.valorTotal ?? c.total ?? 0,
-          quantidade: c.quantidade ?? c.qtd ?? 0,
-          data: c.data ?? c.dataVenda ?? c.dataHora ?? c.createdAt ?? null,
-          id: c.vendaId ?? c.id ?? c.idVenda ?? idx,
-          // tentar encontrar itens da venda dentro do objeto retornado
-          itens: c.itens ?? c.itensVenda ?? c.items ?? c.itensVendaList ?? c.produtos ?? [],
-          __raw: c,
+        const clientesComId = content.map((venda) => ({
+          vendaId: venda.id,
+          cliente: venda.clienteId ? `Cliente ${venda.clienteId}` : "Sem cliente",
+          valor_total: venda.valorTotal,
+          data: venda.data,
+          id: venda.id,
+          itens: venda.itensVenda || [],
+          __raw: venda,
         }));
 
         setClientes(clientesComId);
         setClientesFiltrados(clientesComId);
 
-        // extrair datas únicas das vendas para popular os dropdowns (YYYY-MM-DD)
+        // extrair datas únicas das vendas para popular os dropdowns
         const datas = clientesComId
           .map((v) => {
-            try {
-              const d = new Date(v.data);
-              if (isNaN(d)) return null;
-              return d.toISOString().split('T')[0];
-            } catch (e) {
-              return null;
-            }
+            const d = new Date(v.data);
+            return d.toISOString().split('T')[0];
           })
           .filter(Boolean);
-        const unicas = Array.from(new Set(datas)).sort((a, b) => (a < b ? -1 : 1));
+        const unicas = Array.from(new Set(datas)).sort();
         setDatasDisponiveis(unicas);
 
-        // extrair total e totalPages diretamente do Page retornado pelo backend
-        const totalCount = body.totalElements ?? body.total ?? null;
-        const totalPages = body.totalPages ?? body.total_pages ?? null;
-        setTotalVendasCount(totalCount != null ? Number(totalCount) : null);
-        setTotalPaginasVendas(totalPages != null ? Number(totalPages) : null);
+        setTotalVendasCount(res.data.totalElements);
+        setTotalPaginasVendas(res.data.totalPages);
       })
       .catch(() => {
         setClientes([]);
@@ -87,45 +73,30 @@ export default function HistoricoVendasFixed() {
       .finally(() => setCarregando(false));
   }, [vendasPage, filtroInicio, filtroFim]);
 
-  // Filtrar por intervalo de datas via endpoint específico
   const filtrarPorData = async () => {
     if (!filtroInicio || !filtroFim) return;
-    try {
-      setCarregando(true);
-      const res = await API.get('/vendas/filtrar-por-data', { params: { inicio: filtroInicio, fim: filtroFim } });
-      // o backend retorna List<VendaResponseDto> ou 204
-      const body = res.data ?? [];
-      const content = Array.isArray(body) ? body : [];
+    
+    setCarregando(true);
+    const res = await API.get('/vendas/filtrar-por-data', { 
+      params: { inicio: filtroInicio, fim: filtroFim } 
+    });
+    
+    const content = res.data;
+    const clientesComId = content.map((venda) => ({
+      vendaId: venda.id,
+      cliente: venda.clienteId ? `Cliente ${venda.clienteId}` : "Sem cliente",
+      valor_total: venda.valorTotal,
+      data: venda.data,
+      id: venda.id,
+      itens: venda.itensVenda || [],
+      __raw: venda,
+    }));
 
-      const clientesComId = content.map((c, idx) => ({
-        vendaId: c.vendaId ?? c.id ?? c.idVenda ?? c.codigo ?? idx,
-        cliente: (c.cliente && (typeof c.cliente === 'string' ? c.cliente : c.cliente.nome)) ?? c.nomeCliente ?? c.clienteNome ?? c.nome ?? "",
-        valor_total: c.valor_total ?? c.valorTotal ?? c.total ?? 0,
-        quantidade: c.quantidade ?? c.qtd ?? 0,
-        data: c.data ?? c.dataVenda ?? c.dataHora ?? c.createdAt ?? null,
-        id: c.vendaId ?? c.id ?? c.idVenda ?? idx,
-        itens: c.itens ?? c.itensVenda ?? c.items ?? c.itensVendaList ?? c.produtos ?? [],
-        __raw: c,
-      }));
-
-      setClientes(clientesComId);
-      setClientesFiltrados(clientesComId);
-      // sem paginação aqui (lista simples). mostrar total diretamente
-      setTotalVendasCount(clientesComId.length);
-      setTotalPaginasVendas(null);
-    } catch (err) {
-      if (err.response && err.response.status === 204) {
-        setClientes([]);
-        setClientesFiltrados([]);
-        setTotalVendasCount(0);
-        setTotalPaginasVendas(null);
-      } else {
-        console.error('Erro ao filtrar por data:', err);
-        alert('Erro ao filtrar por data. Tente novamente.');
-      }
-    } finally {
-      setCarregando(false);
-    }
+    setClientes(clientesComId);
+    setClientesFiltrados(clientesComId);
+    setTotalVendasCount(clientesComId.length);
+    setTotalPaginasVendas(null);
+    setCarregando(false);
   };
 
   const limparFiltro = () => {
@@ -150,7 +121,6 @@ export default function HistoricoVendasFixed() {
   }, [buscaClientes, clientes]);
 
   function formatarData(dataString) {
-    if (!dataString) return "";
     const data = new Date(dataString);
     const pad = (n) => String(n).padStart(2, "0");
     return `${pad(data.getDate())}/${pad(data.getMonth() + 1)}/${data.getFullYear()} - ${pad(
@@ -163,7 +133,7 @@ export default function HistoricoVendasFixed() {
       id: c.vendaId,
       "ID Venda": c.vendaId,
       "Data / Hora": formatarData(c.data),
-      "Valor Total": Number(c.valor_total).toLocaleString("pt-BR", {
+      "Valor Total": c.valor_total.toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
       }),
@@ -172,12 +142,11 @@ export default function HistoricoVendasFixed() {
   }
 
   const abrirModalEditarVenda = (row) => {
-    // row may include __raw (from mapClientesParaTabela) or be the original object
-    const raw = row?.__raw ?? row;
-    const vendaId = raw?.vendaId ?? raw?.id ?? raw?.idVenda ?? null;
-    const itens = raw?.itens ?? raw?.itensVenda ?? raw?.items ?? raw?.produtos ?? [];
+    const raw = row.__raw || row;
+    const vendaId = raw.vendaId || raw.id;
+    const itens = raw.itens || raw.itensVenda || [];
     setVendaSelecionada(vendaId);
-    setVendaItens(Array.isArray(itens) ? itens.slice() : []);
+    setVendaItens(itens.slice());
     setMostrarModalVenda(true);
   };
 
@@ -197,51 +166,36 @@ export default function HistoricoVendasFixed() {
   const confirmarRemocao = async () => {
     if (!removerConfirm) return;
     const { index, item } = removerConfirm;
-    // determine id of the venda-item (idItemVenda) - prefer explicit item id fields
-    const idItemVenda = item?.id ?? item?.idItemVenda ?? item?.itemVendaId ?? item?.idItem ?? item?.itemId ?? null;
-    if (!vendaSelecionada || !idItemVenda) {
-      alert('Não foi possível identificar a venda ou o item para remoção.');
-      setRemoverConfirm(null);
-      return;
-    }
+    const idItemVenda = item.id;
+    
+    setRemoverLoading(true);
+    await API.delete(`/vendas/${vendaSelecionada}/itens/${idItemVenda}`);
 
-    try {
-      setRemoverLoading(true);
-      // call backend delete endpoint
-      await API.delete(`/vendas/${vendaSelecionada}/itens/${idItemVenda}`);
+    setVendaItens((prev) => {
+      const novo = prev.slice();
+      novo.splice(index, 1);
+      return novo;
+    });
 
-      // on success, remove locally as well
-      setVendaItens((prev) => {
-        const novo = prev.slice();
-        novo.splice(index, 1);
-        return novo;
-      });
+    setClientes((antes) =>
+      antes.map((c) => (c.vendaId === vendaSelecionada ? 
+        { ...c, itens: (c.itens || []).filter((_, i) => i !== index), valor_total: calcularValorTotal((c.itens || []).filter((_, i) => i !== index)) } 
+        : c))
+    );
+    setClientesFiltrados((antes) =>
+      antes.map((c) => (c.vendaId === vendaSelecionada ? 
+        { ...c, itens: (c.itens || []).filter((_, i) => i !== index), valor_total: calcularValorTotal((c.itens || []).filter((_, i) => i !== index)) } 
+        : c))
+    );
 
-      // also update clientes and clientesFiltrados
-      setClientes((antes) =>
-        antes.map((c) => (c.vendaId === vendaSelecionada ? { ...c, itens: (c.itens || []).filter((_, i) => i !== index), valor_total: calcularValorTotal((c.itens || []).filter((_, i) => i !== index)) } : c))
-      );
-      setClientesFiltrados((antes) =>
-        antes.map((c) => (c.vendaId === vendaSelecionada ? { ...c, itens: (c.itens || []).filter((_, i) => i !== index), valor_total: calcularValorTotal((c.itens || []).filter((_, i) => i !== index)) } : c))
-      );
-
-      setRemoverConfirm(null);
-    } catch (error) {
-      console.error('Erro ao remover item da venda:', error);
-      const msg = error?.response?.data?.message || error?.message || 'Erro ao remover item. Tente novamente.';
-      alert(msg);
-    } finally {
-      setRemoverLoading(false);
-    }
+    setRemoverConfirm(null);
+    setRemoverLoading(false);
   };
 
   function calcularValorTotal(itensArray) {
-    if (!Array.isArray(itensArray)) return 0;
-    return itensArray.reduce((acc, it) => {
-      const qtd = Number(it.qtdParaVender ?? it.quantidade ?? it.qtd ?? it.amount ?? 0) || 0;
-      let valor = it.valor ?? it.preco ?? it.price ?? it.valorUnitario ?? it.valorUnitarioVenda ?? 0;
-      if (typeof valor === 'string') valor = Number(String(valor).replace(',', '.')) || 0;
-      valor = Number(valor) || 0;
+    return itensArray.reduce((acc, item) => {
+      const qtd = item.qtdParaVender || 0;
+      const valor = item.valorUnitario || 0;
       return acc + qtd * valor;
     }, 0);
   }
@@ -389,9 +343,9 @@ export default function HistoricoVendasFixed() {
                     <tbody>
                       {vendaItens.map((it, idx) => (
                         <tr key={idx} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                          <td style={{ padding: 8 }}>{it.itemId ?? it.id ?? it.productId ?? it.codigo ?? '-'}</td>
-                          <td style={{ padding: 8 }}>{it.nomeItem ?? it.nome ?? it.descricao ?? it.name ?? '-'}</td>
-                          <td style={{ padding: 8 }}>{it.qtdParaVender ?? it.quantidade ?? it.qtd ?? it.amount ?? 0}</td>
+                          <td style={{ padding: 8 }}>{it.itemId || '-'}</td>
+                          <td style={{ padding: 8 }}>{it.nomeItem || '-'}</td>
+                          <td style={{ padding: 8 }}>{it.qtdParaVender}</td>
                           <td style={{ padding: 8 }}>
                             <button onClick={() => removerItemLocal(idx, it)} style={{ color: 'white', backgroundColor: '#8b3b6a', border: 'none', padding: '6px 10px', borderRadius: 4, fontWeight: 700 }}>Remover</button>
                           </td>

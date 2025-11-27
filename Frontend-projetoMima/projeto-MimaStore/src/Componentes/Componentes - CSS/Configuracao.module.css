@@ -119,7 +119,6 @@
 	box-shadow: 0 1px 6px rgba(0,0,0,0.04);
 }
 
-/* Make container positioned so edit button can be absolute inside it */
 .main-card {
 	position: relative;
 }
@@ -156,7 +155,6 @@
 	margin-top: 6px;
 }
 
-/* Edit form styles */
 .edit-form {
 	margin-top: 12px;
 	background: #fff;
@@ -193,7 +191,6 @@
 	border-color: #724165;
 }
 
-/* Estilização especial para input de arquivo */
 .field input[type="file"] {
 	display: none;
 }
@@ -252,7 +249,7 @@
 	color: #666;
 	font-style: italic;
 }
-/* Read-only value style in sidebar */
+
 .option-desc {
 	color: #333;
 	font-weight: 500;
@@ -263,7 +260,6 @@
 	width: 100%;
 }
 
-/* Upload control in sidebar */
 .upload-label {
 	display: inline-flex;
 	align-items: center;
@@ -284,7 +280,6 @@
 	font-weight: 600;
 }
 
-/* Edit button positioned bottom-right inside .main-card */
 .edit-button {
 	position: absolute;
 	right: 16px;

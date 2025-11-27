@@ -39,7 +39,6 @@ export default function PrimeiroAcesso() {
     }
 
     try {
-      // 1) Autentica com email + senha provisória para obter JWT
       const loginResp = await API.post("/usuarios/login", {
         email: form.email,
         senha: form.senhaProvisoria,
@@ -47,7 +46,6 @@ export default function PrimeiroAcesso() {
 
       const loginData = loginResp?.data || {};
 
-      // tenta extrair o token por alguns nomes comuns MUDAR ------------------------------------------------------------------------------------
       const token =
         loginData.token ||
         loginData.jwt ||
@@ -62,18 +60,26 @@ export default function PrimeiroAcesso() {
         return;
       }
 
-      // 2) Chama endpoint de redefinir senha passando o JWT no corpo
       await API.post("/usuarios/redefinir-senha", {
         token: token,
         novaSenha: form.novaSenha,
       });
 
       setSucesso(true);
-      // redireciona para login após curto delay
-      setTimeout(() => navigate("/login"), 2000);
+      setTimeout(() => navigate("/login"), 7000);
     } catch (error) {
+      if (error?.response?.status === 401) {
+        setErro("Usuário inexistente");
+        return;
+      }
+
       const serverMessage =
-        error?.response?.data || error?.response?.data?.message || error?.message;
+        (error?.response?.data &&
+          (typeof error.response.data === "string"
+            ? error.response.data
+            : error.response.data.message)) ||
+        error?.message;
+
       setErro(
         typeof serverMessage === "string"
           ? serverMessage
@@ -135,7 +141,21 @@ export default function PrimeiroAcesso() {
                 onChange={handleChange}
                 autoComplete="new-password"
               />
-              {erro && <div className={styles.erro}>{erro}</div>}
+              {erro && (
+                <div className={styles.erro}>
+                  {erro}
+                  {erro !== "Usuário inexistente" && (
+                    <button
+                      type="button"
+                      className={styles.closeErro}
+                      onClick={() => setErro("")}
+                      aria-label="Fechar mensagem de erro"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              )}
               <button type="submit" className={styles.btn}>
                 Entrar
               </button>

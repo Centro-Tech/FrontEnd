@@ -6,7 +6,6 @@ import iconCardapio from './assets/icons8-cardápio.svg';
 import fotoId from './assets/fotoIconExemplo.jpg';
 import { Perfil } from '../Telas/Perfil.jsx';
 import { useLocation, useNavigate } from 'react-router-dom';
-// MUI Icons
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import CachedIcon from '@mui/icons-material/Cached';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -116,7 +115,6 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
 
     const handleConfig = () => {
         setPerfilMenuOpen(false);
-        // Navega para a tela de Configurações criada em src/Telas/Configuracao.jsx
         navigate('/configuracao');
     };
 
@@ -186,7 +184,6 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
                                         style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
                                     >
                                         <Perfil nome={usuario?.nome || 'Usuário'} fotoId={usuario?.imagem || fotoId} />
-                                        
                                     </div>
                                 </li>
                             )}

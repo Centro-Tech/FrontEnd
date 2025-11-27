@@ -28,69 +28,20 @@ export default function Estoque() {
 
   useEffect(() => {
     buscarEstoque(currentPage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   const buscarEstoque = async (page = 0) => {
     setCarregando(true);
     setErro('');
-    try {
-      const res = await API.get('/itens', {
-        params: {
-          page,
-          size: 10
-        }
-      });
+    
+    const res = await API.get('/itens', {
+      params: { page, size: 10 }
+    });
 
-      // Se a API retornar 204 sem corpo:
-      if (res.status === 204 || !res.data) {
-        setItens([]);
-        setTotalItems(0);
-        setTotalPages(0);
-        return;
-      }
-
-      // Caso padrão: resposta paginada (Spring Page)
-      if (res.data.content && Array.isArray(res.data.content)) {
-        setItens(res.data.content);
-        setTotalItems(res.data.totalElements ?? res.data.content.length ?? 0);
-        setTotalPages(res.data.totalPages ?? 0);
-        return;
-      }
-
-      // Caso a API retorne um array direto (ex.: /itens/estoque)
-      if (Array.isArray(res.data)) {
-        setItens(res.data);
-        setTotalItems(res.data.length);
-        // quando receber lista completa, desabilita paginação (null)
-        setTotalPages(null);
-        return;
-      }
-
-      // fallback defensivo
-      setItens([]);
-      setTotalItems(0);
-      setTotalPages(0);
-    } catch (err) {
-      console.error('Erro buscarEstoque:', err);
-      if (err.response) {
-        if (err.response.status === 404) {
-          setItens([]);
-          setErro('Endpoint não encontrado.');
-        } else if (err.response.status === 204) {
-          setItens([]);
-          setErro('');
-        } else {
-          setErro(`Erro ao carregar estoque (${err.response.status})`);
-        }
-      } else if (err.request) {
-        setErro('Erro de conexão com o servidor.');
-      } else {
-        setErro(`Erro inesperado: ${err.message}`);
-      }
-    } finally {
-      setCarregando(false);
-    }
+    setItens(res.data.content);
+    setTotalItems(res.data.totalElements);
+    setTotalPages(res.data.totalPages);
+    setCarregando(false);
   };
 
   const buscarPorNome = async () => {
@@ -101,40 +52,20 @@ export default function Estoque() {
 
     setCarregando(true);
     setErro('');
-    try {
-      const res = await API.get('/itens/nome', {
-        params: { nome: busca.trim() }
-      });
+    
+    const res = await API.get('/itens/nome', {
+      params: { nome: busca.trim() }
+    });
 
-      if (res.status === 204 || !res.data) {
-        setItens([]);
-        setTotalItems(0);
-        setTotalPages(null);
-        setErro('Nenhum item encontrado.');
-        return;
-      }
-
-      const resultados = Array.isArray(res.data) ? res.data : [];
-      setItens(resultados);
-      setTotalItems(resultados.length);
-      setTotalPages(null); // desabilita paginação para busca
-
-      if (resultados.length === 0) {
-        setErro('Nenhum item encontrado com esse nome.');
-      }
-    } catch (err) {
-      console.error('Erro buscarPorNome:', err);
-      if (err.response?.status === 404 || err.response?.status === 204) {
-        setItens([]);
-        setTotalItems(0);
-        setTotalPages(null);
-        setErro('Nenhum item encontrado.');
-      } else {
-        setErro('Erro ao buscar itens por nome.');
-      }
-    } finally {
-      setCarregando(false);
+    setItens(res.data);
+    setTotalItems(res.data.length);
+    setTotalPages(null);
+    
+    if (res.data.length === 0) {
+      setErro('Nenhum item encontrado com esse nome.');
     }
+    
+    setCarregando(false);
   };
 
   const limparBusca = () => {
@@ -146,61 +77,13 @@ export default function Estoque() {
   const goToPrev = () => { if (currentPage > 0) setCurrentPage(p => p - 1); };
   const goToNext = () => { if (totalPages === null || currentPage < totalPages - 1) setCurrentPage(p => p + 1); };
 
-  // função utilitária: tenta localizar item por id (num/str) ou por codigo
-  const localizarItemCompleto = (identificador) => {
-    if (!identificador) return null;
 
-    // se `identificador` for o objeto inteiro
-    if (typeof identificador === 'object') {
-      const obj = identificador;
-      // se já for completo com propriedades essenciais, retorna
-      if (obj.id || obj.codigo) return obj;
-      // tenta achar pelo nome/codigo
-      return itens.find(it => (it.id && String(it.id) === String(obj.id)) || (it.codigo && it.codigo === obj.codigo)) || obj;
-    }
 
-    // se `identificador` for um id (number ou string) ou codigo string
-    const idStr = String(identificador);
-    let encontrado = itens.find(it => it.id !== undefined && it.id !== null && String(it.id) === idStr);
-    if (encontrado) return encontrado;
-    encontrado = itens.find(it => it.codigo !== undefined && it.codigo !== null && String(it.codigo) === idStr);
-    return encontrado || null;
-  };
-
-  // utilitário para ler quantidade de forma compatível com diferentes formatos da API
-  const getQtd = (obj) => (obj?.qtd_estoque ?? obj?.qtdEstoque ?? 0);
-
-  const abrirCardAdicionar = async (item) => {
-    console.debug('abrirCardAdicionar - recebido:', item);
-    // localiza item completo na lista (pode ser que Tabela passe só id ou só codigo)
-    const itemCompletoEncontrado = localizarItemCompleto(item) || item;
-
-    // se não temos nem id nem codigo, ainda assim vamos tentar usar o objeto recebido
-    const id = itemCompletoEncontrado?.id;
-
-    try {
-      setCarregando(true);
-      let itemCompleto = itemCompletoEncontrado;
-
-      if (id !== undefined && id !== null) {
-        try {
-          const res = await API.get(`/itens/${id}`);
-          if (res.data) itemCompleto = res.data;
-        } catch (err) {
-          console.warn('Não foi possível buscar item por id ao abrir modal, usando item local.', err);
-        }
-      }
-
-      setItemParaAdicionar(itemCompleto);
-    } catch (err) {
-      console.error('Erro ao buscar item por id ao abrir modal:', err);
-      setItemParaAdicionar(itemCompletoEncontrado);
-    } finally {
-      setCarregando(false);
-      setQuantidadeAdicionar(1);
-      setModalErroAdicionar('');
-      setMostrarCardAdicionar(true);
-    }
+  const abrirCardAdicionar = (item) => {
+    setItemParaAdicionar(item.__original || item);
+    setQuantidadeAdicionar(1);
+    setModalErroAdicionar('');
+    setMostrarCardAdicionar(true);
   };
 
   const fecharCardAdicionar = () => {
@@ -211,20 +94,6 @@ export default function Estoque() {
   };
 
   const confirmarAdicao = async () => {
-    // permite identificar item por id ou codigo
-    const item = itemParaAdicionar;
-    if (!item) {
-      setModalErroAdicionar('Erro: Item inválido para adicionar estoque.');
-      return;
-    }
-
-    // tenta obter id, se não tiver tenta achar pelo codigo
-    const id = item.id ?? null;
-    if (!id && !item.codigo) {
-      setModalErroAdicionar('Erro: Item não possui identificador (id ou código).');
-      return;
-    }
-
     if (quantidadeAdicionar <= 0) {
       setModalErroAdicionar('A quantidade deve ser maior que zero.');
       return;
@@ -232,121 +101,51 @@ export default function Estoque() {
 
     setCarregando(true);
     setModalErroAdicionar('');
-    try {
-      // se tivermos id, usamos endpoint patch por id
-      let res;
-      if (id) {
-        res = await API.patch(`/itens/${id}/adicionar-estoque`, null, {
-          params: { quantidade: quantidadeAdicionar }
-        });
-      } else {
-        // caso extremo: tentar localizar itemByCodigo -> buscar item por código para pegar id, então patch
-        const buscarPorCodigoRes = await API.get(`/itens/codigo/${encodeURIComponent(item.codigo)}`);
-        const itemComId = buscarPorCodigoRes?.data;
-        if (itemComId?.id) {
-          res = await API.patch(`/itens/${itemComId.id}/adicionar-estoque`, null, {
-            params: { quantidade: quantidadeAdicionar }
-          });
-        } else {
-          throw new Error('Não foi possível identificar item para adicionar estoque.');
-        }
-      }
+    
+    const res = await API.patch(`/itens/${itemParaAdicionar.codigo}/adicionar-estoque`, null, {
+      params: { quantidade: quantidadeAdicionar }
+    });
 
-      const itemAtualizado = res?.data;
-      if (itemAtualizado && (itemAtualizado.id || itemAtualizado.codigo)) {
-        // substitui por id ou por codigo
-        setItens(prev => prev.map(it => {
-          if ((itemAtualizado.id && it.id === itemAtualizado.id) || (itemAtualizado.codigo && it.codigo === itemAtualizado.codigo)) {
-            return itemAtualizado;
-          }
-          return it;
-        }));
-      } else {
-        // se não veio o item atualizado, recarrega a página atual
-        await buscarEstoque(currentPage);
-      }
+    setItens(prev => prev.map(it => 
+      it.codigo === itemParaAdicionar.codigo ? res.data : it
+    ));
 
-      setMensagem(`${quantidadeAdicionar} unidade(s) adicionada(s) ao estoque de "${item.nome}"!`);
-      setTimeout(() => setMensagem(''), 3000);
-      fecharCardAdicionar();
-    } catch (error) {
-      console.error('Erro ao adicionar estoque:', error);
-      const mensagem = error?.response?.data?.message || error?.message || 'Erro ao adicionar itens ao estoque. Verifique o console.';
-      setModalErroAdicionar(mensagem);
-    } finally {
-      setCarregando(false);
-    }
+    setMensagem(`${quantidadeAdicionar} unidade(s) adicionada(s) ao estoque de "${itemParaAdicionar.nome}"!`);
+    setTimeout(() => setMensagem(''), 3000);
+    fecharCardAdicionar();
+    setCarregando(false);
   };
 
-  const abrirConfirmacaoExclusao = async (item) => {
-    console.debug('abrirConfirmacaoExclusao - recebido:', item);
-    const itemCompleto = localizarItemCompleto(item) || item;
-
-    if (!itemCompleto) {
-      setErro('Erro: Item inválido para exclusão.');
-      return;
-    }
-
-    if (!itemCompleto.codigo && (itemCompleto.id === undefined || itemCompleto.id === null)) {
-      setErro('Erro: Item não possui código ou id válido para exclusão.');
-      return;
-    }
-
+  const abrirConfirmacaoExclusao = (item) => {
     setMostrarModalConfirmacao(true);
-    setItemParaExcluir(itemCompleto);
+    setItemParaExcluir(item.__original || item);
   };
 
   const confirmarExclusao = async () => {
-    if (!itemParaExcluir) {
-      setErro('Erro: Item não encontrado para exclusão.');
-      return;
-    }
-
     setCarregando(true);
     setErro('');
-    try {
-      // prefira deletar por código (controller: DELETE /itens/codigo/{codigo})
-      if (itemParaExcluir.codigo) {
-        await API.delete(`/itens/codigo/${encodeURIComponent(itemParaExcluir.codigo)}`);
-        // atualiza estado local removendo pelo codigo
-        setItens(prev => prev.filter(it => it.codigo !== itemParaExcluir.codigo));
-      } else if (itemParaExcluir.id) {
-        await API.delete(`/itens/${itemParaExcluir.id}`);
-        setItens(prev => prev.filter(it => it.id !== itemParaExcluir.id));
-      } else {
-        throw new Error('Item sem identificador válido.');
-      }
+    
+    await API.delete(`/itens/codigo/${encodeURIComponent(itemParaExcluir.codigo)}`);
+    setItens(prev => prev.filter(it => it.codigo !== itemParaExcluir.codigo));
 
-      setMensagem(`Item "${itemParaExcluir.nome}" excluído com sucesso!`);
-      setTimeout(() => setMensagem(''), 3000);
-      // opcional: recarregar página atual para garantir consistência
-      if (totalPages !== null) await buscarEstoque(currentPage);
-      setMostrarModalConfirmacao(false);
-      setItemParaExcluir(null);
-    } catch (error) {
-      console.error('Erro ao excluir:', error);
-      setErro('Erro ao excluir item. Verifique o console.');
-    } finally {
-      setCarregando(false);
-    }
+    setMensagem(`Item "${itemParaExcluir.nome}" excluído com sucesso!`);
+    setTimeout(() => setMensagem(''), 3000);
+    setMostrarModalConfirmacao(false);
+    setItemParaExcluir(null);
+    setCarregando(false);
   };
 
-  const dadosTabela = itens.map((i, index) => {
-  const safeId = i.id !== undefined && i.id !== null ? i.id : (i.codigo ?? `row-${index}`);
-  const quantidade = getQtd(i);
-
-  return {
-    id: safeId,
-    nome: i.nome,
-    categoria: i.categoria?.nome || 'Sem categoria',
-    tamanho: i.tamanho?.descricao || 'Sem tamanho',
-    cor: i.cor?.nome || 'Sem cor',
-    qtd_estoque: quantidade,
-    preco: (i.preco !== undefined && i.preco !== null) ? Number(Math.max(0, i.preco)).toFixed(2) : '-',
-    codigo: i.codigo,
-    __original: i
-  };
-});
+  const dadosTabela = itens.map((item) => ({
+    id: item.codigo,
+    nome: item.nome,
+    categoria: item.categoria,
+    tamanho: item.tamanho,
+    cor: item.cor,
+    qtd_estoque: item.qtdEstoque,
+    preco: item.preco.toFixed(2),
+    codigo: item.codigo,
+    __original: item
+  }));
 
   return (
     <div>
@@ -399,7 +198,6 @@ export default function Estoque() {
               itens={dadosTabela}
               botaoEditar={true}
               onEditar={(row) => {
-                // Tabela pode enviar row simplificado; preferimos usar o original se existir
                 const payload = row?.__original ?? row;
                 abrirCardAdicionar(payload);
               }}
@@ -479,8 +277,8 @@ export default function Estoque() {
             <div className={styles['modal-body']}>
               <div className={styles['modal-card']}>
                 <p><strong>Item:</strong> {itemParaAdicionar.nome}</p>
-                {itemParaAdicionar.codigo && (<p><strong>Código:</strong> {itemParaAdicionar.codigo}</p>)}
-                <p><strong>Estoque Atual:</strong> {getQtd(itemParaAdicionar)} unidade(s)</p>
+                <p><strong>Código:</strong> {itemParaAdicionar.codigo}</p>
+                <p><strong>Estoque Atual:</strong> {itemParaAdicionar.qtdEstoque} unidade(s)</p>
               </div>
               <MensagemErro mensagem={modalErroAdicionar} />
 
@@ -500,7 +298,7 @@ export default function Estoque() {
 
               <div className={styles['modal-result']}>
                 <p>
-                  <strong>Novo Estoque:</strong> {getQtd(itemParaAdicionar) + quantidadeAdicionar} unidade(s)
+                  <strong>Novo Estoque:</strong> {itemParaAdicionar.qtdEstoque + quantidadeAdicionar} unidade(s)
                 </p>
               </div>
             </div>
@@ -523,9 +321,9 @@ export default function Estoque() {
               <p className={styles['modal-confirm-text']}>Tem certeza que deseja excluir o item?</p>
               <div className={styles['modal-card']}>
                 <p><strong>Nome:</strong> {itemParaExcluir.nome}</p>
-                {itemParaExcluir.codigo && (<p><strong>Código:</strong> {itemParaExcluir.codigo}</p>)}
-                {itemParaExcluir.preco !== undefined && (<p><strong>Preço:</strong> {Number(Math.max(0, itemParaExcluir.preco)).toFixed(2)}</p>)}
-                {(itemParaExcluir.qtd_estoque !== undefined || itemParaExcluir.qtdEstoque !== undefined) && (<p><strong>Quantidade:</strong> {getQtd(itemParaExcluir)}</p>)}
+                <p><strong>Código:</strong> {itemParaExcluir.codigo}</p>
+                <p><strong>Preço:</strong> R$ {itemParaExcluir.preco.toFixed(2)}</p>
+                <p><strong>Quantidade:</strong> {itemParaExcluir.qtdEstoque}</p>
               </div>
               <p className={styles['modal-warning']}>⚠️ Esta ação não pode ser desfeita!</p>
             </div>

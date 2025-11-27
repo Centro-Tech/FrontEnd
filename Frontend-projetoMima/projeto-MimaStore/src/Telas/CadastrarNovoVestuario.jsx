@@ -19,7 +19,6 @@ export function CadastroNovoVestuario() {
     const [tamanho, setTamanho] = useState('');
     const [material, setMaterial] = useState('');
     const [mensagem, setMensagem] = useState('');
-
     const [categorias, setCategorias] = useState([]);
     const [fornecedores, setFornecedores] = useState([]);
     const [cores, setCores] = useState([]);
@@ -39,17 +38,14 @@ export function CadastroNovoVestuario() {
 
                 for (let ep of endpoints) {
                     const res = await API.get(ep.url);
-                    // debug rápido para inspecionar a resposta do backend
                     console.log('debug buscarListas', ep.url, res.data);
 
-                    // normaliza vários formatos comuns de retorno do backend
                     let items = [];
                     if (Array.isArray(res.data)) {
                         items = res.data;
                     } else if (Array.isArray(res.data?.data)) {
                         items = res.data.data;
                     } else {
-                        // tenta encontrar a primeira propriedade que seja um array (caso o backend use envelope)
                         const values = Object.values(res.data || {});
                         const found = values.find(v => Array.isArray(v));
                         items = found || [];
@@ -90,12 +86,11 @@ if (
     return;
 }
 
-// bloqueia quantidade negativa
 if (Number(quantidade) < 0) {
     setErro('Quantidade não pode ser negativa.');
     return;
 }
-// bloqueia preço negativo
+
 if (Number(preco) < 0) {
     setErro('Preço não pode ser negativo.');
     return;
@@ -112,7 +107,6 @@ if (Number(preco) < 0) {
             idCategoria: Number(categoria)
         };
 
-        // validação rápida
         for (let key in vestuario) {
             if (vestuario[key] === '' || vestuario[key] === null || (typeof vestuario[key] === 'number' && isNaN(vestuario[key]))) {
                 setMensagem(`Preencha corretamente o campo ${key}`);
@@ -194,7 +188,6 @@ if (Number(preco) < 0) {
                                 onChange={e => {
                                     const v = e.target.value;
                                     if (v === '') { setPreco(''); return; }
-                                    // aceita vírgula ou ponto, transforma em number
                                     const n = Number(String(v).replace(',', '.'));
                                     if (isNaN(n)) { setPreco(''); return; }
                                     setPreco(String(Math.max(0, n)));
@@ -223,7 +216,6 @@ if (Number(preco) < 0) {
                                     if (v === '') { setQuantidade(''); return; }
                                     const n = Number(v);
                                     if (isNaN(n)) { setQuantidade(''); return; }
-                                    // força mínimo 0
                                     setQuantidade(String(Math.max(0, n)));
                                 }}
                             />

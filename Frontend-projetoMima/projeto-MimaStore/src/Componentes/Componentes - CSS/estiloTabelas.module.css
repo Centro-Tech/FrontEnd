@@ -15,7 +15,6 @@ body, .page-container, .container {
 }
 
 .estoque-content-center {
-  /* max-width: 1200px; */
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -60,7 +59,6 @@ body, .page-container, .container {
   border-color: #6c217e;
 }
 
-/* Botão deletar */
 .estoque-delete-btn {
   background: #8d3e74 !important;
   color: #fff !important;
@@ -79,7 +77,6 @@ body, .page-container, .container {
   background: #6c217e !important;
 }
 
-/* Tabela */
 .MuiTableContainer-root {
   margin-top: 8px;
   border-radius: 0 !important;
@@ -121,7 +118,6 @@ body, .page-container, .container {
   color: #3d3d3d;
 }
 
-/* Paginação */
 .estoque-pagination {
   display: flex;
   justify-content: flex-end;
@@ -155,12 +151,10 @@ body, .page-container, .container {
   color: #6c217e;
 }
 
-/* Remove box-shadow dos popups/drawers */
 .MuiDrawer-paper {
   box-shadow: none !important;
 }
 
-/* Remove outline dos inputs */
 .MuiOutlinedInput-notchedOutline {
   border: none !important;
 }
