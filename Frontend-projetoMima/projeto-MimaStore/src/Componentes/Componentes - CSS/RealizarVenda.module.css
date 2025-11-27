@@ -207,7 +207,6 @@
     background-color: #724165;
 }
 
-/* Botão cinza para ações secundárias */
 .botaoCinza {
     background-color: #6c757d;
     color: white;
@@ -225,7 +224,6 @@
     background-color: #545b62;
 }
 
-/* Painel Direito - Carrinho */
 .painelDireito {
     flex: 1;
     background-color: white;
@@ -259,7 +257,6 @@
     background-color: #c82333;
 }
 
-/* Resumo da Venda */
 .resumoVenda {
     margin-top: 20px;
     padding: 20px;
@@ -310,7 +307,6 @@
     cursor: not-allowed;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
     .paineis {
         flex-direction: column;

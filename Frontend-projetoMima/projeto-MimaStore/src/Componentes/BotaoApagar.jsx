@@ -1,5 +1,3 @@
-// BotaoApagar.jsx
-import React from "react";
 import { Button } from "@mui/material";
 import styles from "../../Componentes/Componentes - CSS/estiloTabelas.module.css";
 

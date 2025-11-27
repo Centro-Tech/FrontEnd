@@ -1,7 +1,6 @@
-/* Scroll personalizado global */
+
 ::-webkit-scrollbar {
   width: 8px;
-  /* background: #f5f5f5; */
 }
 
 ::-webkit-scrollbar-thumb {
@@ -13,7 +12,6 @@
   background: #864176;
 }
 
-/* Para Firefox */
 * {
   scrollbar-width: thin;
   scrollbar-color: #D7BFD3 #f5f5f5;

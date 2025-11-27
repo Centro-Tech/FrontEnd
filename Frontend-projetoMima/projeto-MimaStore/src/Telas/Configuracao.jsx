@@ -22,7 +22,6 @@ export function Configuracao() {
     const [loading, setLoading] = useState(true);
     const [erro, setErro] = useState('');
     const [imagemErro, setImagemErro] = useState(false);
-    // editMain controla edição no painel principal
     const [editMain, setEditMain] = useState(false);
     const [form, setForm] = useState({
         nome: '',
@@ -76,7 +75,7 @@ export function Configuracao() {
                     console.log('Usuário encontrado:', encontrado);
                     console.log('URL da imagem:', encontrado.imagem);
                     setUsuario(encontrado);
-                    setImagemErro(false); // reset erro de imagem
+                    setImagemErro(false); 
                     setForm({
                         nome: encontrado.nome || '',
                         email: encontrado.email || '',
@@ -139,7 +138,6 @@ export function Configuracao() {
             fd.append('endereco', form.endereco);
             if (form.imagemFile) fd.append('imagem', form.imagemFile);
 
-            // Não setar Content-Type manualmente para que o browser inclua o boundary
             const res = await API.put(`/usuarios/${usuario.id}`, fd);
             setUsuario(res.data);
             setEditMain(false);
@@ -185,7 +183,6 @@ export function Configuracao() {
     };
 
     const handleCancelMain = () => {
-        // reset form to current usuario
         if (usuario) {
             setForm({
                 nome: usuario.nome ,
@@ -236,42 +233,6 @@ export function Configuracao() {
                                     <div className={styles['profile-email']}>{usuario?.email || 'seu.email@exemplo.com'}</div>
                                 </div>
                             </div>
-
-                            {/* <div className={styles['profile-actions']}>
-                                <label className={styles['upload-label']}>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={async (ev) => {
-                                            const file = ev.target.files?.[0];
-                                            if (!file || !usuario) return;
-                                            setLoading(true);
-                                            setErro('');
-                                            try {
-                                                const fd = new FormData();
-                                                fd.append('nome', usuario.nome || '');
-                                                fd.append('email', usuario.email || '');
-                                                fd.append('telefone', usuario.telefone || '');
-                                                fd.append('cargo', usuario.cargo || '');
-                                                fd.append('endereco', usuario.endereco || '');
-                                                fd.append('imagem', file);
-
-                                                const res = await API.put(`/usuarios/${usuario.id}`, fd);
-                                                console.log('Resposta após upload:', res.data);
-                                                console.log('Nova URL da imagem:', res.data.imagem);
-                                                setUsuario(res.data);
-                                                setImagemErro(false);
-                                            } catch (err) {
-                                                console.error('Erro ao enviar imagem', err);
-                                                console.error('Detalhes do erro:', err.response?.data);
-                                                setErro('Erro ao enviar imagem');
-                                            } finally {
-                                                setLoading(false);
-                                            }
-                                        }}
-                                    />
-                                </label>
-                            </div> */}
 
                             {loading && <div style={{ marginTop: 8 }}>Carregando...</div>}
                             {erro && <div style={{ marginTop: 8, color: 'crimson' }}>{erro}</div>}

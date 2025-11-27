@@ -7,7 +7,6 @@ import iconCardapio from './assets/icons8-cardápio.svg';
 import fotoId from './assets/fotoIconExemplo.jpg';
 import { Perfil } from '../Telas/Perfil.jsx';
 import { useLocation, useNavigate } from 'react-router-dom';
-// MUI Icons
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import CachedIcon from '@mui/icons-material/Cached';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -58,8 +57,7 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
     const computePerfilMenuPosition = () => {
         if (!perfilRef.current) return;
         const rect = perfilRef.current.getBoundingClientRect();
-        const menuWidth = 160; // largura mínima esperada
-        // aproxima bastante: 4px de espaçamento abaixo e alinhado à direita do avatar
+        const menuWidth = 160; 
         const top = rect.bottom + 4;
         const left = Math.max(8, rect.right - menuWidth + 8);
         // setPerfilMenuStyle({ position: 'fixed', left: `${left}px`, minWidth: `${menuWidth}px` });
@@ -95,7 +93,6 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
 
     const handleConfig = () => {
         setPerfilMenuOpen(false);
-        // Navega para a tela de Configurações criada em src/Telas/Configuracao.jsx
         navigate('/configuracao');
     };
 

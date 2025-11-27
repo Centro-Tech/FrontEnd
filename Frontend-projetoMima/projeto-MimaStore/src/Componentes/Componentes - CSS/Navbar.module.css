@@ -2,7 +2,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Average&family=Petrona:ital,wght@0,100..900;1,100..900&family=Press+Start+2P&display=swap');
 
 body {
-    /* font-family: 'Average', serif; */
     margin: 0;
     padding: 0;
 }
@@ -87,7 +86,6 @@ h3 {
 }
 
 .sidebar {
-    /* position: fixed; */
     top: 0; left: 0;
     width: 240px; height: 100vh;
     background: linear-gradient(180deg, #ffffff 0%, #fbf7fb 100%);
@@ -162,7 +160,7 @@ h3 {
     gap: 5px;
     padding: 5px 6px;
     border-radius: 6px;
-    color: #111; /* texto escuro por padrão */
+    color: #111; 
     text-decoration: none;
     background: transparent;
     transition: background 0.12s, transform 0.08s, box-shadow 0.08s;
@@ -176,11 +174,11 @@ h3 {
     align-items: center;
     justify-content: center;
     font-size: 14px;
-    color: #222; /* ícone escuro */
+    color: #222; 
 }
 
 .menuText {
-    color: #111; /* texto escuro */
+    color: #111; 
     font-size: 0.88rem;
 }
 
@@ -200,8 +198,8 @@ h3 {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #fff; /* fundo claro */
-    color: #111; /* texto escuro */
+    background: #fff; 
+    color: #111; 
     padding: 6px 10px;
     border-radius: 999px;
     text-decoration: none;

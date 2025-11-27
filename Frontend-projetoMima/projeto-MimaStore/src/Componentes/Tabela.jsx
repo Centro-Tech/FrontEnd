@@ -27,11 +27,10 @@ export function Tabela({
   renderBotaoEditar,
   renderBotaoRemover,
   theme = "default",
-  columns = null, // optional custom columns: [{ key, label }]
+  columns = null, 
 }) {
   const styles = theme === "fornecedor" ? fornecedorStyles : estiloStyles;
 
-  // ✅ MAPEAMENTO PADRÃO DAS COLUNAS (pode ser sobrescrito via prop `columns`)
   const defaultColunas = [
     { key: "nome", label: "NOME" },
     { key: "preco", label: "PREÇO" },
@@ -40,9 +39,6 @@ export function Tabela({
   ];
   const colunas = Array.isArray(columns) && columns.length > 0 ? columns : defaultColunas;
 
-  /* ========================
-     TEMA FORNECEDOR (tabela HTML simples)
-     ======================== */
   if (theme === "fornecedor") {
     if (itens.length === 0) {
       return (
@@ -122,9 +118,6 @@ export function Tabela({
     );
   }
 
-  /* ========================
-     TEMA PADRÃO (MUI)
-     ======================== */
   if (itens.length === 0) {
     return (
       <Box className={styles["estoque-content-center"]}>

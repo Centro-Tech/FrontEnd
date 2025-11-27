@@ -53,7 +53,6 @@
     }
 }
 
-/* Ajustar posição em telas pequenas */
 @media (max-width: 768px) {
     .tooltipBox {
         max-width: 220px;
