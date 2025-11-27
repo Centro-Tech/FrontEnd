@@ -60,7 +60,7 @@ export function Navbar({ mostrarHamburguer: mostrarHamburguerProp, mostrarPerfil
         const menuWidth = 160; 
         const top = rect.bottom + 4;
         const left = Math.max(8, rect.right - menuWidth + 8);
-        setPerfilMenuStyle({ position: 'fixed', top: `${top}px`, left: `${left}px`, minWidth: `${menuWidth}px` });
+        // setPerfilMenuStyle({ position: 'fixed', left: `${left}px`, minWidth: `${menuWidth}px` });
     };
 
     const handlePerfilClick = () => {

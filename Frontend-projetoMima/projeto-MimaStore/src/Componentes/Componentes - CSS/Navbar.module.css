@@ -266,7 +266,9 @@ h3 {
     margin-left: 4px;
 }
 
+
 .perfilMenu {
+    position: fixed;
     background: #fff;
     border: 1px solid #e0c3e3;
     border-radius: 8px;
@@ -276,6 +278,9 @@ h3 {
     z-index: 9999;
     display: flex;
     flex-direction: column;
+    left: 76.5%;
+    transition: cubic-bezier(0.075, 0.82, 0.165, 1);
+    top: 8%;
 }
 
 .perfilMenu button {

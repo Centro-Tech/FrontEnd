@@ -31,6 +31,13 @@ export function Configuracao() {
         endereco: '',
         imagemFile: null
     });
+    const [formErrors, setFormErrors] = useState({});
+
+    const isValidEmail = (email) => {
+        if (!email) return false;
+        // simples verificação de formato
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    };
 
     function getEmailFromToken(token) {
         try {
@@ -94,6 +101,34 @@ export function Configuracao() {
     const handleSaveMain = async (e) => {
         e.preventDefault();
         if (!usuario) return;
+        // reset erros anteriores
+        setErro('');
+        setFormErrors({});
+
+        // validação cliente para evitar chamada desnecessária ao servidor
+        const newErrors = {};
+        const nomeVal = (form.nome || '').toString().trim();
+        if (!nomeVal) newErrors.nome = 'O nome é obrigatório';
+
+        const emailVal = (form.email || '').toString().trim();
+        if (!emailVal) newErrors.email = 'O e-mail é obrigatório';
+        else if (!isValidEmail(emailVal)) newErrors.email = 'Formato de e-mail inválido';
+
+        const cargoVal = (form.cargo || '').toString().trim();
+        if (!cargoVal) newErrors.cargo = 'O cargo é obrigatório';
+        else if (cargoVal.length < 2 || cargoVal.length > 50) newErrors.cargo = 'O cargo deve ter entre 2 e 50 caracteres';
+
+        const telVal = (form.telefone || '').toString().trim();
+        if (!telVal) newErrors.telefone = 'O telefone é obrigatório';
+        else if (telVal.length < 8 || telVal.length > 20) newErrors.telefone = 'O telefone deve ter entre 8 e 20 caracteres';
+
+        const enderecoVal = (form.endereco || '').toString().trim();
+        if (!enderecoVal) newErrors.endereco = 'O endereço é obrigatório';
+
+        if (Object.keys(newErrors).length > 0) {
+            setFormErrors(newErrors);
+            return;
+        }
         try {
             const fd = new FormData();
             fd.append('nome', form.nome);
@@ -106,9 +141,44 @@ export function Configuracao() {
             const res = await API.put(`/usuarios/${usuario.id}`, fd);
             setUsuario(res.data);
             setEditMain(false);
+            setFormErrors({});
         } catch (err) {
             console.error('Erro ao atualizar usuário', err);
-            setErro('Erro ao salvar alterações');
+            // Tentar extrair mensagens de validação do servidor
+            const data = err.response?.data;
+            // formato comum: { violations: [ { propertyPath: 'cargo', message: '...' }, ... ] }
+            if (data && Array.isArray(data.violations)) {
+                const fieldErrors = {};
+                data.violations.forEach(v => {
+                    const prop = v.propertyPath || v.field || v.path || '';
+                    if (prop) fieldErrors[prop] = v.message || v.msg || v.error || JSON.stringify(v);
+                });
+                setFormErrors(fieldErrors);
+                setErro('Erros de validação no formulário');
+            } else if (data && typeof data === 'object') {
+                // possível mapa de campo -> mensagem
+                const fieldErrors = {};
+                let found = false;
+                Object.keys(data).forEach(k => {
+                    const v = data[k];
+                    if (typeof v === 'string') {
+                        fieldErrors[k] = v;
+                        found = true;
+                    }
+                });
+                if (found) {
+                    setFormErrors(fieldErrors);
+                    setErro('Erros de validação no formulário');
+                } else if (data.message) {
+                    setErro(data.message);
+                } else {
+                    setErro('Erro ao salvar alterações');
+                }
+            } else if (typeof data === 'string') {
+                setErro(data);
+            } else {
+                setErro('Erro ao salvar alterações');
+            }
         }
     };
 
@@ -122,6 +192,7 @@ export function Configuracao() {
                 endereco: usuario.endereco || '',
                 imagemFile: null
             });
+            setFormErrors({});
         }
         setEditMain(false);
     };
@@ -174,28 +245,54 @@ export function Configuracao() {
                         <div className={styles['main-card']}>
                             <h2 className={styles['panel-title']}>Painel de configurações</h2>
                             <p className={styles['muted']}>Selecione uma opção na coluna à esquerda para visualizar ou editar seus ajustes.</p>
+                            {erro && <div style={{ marginTop: 8, color: 'crimson' }}>{erro}</div>}
 
                             {editMain ? (
                                 <form className={styles['edit-form']} onSubmit={handleSaveMain}>
                                     <label className={styles['field']}>
                                         <span>Nome</span>
                                         <input name="nome" value={form.nome} onChange={(ev) => setForm({...form, nome: ev.target.value})} />
+                                        {formErrors.nome && (
+                                            <div style={{ color: 'crimson', marginTop: 6, fontSize: 12 }}>
+                                                {formErrors.nome}
+                                            </div>
+                                        )}
                                     </label>
                                     <label className={styles['field']}>
                                         <span>E-mail</span>
                                         <input name="email" value={form.email} onChange={(ev) => setForm({...form, email: ev.target.value})} />
+                                        {formErrors.email && (
+                                            <div style={{ color: 'crimson', marginTop: 6, fontSize: 12 }}>
+                                                {formErrors.email}
+                                            </div>
+                                        )}
                                     </label>
                                     <label className={styles['field']}>
                                         <span>Telefone</span>
                                         <input name="telefone" value={form.telefone} onChange={(ev) => setForm({...form, telefone: ev.target.value})} />
+                                        {formErrors.telefone && (
+                                            <div style={{ color: 'crimson', marginTop: 6, fontSize: 12 }}>
+                                                {formErrors.telefone}
+                                            </div>
+                                        )}
                                     </label>
                                     <label className={styles['field']}>
                                         <span>Cargo</span>
                                         <input name="cargo" value={form.cargo} onChange={(ev) => setForm({...form, cargo: ev.target.value})} />
+                                        {formErrors.cargo && (
+                                            <div style={{ color: 'crimson', marginTop: 6, fontSize: 12 }}>
+                                                {formErrors.cargo}
+                                            </div>
+                                        )}
                                     </label>
                                     <label className={styles['field']}>
                                         <span>Endereço</span>
                                         <input name="endereco" value={form.endereco} onChange={(ev) => setForm({...form, endereco: ev.target.value})} />
+                                        {formErrors.endereco && (
+                                            <div style={{ color: 'crimson', marginTop: 6, fontSize: 12 }}>
+                                                {formErrors.endereco}
+                                            </div>
+                                        )}
                                     </label>
                                     <div className={styles['field']}>
                                         <span>Imagem (opcional)</span>
