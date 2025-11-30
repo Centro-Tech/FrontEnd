@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../Componentes/Componentes - CSS/Splashscreen.module.css";
-import atendimentoImg from "../Componentes/assets/atendimento.png";
+import atendimentoImg from "../Componentes/assets/Atendimento.png";
 
 export default function Splashscreen() {
   const navigate = useNavigate();

@@ -4,7 +4,7 @@ import { Navbar } from "../Componentes/Navbar.jsx";
 import { FaixaSair } from "../Componentes/FaixaSair.jsx";
 import styles from "../Componentes/Componentes - CSS/PrimeiroAcesso.module.css";
 import API from "../Provider/API";
-import roupasImg from "../Componentes/assets/roupas.png";
+import roupasImg from "../Componentes/assets/Roupas.png";
 
 export default function PrimeiroAcesso() {
   const navigate = useNavigate();

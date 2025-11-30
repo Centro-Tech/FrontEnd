@@ -6,7 +6,7 @@ import styles from "../Componentes/Componentes - CSS/PrimeiroAcesso.module.css";
 import API from "../Provider/API";
 import { AuthContext } from '../Provider/AuthProvider';
 import { useLocation } from 'react-router-dom';
-import roupasLoginImg from "../Componentes/assets/roupasLogin.png";
+import roupasLoginImg from "../Componentes/assets/RoupasLogin.png";
 
 export default function Login() {
   const navigate = useNavigate();
