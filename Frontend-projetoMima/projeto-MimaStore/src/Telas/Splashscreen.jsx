@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../Componentes/Componentes - CSS/Splashscreen.module.css";
+import atendimentoImg from "../Componentes/assets/atendimento.png";
 
 export default function Splashscreen() {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ export default function Splashscreen() {
         </div>
         <div className={styles.splashscreenRight}>
           <img
-            src="src/Componentes/assets/atendimento.png"
+            src={atendimentoImg}
             alt="Ilustração de atendimento"
             className={styles.splashscreenImg}
           />

@@ -4,6 +4,7 @@ import { Navbar } from "../Componentes/Navbar.jsx";
 import { FaixaSair } from "../Componentes/FaixaSair.jsx";
 import styles from "../Componentes/Componentes - CSS/PrimeiroAcesso.module.css";
 import API from "../Provider/API";
+import roupasImg from "../Componentes/assets/roupas.png";
 
 export default function PrimeiroAcesso() {
   const navigate = useNavigate();
@@ -100,7 +101,7 @@ export default function PrimeiroAcesso() {
         <div className={styles.card}>
           <div className={styles.left}>
             <img
-              src="src/Componentes/assets/roupas.png"
+              src={roupasImg}
               alt="Roupas"
               className={styles.img}
             />

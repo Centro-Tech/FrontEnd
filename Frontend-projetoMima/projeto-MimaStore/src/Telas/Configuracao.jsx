@@ -4,6 +4,7 @@ import styles from '../Componentes/Componentes - CSS/Configuracao.module.css';
 import API from '../Provider/API';
 import { Navbar } from '../Componentes/Navbar';
 import { FaixaVoltar } from '../Componentes/FaixaVoltar';
+import { getImageUrl } from '../utils/images';
 
 export function Configuracao() {
     const navigate = useNavigate();
@@ -209,15 +210,17 @@ export function Configuracao() {
                                 <div className={styles['avatar']} aria-hidden>
                                     {usuario?.imagem ? (
                                         <img 
-                                            src={usuario.imagem} 
+                                            src={getImageUrl(usuario.imagem)} 
                                             alt="Avatar" 
                                             onError={(e) => {
                                                 console.error('Erro ao carregar imagem:', usuario.imagem);
+                                                console.error('URL normalizada:', getImageUrl(usuario.imagem));
                                                 setImagemErro(true);
                                                 e.target.style.display = 'none';
                                             }}
                                             onLoad={() => {
                                                 console.log('Imagem carregada com sucesso:', usuario.imagem);
+                                                console.log('URL normalizada:', getImageUrl(usuario.imagem));
                                                 setImagemErro(false);
                                             }}
                                         />
