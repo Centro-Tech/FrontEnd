@@ -28,7 +28,7 @@ export function GestaoClientes() {
         nome: '',
         email: '',
         telefone: '',
-        cpf: '',
+        CPF: '',
         endereco: ''
     });
 
@@ -195,7 +195,7 @@ export function GestaoClientes() {
             nome: '',
             email: '',
             telefone: '',
-            cpf: '',
+            CPF: '',
             endereco: ''
         });
         setMensagem('Cliente cadastrado com sucesso!');
@@ -397,8 +397,8 @@ export function GestaoClientes() {
                                 <label>CPF</label>
                                 <input 
                                     type="text"
-                                    value={clienteEditando.cpf || ''}
-                                    onChange={(e) => setClienteEditando({...clienteEditando, cpf: e.target.value})}
+                                    value={clienteEditando.CPF || ''}
+                                    onChange={(e) => setClienteEditando({...clienteEditando, CPF: e.target.value})}
                                 />
                             </div>
                             <div className={styles['form-group']}>
@@ -472,8 +472,8 @@ export function GestaoClientes() {
                                 <label>CPF</label>
                                 <input 
                                     type="text"
-                                    value={novoCliente.cpf}
-                                    onChange={(e) => setNovoCliente({...novoCliente, cpf: e.target.value})}
+                                    value={novoCliente.CPF}
+                                    onChange={(e) => setNovoCliente({...novoCliente, CPF: e.target.value})}
                                 />
                             </div>
                             <div className={styles['form-group']}>

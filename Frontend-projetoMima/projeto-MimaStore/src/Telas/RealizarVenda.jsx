@@ -123,7 +123,6 @@ export function RealizarVenda() {
         };
 
         const payload = {
-            codigoProduto: produto.codigo,
             qtdParaVender: quantidadeProduto,
             funcionarioId: null,
             clienteId: null,
@@ -180,7 +179,6 @@ export function RealizarVenda() {
         setFinalizando(true);
         const vendaPayload = {
             itens: carrinho.map(item => ({
-                codigoProduto: item.codigo,
                 quantidade: item.quantidade,
                 valorUnitario: item.valor,
                 valorTotal: item.valorTotal

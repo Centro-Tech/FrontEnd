@@ -119,6 +119,12 @@ export function GestaoFornecedor() {
             return;
         }
 
+        // Validar tamanho do telefone (8 a 11 caracteres)
+        if (fornecedorEditando.telefone && (fornecedorEditando.telefone.length < 8 || fornecedorEditando.telefone.length > 11)) {
+            setErro('Telefone deve ter entre 8 e 11 dígitos.');
+            return;
+        }
+
         setCarregando(true);
         
         const payload = {
@@ -148,6 +154,12 @@ export function GestaoFornecedor() {
     const cadastrarFornecedor = async () => {
         if (!novoFornecedor.nome || !novoFornecedor.email || !novoFornecedor.telefone) {
             setErro('Nome, email e telefone são obrigatórios.');
+            return;
+        }
+
+        // Validar tamanho do telefone (8 a 11 caracteres)
+        if (novoFornecedor.telefone.length < 8 || novoFornecedor.telefone.length > 11) {
+            setErro('Telefone deve ter entre 8 e 11 dígitos.');
             return;
         }
 
@@ -366,7 +378,13 @@ export function GestaoFornecedor() {
                                     type="text"
                                     value={fornecedorEditando.telefone || ''}
                                     onChange={(e) => setFornecedorEditando({...fornecedorEditando, telefone: e.target.value})}
+                                    placeholder="Digite de 8 a 11 dígitos"
                                 />
+                                {fornecedorEditando.telefone && (fornecedorEditando.telefone.length < 8 || fornecedorEditando.telefone.length > 11) && (
+                                    <small style={{color: '#dc3545', fontSize: '0.85rem', marginTop: '4px', display: 'block'}}>
+                                        Telefone deve ter entre 8 e 11 dígitos
+                                    </small>
+                                )}
                             </div>
                         </div>
                         <div className={styles['modal-footer']}>
@@ -420,13 +438,19 @@ export function GestaoFornecedor() {
                                 />
                             </div>
                             <div className={styles['form-group']}>
-                                <label>Telefone</label>
+                                <label>Telefone *</label>
                                 <input 
                                     type="text"
                                     value={novoFornecedor.telefone}
                                     onChange={(e) => setNovoFornecedor({...novoFornecedor, telefone: e.target.value})}
+                                    placeholder="Digite de 8 a 11 dígitos"
                                 />
-                                    <MensagemErro mensagem={erro} />
+                                {novoFornecedor.telefone && (novoFornecedor.telefone.length < 8 || novoFornecedor.telefone.length > 11) && (
+                                    <small style={{color: '#dc3545', fontSize: '0.85rem', marginTop: '4px', display: 'block'}}>
+                                        Telefone deve ter entre 8 e 11 dígitos
+                                    </small>
+                                )}
+                                <MensagemErro mensagem={erro} />
                              
                             </div>
                         </div>
