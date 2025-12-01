@@ -2,6 +2,12 @@ import axios from "axios";
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "/api",
+  headers: {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Accept': 'application/json',
+  },
+  responseType: 'json',
+  responseEncoding: 'utf8',
 });
 
 API.interceptors.request.use(
@@ -10,6 +16,8 @@ API.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    // Força UTF-8 em todas as requisições
+    config.headers['Accept-Charset'] = 'utf-8';
     return config;
   },
   (error) => Promise.reject(error)
