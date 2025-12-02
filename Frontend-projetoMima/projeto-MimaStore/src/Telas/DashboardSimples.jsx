@@ -28,6 +28,12 @@ export default function DashboardSimples() {
     });
     const [fidelizacao, setFidelizacao] = useState({ valor: '0', variacao: 0 });
     
+    // Dias com vendas para calendários
+    const [diasComVendasTicket, setDiasComVendasTicket] = useState([]);
+    const [diasComVendasFidelizacao, setDiasComVendasFidelizacao] = useState([]);
+    const [diasComVendasRuptura, setDiasComVendasRuptura] = useState([]);
+    const [diasComVendasCategorias, setDiasComVendasCategorias] = useState([]);
+    
     // Charts Data State
     const [estoqueVendasData, setEstoqueVendasData] = useState(null);
     const [estoqueMeta, setEstoqueMeta] = useState({ page: 1, totalPages: 1, pageSize: 4 });
@@ -92,13 +98,15 @@ export default function DashboardSimples() {
     }, [
         filtroTicket,
         filtroFidelizacao,
-        filtroCategorias, 
         filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2,
         rupturaDataInicio,
-        rupturaDataFim,
-        dataCategorias,
-        categoriasPagination.page
+        rupturaDataFim
     ]);
+    
+    // Carregar categorias separadamente para não recarregar toda dashboard
+    useEffect(() => {
+        loadCategoriasChart();
+    }, [mesCategorias, anoCategorias, categoriasModoDia, dataCategorias, categoriasPagination.page]);
 
     // Load only the estoque x vendas chart when page changes
     useEffect(() => {
@@ -130,23 +138,28 @@ export default function DashboardSimples() {
                 })
             ]);
 
-            // Carregar categorias separadamente (depende do modo: mês inteiro ou dia específico) — agora paginado
-            let categoriasResp = null;
+            // Buscar dias com vendas para calendário de ruptura - TODO o histórico disponível
             try {
-                if (categoriasModoDia) {
-                    // dia específico
-                    categoriasResp = await DashboardService.getCategoriesForPeriod(dataCategorias, dataCategorias, categoriasPagination.page, categoriasPagination.pageSize);
-                } else {
-                    // mês inteiro baseado em mesCategorias/anoCategorias
-                    const primeiroDia = `${anoCategorias}-${String(mesCategorias).padStart(2, '0')}-01`;
-                    const ultimoDiaNum = new Date(anoCategorias, mesCategorias, 0).getDate();
-                    const ultimoDia = `${anoCategorias}-${String(mesCategorias).padStart(2, '0')}-${String(ultimoDiaNum).padStart(2, '0')}`;
-                    categoriasResp = await DashboardService.getCategoriesForPeriod(primeiroDia, ultimoDia, categoriasPagination.page, categoriasPagination.pageSize);
-                }
-            } catch (errCat) {
-                console.error('Erro carregando categorias paginadas:', errCat);
+                const hoje = new Date();
+                const futuro30Dias = new Date(hoje);
+                futuro30Dias.setDate(hoje.getDate() + 30);
+                const inicioHistorico = '2015-01-01';
+                const fimHistorico = futuro30Dias.toISOString().split('T')[0];
+                
+                const respRuptura = await DashboardService.API.get(`/vendas/filtrar-por-data?inicio=${inicioHistorico}&fim=${fimHistorico}`);
+                const vendasRuptura = DashboardService.extractArray(respRuptura);
+                const diasUnicos = new Set();
+                vendasRuptura.forEach(v => {
+                    if (v.data) {
+                        const data = new Date(v.data).toISOString().split('T')[0];
+                        diasUnicos.add(data);
+                    }
+                });
+                setDiasComVendasRuptura(Array.from(diasUnicos).sort());
+            } catch (err) {
+                console.error('Erro buscando dias com vendas para ruptura:', err);
             }
-
+            
             console.log('[DASHBOARD] ticketData recebido:', ticketData);
             console.log('[DASHBOARD] fidelizacaoData recebido:', fidelizacaoData);
 
@@ -157,6 +170,9 @@ export default function DashboardSimples() {
                     variacaoNominal: ticketData.variacaoNominal || 0,
                     mesesComVendasAnoAtual: ticketData.mesesComVendasAnoAtual || []
                 });
+                if (ticketData.diasComVendas) {
+                    setDiasComVendasTicket(ticketData.diasComVendas);
+                }
             }
 
             if (sazonalData) {
@@ -207,6 +223,9 @@ export default function DashboardSimples() {
                     variacao: variacaoDisplay,
                     mesesComVendasAnoAtual: fidelizacaoData.mesesComVendasAnoAtual || []
                 });
+                if (fidelizacaoData.diasComVendas) {
+                    setDiasComVendasFidelizacao(fidelizacaoData.diasComVendas);
+                }
             }
 
             if (estoqueVendas && estoqueVendas.labels) {
@@ -224,6 +243,52 @@ export default function DashboardSimples() {
                 console.warn('[DASHBOARD UI] estoqueVendas sem labels:', estoqueVendas);
             }
 
+        } catch (error) {
+            console.error('Error loading dashboard data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    const loadCategoriasChart = async () => {
+        try {
+            let categoriasResp = null;
+            let inicioCategorias, fimCategorias;
+            
+            if (categoriasModoDia && dataCategorias) {
+                // Modo dia específico
+                inicioCategorias = dataCategorias;
+                fimCategorias = dataCategorias;
+                categoriasResp = await DashboardService.getCategoriesForPeriod(dataCategorias, dataCategorias, categoriasPagination.page, categoriasPagination.pageSize);
+            } else if (!categoriasModoDia) {
+                // Modo mês/ano: mês inteiro baseado em mesCategorias/anoCategorias
+                const primeiroDia = `${anoCategorias}-${String(mesCategorias).padStart(2, '0')}-01`;
+                const ultimoDiaNum = new Date(anoCategorias, mesCategorias, 0).getDate();
+                const ultimoDia = `${anoCategorias}-${String(mesCategorias).padStart(2, '0')}-${String(ultimoDiaNum).padStart(2, '0')}`;
+                inicioCategorias = primeiroDia;
+                fimCategorias = ultimoDia;
+                categoriasResp = await DashboardService.getCategoriesForPeriod(primeiroDia, ultimoDia, categoriasPagination.page, categoriasPagination.pageSize);
+            }
+            
+            // Buscar dias com vendas do ANO INTEIRO visualizado no calendário (não apenas o mês)
+            // para mostrar todos os dias em verde quando o usuário navegar pelos meses
+            try {
+                const inicioAno = `${anoCategorias}-01-01`;
+                const fimAno = `${anoCategorias}-12-31`;
+                const respCategorias = await DashboardService.API.get(`/vendas/filtrar-por-data?inicio=${inicioAno}&fim=${fimAno}`);
+                const vendasCategorias = DashboardService.extractArray(respCategorias);
+                const diasUnicos = new Set();
+                vendasCategorias.forEach(v => {
+                    if (v.data) {
+                        const data = new Date(v.data).toISOString().split('T')[0];
+                        diasUnicos.add(data);
+                    }
+                });
+                setDiasComVendasCategorias(Array.from(diasUnicos).sort());
+            } catch (err) {
+                console.error('Erro buscando dias com vendas para categorias:', err);
+            }
+            
             if (categoriasResp && categoriasResp.labels) {
                 setCategoriasData({
                     labels: categoriasResp.labels,
@@ -237,9 +302,7 @@ export default function DashboardSimples() {
                 }
             }
         } catch (error) {
-            console.error('Error loading dashboard data:', error);
-        } finally {
-            setLoading(false);
+            console.error('Error loading categorias chart:', error);
         }
     };
 
@@ -447,7 +510,7 @@ export default function DashboardSimples() {
                                         anoSelecionado={new Date().getFullYear()}
                                         onMesChange={() => {}}
                                         onAnoChange={() => {}}
-                                        diasComVendas={[]}
+                                        diasComVendas={diasComVendasRuptura}
                                         modoIntervalo={true}
                                         compact={true}
                                         dataMinFim={dataMinFim}
@@ -557,12 +620,14 @@ export default function DashboardSimples() {
                                     onMesChange={(m) => {
                                         setMesCategorias(m);
                                         setCategoriasModoDia(false);
+                                        setDataCategorias('');
                                     }}
                                     onAnoChange={(a) => {
                                         setAnoCategorias(a);
                                         setCategoriasModoDia(false);
+                                        setDataCategorias('');
                                     }}
-                                    diasComVendas={[]}
+                                    diasComVendas={diasComVendasCategorias}
                                     modoIntervalo={false}
                                     compact={true}
                                 />

@@ -155,10 +155,10 @@ const FiltroCalendario = ({
     ];
 
     const anoAtual = new Date().getFullYear();
-    // Incluir anos passados (5 anos) e futuros (2 anos) para cobrir previsões
+    // Incluir anos passados (até 2015) e futuros (2 anos) para cobrir todo histórico
     const anos = [
-        ...Array.from({ length: 2 }, (_, i) => anoAtual + 2 - i), // 2027, 2026
-        ...Array.from({ length: 5 }, (_, i) => anoAtual - i) // 2025, 2024, 2023, 2022, 2021
+        ...Array.from({ length: 2 }, (_, i) => anoAtual + 2 - i), // Anos futuros
+        ...Array.from({ length: anoAtual - 2015 + 1 }, (_, i) => anoAtual - i) // De 2025 até 2015
     ];
 
     // Feriados fixos do Brasil

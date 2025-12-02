@@ -242,6 +242,17 @@ export const getAverageTicket = async (diasOuOpcoes = 30) => {
 
         console.log(`[TICKET MÉDIO] Variação: R$ ${variacaoNominal.toFixed(2)} (${variacaoPercentual.toFixed(1)}%)`);
 
+        // Extrair dias com vendas do período atual para o calendário
+        const diasComVendas = [];
+        const datasUnicas = new Set();
+        vendasAtual.forEach(venda => {
+            if (venda.data) {
+                const dataVenda = new Date(venda.data).toISOString().split('T')[0];
+                datasUnicas.add(dataVenda);
+            }
+        });
+        diasComVendas.push(...Array.from(datasUnicas).sort());
+
         // Formatar valor para exibição
         const valorFormatado = variacaoNominal.toLocaleString('pt-BR', { 
             style: 'currency', 
@@ -253,11 +264,12 @@ export const getAverageTicket = async (diasOuOpcoes = 30) => {
             variacao: Math.round(variacaoPercentual),
             variacaoNominal,
             faturamentoAtual: somaAtual,
-            faturamentoAnterior: somaAnterior
+            faturamentoAnterior: somaAnterior,
+            diasComVendas
         };
     } catch (error) {
         console.error('[TICKET MÉDIO] Erro:', error);
-        return { valor: 'R$ 0,00', variacao: 0, variacaoNominal: 0 };
+        return { valor: 'R$ 0,00', variacao: 0, variacaoNominal: 0, diasComVendas: [] };
     }
 };
 
@@ -771,7 +783,7 @@ export const getLoyalCustomersStats = async (mesesOuOpcoes = 12) => {
         };
     } catch (error) {
         console.error('Error computing loyal customers stats:', error);
-        return { currentCount: 0, startOfMonthCount: 0, variationPercent: 0, addedSinceStart: 0, mesesComVendasAnoAtual: [] };
+        return { currentCount: 0, startOfMonthCount: 0, variationPercent: 0, addedSinceStart: 0, mesesComVendasAnoAtual: [], diasComVendas: [] };
     }
 };
 
@@ -1847,7 +1859,9 @@ const DashboardService = {
     getMonthlySalesComparison,
     getCustomersEvolution,
     getRevenueTrend,
-    getSalesTrend
+    getSalesTrend,
+    API,
+    extractArray
 };
 
 export default DashboardService;
