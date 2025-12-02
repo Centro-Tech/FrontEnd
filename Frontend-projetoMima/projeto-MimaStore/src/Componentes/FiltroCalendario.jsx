@@ -229,9 +229,9 @@ const FiltroCalendario = ({
         return `${anoAtual}-${mesFormatado}-${diaFormatado}`;
     };
 
-    const temVendas = (dia) => {
+    const temVendas = (dia, paraInicio = false) => {
         if (!dia) return false;
-        const dataFormatada = formatarData(dia);
+        const dataFormatada = formatarData(dia, paraInicio);
         return diasComVendas.includes(dataFormatada);
     };
 
@@ -351,7 +351,7 @@ const FiltroCalendario = ({
 
                         const dataFormatada = formatarData(dia, paraInicio);
                         const selecionado = dataFormatada === (paraInicio ? dataInicio : dataFim);
-                        const comVendas = temVendas(dia);
+                        const comVendas = temVendas(dia, paraInicio);
                         const feriado = verificarFeriado(dia, mesViz, anoViz);
                         const hoje = new Date();
                         const ehHoje = dia === hoje.getDate() && 

@@ -155,7 +155,8 @@ export default function DashboardSimples() {
                         diasUnicos.add(data);
                     }
                 });
-                setDiasComVendasRuptura(Array.from(diasUnicos).sort());
+                const diasArray = Array.from(diasUnicos).sort();
+                setDiasComVendasRuptura(diasArray);
             } catch (err) {
                 console.error('Erro buscando dias com vendas para ruptura:', err);
             }
@@ -284,7 +285,8 @@ export default function DashboardSimples() {
                         diasUnicos.add(data);
                     }
                 });
-                setDiasComVendasCategorias(Array.from(diasUnicos).sort());
+                const diasArray = Array.from(diasUnicos).sort();
+                setDiasComVendasCategorias(diasArray);
             } catch (err) {
                 console.error('Erro buscando dias com vendas para categorias:', err);
             }

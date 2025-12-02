@@ -58,13 +58,27 @@ export default function DashboardCompleto() {
     const [filtroAno1, setFiltroAno1] = useState(null);
     const [filtroEstacao2, setFiltroEstacao2] = useState(null);
     const [filtroAno2, setFiltroAno2] = useState(null);
+    
+    // Filtros dos gráficos de regressão
+    const [clientesHistoricoMeses, setClientesHistoricoMeses] = useState(10);
+    const [clientesPrevisaoMeses, setClientesPrevisaoMeses] = useState(3);
+    const [faturamentoHistoricoMeses, setFaturamentoHistoricoMeses] = useState(10);
+    const [faturamentoPrevisaoMeses, setFaturamentoPrevisaoMeses] = useState(3);
+    const [vendasHistoricoMeses, setVendasHistoricoMeses] = useState(10);
+    const [vendasPrevisaoMeses, setVendasPrevisaoMeses] = useState(3);
+
+    // Filtro especial apenas para Volume de Clientes: incluir/mostrar somente novos clientes
+    const [clientesMostrarNovos, setClientesMostrarNovos] = useState(false);
 
     useEffect(() => {
         loadDashboardData();
     }, [
         ticketMesAvancado, ticketAnoAvancado, ticketDataInicio, ticketDataFim,
         fidelizacaoMesAvancado, fidelizacaoAnoAvancado, fidelizacaoDataInicio, fidelizacaoDataFim,
-        filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2
+        filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2,
+        clientesHistoricoMeses, clientesPrevisaoMeses,
+        faturamentoHistoricoMeses, faturamentoPrevisaoMeses,
+        vendasHistoricoMeses, vendasPrevisaoMeses
     ]);
 
     const loadDashboardData = async () => {
@@ -88,10 +102,32 @@ export default function DashboardCompleto() {
                 DashboardService.getAverageTicket(ticketParam),
                 DashboardService.getSeasonalIndex(filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2),
                 DashboardService.getLoyalCustomersStats(fidelizacaoParam),
-                DashboardService.getCustomersEvolution(),
-                DashboardService.getRevenueTrend(),
-                DashboardService.getSalesTrend()
+                DashboardService.getCustomersEvolution(clientesHistoricoMeses, clientesPrevisaoMeses),
+                DashboardService.getRevenueTrend(faturamentoHistoricoMeses, faturamentoPrevisaoMeses),
+                DashboardService.getSalesTrend(vendasHistoricoMeses, vendasPrevisaoMeses)
             ]);
+
+            // Buscar dias com vendas de TODO o histórico para marcar em verde no calendário
+            try {
+                const inicioHistorico = '2015-01-01';
+                const hoje = new Date();
+                const fimHistorico = hoje.toISOString().split('T')[0];
+                
+                const respVendas = await DashboardService.API.get(`/vendas/filtrar-por-data?inicio=${inicioHistorico}&fim=${fimHistorico}`);
+                const vendasHistorico = DashboardService.extractArray(respVendas);
+                const diasUnicos = new Set();
+                vendasHistorico.forEach(v => {
+                    if (v.data) {
+                        const data = new Date(v.data).toISOString().split('T')[0];
+                        diasUnicos.add(data);
+                    }
+                });
+                const diasArray = Array.from(diasUnicos).sort();
+                setDiasComVendasTicket(diasArray);
+                setDiasComVendasFidelizacao(diasArray);
+            } catch (err) {
+                console.error('Erro buscando dias com vendas para calendários:', err);
+            }
 
             // Set KPIs
             if (ticketMedioData) {
@@ -101,9 +137,6 @@ export default function DashboardCompleto() {
                     variacaoNominal: ticketMedioData.variacaoNominal || 0,
                     mesesComVendasAnoAtual: ticketMedioData.mesesComVendasAnoAtual || []
                 });
-                if (ticketMedioData.diasComVendas) {
-                    setDiasComVendasTicket(ticketMedioData.diasComVendas);
-                }
             }
 
             if (sazionalData) {
@@ -148,9 +181,6 @@ export default function DashboardCompleto() {
                     variacao: variacaoDisplay,
                     mesesComVendasAnoAtual: fidelizacaoData.mesesComVendasAnoAtual || []
                 });
-                if (fidelizacaoData.diasComVendas) {
-                    setDiasComVendasFidelizacao(fidelizacaoData.diasComVendas);
-                }
             }
 
             // Chart 1 - Clientes únicos por mês + previsão
@@ -383,7 +413,72 @@ export default function DashboardCompleto() {
                                     titulo="Volume de Clientes"
                                     tipo="bar"
                                     dados={clientesEvolucaoData}
-                                    explicacao="Número de clientes únicos por mês (últimos 10 meses) e previsão para os próximos 3. Se a série for curta/ruidosa, a projeção é omitida."
+                                    explicacao={`${clientesMostrarNovos ? 'Novos clientes' : 'Clientes únicos'} por mês (últimos ${clientesHistoricoMeses} meses) com previsão de ${clientesPrevisaoMeses} meses. ${clientesMostrarNovos ? 'Mostra apenas clientes que fizeram sua primeira compra no período.' : 'Se a série for curta/ruidosa, a projeção é omitida.'}`}
+                                    filtroTemporal={
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontFamily: 'Average Sans, sans-serif', fontSize: '12px' }}>
+                                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                                                <span style={{ color: '#666' }}>Histórico:</span>
+                                                <select 
+                                                    value={clientesHistoricoMeses} 
+                                                    onChange={(e) => setClientesHistoricoMeses(Number(e.target.value))}
+                                                    style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid #ddd', fontSize: '12px', fontFamily: 'Average Sans, sans-serif' }}
+                                                >
+                                                    <option value={6}>6 meses</option>
+                                                    <option value={10}>10 meses</option>
+                                                    <option value={12}>12 meses</option>
+                                                    <option value={18}>18 meses</option>
+                                                    <option value={24}>24 meses</option>
+                                                </select>
+                                                <span style={{ color: '#666', marginLeft: '12px' }}>Previsão:</span>
+                                                <select 
+                                                    value={clientesPrevisaoMeses} 
+                                                    onChange={(e) => setClientesPrevisaoMeses(Number(e.target.value))}
+                                                    style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid #ddd', fontSize: '12px', fontFamily: 'Average Sans, sans-serif' }}
+                                                >
+                                                    <option value={1}>1 mês</option>
+                                                    <option value={3}>3 meses</option>
+                                                    <option value={6}>6 meses</option>
+                                                    <option value={12}>12 meses</option>
+                                                </select>
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                                <span style={{ color: '#666' }}>Tipo de cliente:</span>
+                                                <div style={{ display: 'inline-flex', borderRadius: '999px', border: '1px solid #ddd', overflow: 'hidden' }}>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setClientesMostrarNovos(false)}
+                                                        style={{
+                                                            padding: '4px 10px',
+                                                            border: 'none',
+                                                            backgroundColor: clientesMostrarNovos ? 'transparent' : '#864176',
+                                                            color: clientesMostrarNovos ? '#555' : '#fff',
+                                                            cursor: 'pointer',
+                                                            fontSize: '11px',
+                                                            fontFamily: 'Average Sans, sans-serif'
+                                                        }}
+                                                    >
+                                                        Todos
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setClientesMostrarNovos(true)}
+                                                        style={{
+                                                            padding: '4px 10px',
+                                                            border: 'none',
+                                                            backgroundColor: clientesMostrarNovos ? '#864176' : 'transparent',
+                                                            color: clientesMostrarNovos ? '#fff' : '#555',
+                                                            cursor: 'pointer',
+                                                            fontSize: '11px',
+                                                            fontFamily: 'Average Sans, sans-serif',
+                                                            borderLeft: '1px solid #ddd'
+                                                        }}
+                                                    >
+                                                        Apenas Novos
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
                                     opcoes={{
                                         responsive: true,
                                         maintainAspectRatio: false,
@@ -431,7 +526,34 @@ export default function DashboardCompleto() {
                                     titulo="Tendência de Faturamento"
                                     tipo="line"
                                     dados={tendenciaFaturamentoData}
-                                    explicacao="Evolução do faturamento nos últimos 10 meses com projeção para os próximos 3 meses (linha tracejada)."
+                                    explicacao={`Evolução do faturamento mensal (últimos ${faturamentoHistoricoMeses} meses) com projeção de ${faturamentoPrevisaoMeses} meses usando regressão linear.`}
+                                    filtroTemporal={
+                                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontFamily: 'Average Sans, sans-serif', fontSize: '12px', flexWrap: 'wrap' }}>
+                                            <span style={{ color: '#666' }}>Histórico:</span>
+                                            <select 
+                                                value={faturamentoHistoricoMeses} 
+                                                onChange={(e) => setFaturamentoHistoricoMeses(Number(e.target.value))}
+                                                style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid #ddd', fontSize: '12px', fontFamily: 'Average Sans, sans-serif' }}
+                                            >
+                                                <option value={6}>6 meses</option>
+                                                <option value={10}>10 meses</option>
+                                                <option value={12}>12 meses</option>
+                                                <option value={18}>18 meses</option>
+                                                <option value={24}>24 meses</option>
+                                            </select>
+                                            <span style={{ color: '#666', marginLeft: '12px' }}>Previsão:</span>
+                                            <select 
+                                                value={faturamentoPrevisaoMeses} 
+                                                onChange={(e) => setFaturamentoPrevisaoMeses(Number(e.target.value))}
+                                                style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid #ddd', fontSize: '12px', fontFamily: 'Average Sans, sans-serif' }}
+                                            >
+                                                <option value={1}>1 mês</option>
+                                                <option value={3}>3 meses</option>
+                                                <option value={6}>6 meses</option>
+                                                <option value={12}>12 meses</option>
+                                            </select>
+                                        </div>
+                                    }
                                     opcoes={{
                                         responsive: true,
                                         maintainAspectRatio: false,
@@ -474,7 +596,34 @@ export default function DashboardCompleto() {
                                     titulo="Tendência de Vendas"
                                     tipo="line"
                                     dados={tendenciaVendasData}
-                                    explicacao="Evolução do volume de vendas nos últimos 10 meses com projeção para os próximos 3 meses (linha tracejada)."
+                                    explicacao={`Volume de vendas nos últimos ${vendasHistoricoMeses} meses com projeção de ${vendasPrevisaoMeses} meses usando regressão linear.`}
+                                    filtroTemporal={
+                                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontFamily: 'Average Sans, sans-serif', fontSize: '12px', flexWrap: 'wrap' }}>
+                                            <span style={{ color: '#666' }}>Histórico:</span>
+                                            <select 
+                                                value={vendasHistoricoMeses} 
+                                                onChange={(e) => setVendasHistoricoMeses(Number(e.target.value))}
+                                                style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid #ddd', fontSize: '12px', fontFamily: 'Average Sans, sans-serif' }}
+                                            >
+                                                <option value={6}>6 meses</option>
+                                                <option value={10}>10 meses</option>
+                                                <option value={12}>12 meses</option>
+                                                <option value={18}>18 meses</option>
+                                                <option value={24}>24 meses</option>
+                                            </select>
+                                            <span style={{ color: '#666', marginLeft: '12px' }}>Previsão:</span>
+                                            <select 
+                                                value={vendasPrevisaoMeses} 
+                                                onChange={(e) => setVendasPrevisaoMeses(Number(e.target.value))}
+                                                style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid #ddd', fontSize: '12px', fontFamily: 'Average Sans, sans-serif' }}
+                                            >
+                                                <option value={1}>1 mês</option>
+                                                <option value={3}>3 meses</option>
+                                                <option value={6}>6 meses</option>
+                                                <option value={12}>12 meses</option>
+                                            </select>
+                                        </div>
+                                    }
                                     opcoes={{
                                         responsive: true,
                                         maintainAspectRatio: false,
