@@ -1403,49 +1403,80 @@ export const getTopCategoriesForPeriod = async (inicio, fim, topN = 3) => {
 // Retorna todas as categorias ordenadas por quantidade vendida dentro do período, com paginação
 export const getCategoriesForPeriod = async (inicio, fim, page = 1, pageSize = 4) => {
     try {
-        // Buscar catálogo de itens e categorias para robustez na resolução
-        const [itensResp, respCats] = await Promise.all([
+        // 1) Buscar catálogo de itens (nome, categoria, codigo) e todas as vendas no período
+        const [itensResp, vendasResp] = await Promise.all([
             API.get('/itens?size=10000').catch(e => e),
-            API.get('/categorias?size=1000').catch(e => e)
+            API.get(`/vendas/filtrar-por-data?inicio=${inicio}&fim=${fim}`)
         ]);
+
         let itens = extractArray(itensResp);
         if (!itens.length) {
             for (const ep of ['/itens?size=10000', '/itens', '/item', '/produtos', '/vestuarios']) {
-                try { const r = await API.get(ep); itens = extractArray(r); if (itens.length) break; } catch {}
+                try {
+                    const r = await API.get(ep);
+                    itens = extractArray(r);
+                    if (itens.length) break;
+                } catch {}
             }
         }
-        const categoriasArr = extractArray(respCats);
 
-        const itemById = new Map();
-        itens.forEach(it => itemById.set(String(it.id), it));
-        const catById = new Map();
-        categoriasArr.forEach(c => catById.set(String(c.id), { id: Number(c.id), nome: c.nome }));
-
-        const vendasResp = await API.get(`/vendas/filtrar-por-data?inicio=${inicio}&fim=${fim}`);
         const vendas = extractArray(vendasResp);
 
-        const counts = new Map(); // catId -> qtd
+        // 2) Montar mapa itemId -> { categoria, nome }
+        // Backend de /vendas retorna itemId numérico (ID da entidade Item)
+        // Backend de /itens retorna { nome, categoria, codigo, ... } sem id.
+        // Vamos tentar casar por ID (se existir) e depois por nome, e por fim marcar como "Sem categoria".
+
+        const itemMetaById = new Map(); // key: itemId (number/string) -> { categoria, nome }
+
+        // Se o backend de /itens tiver id, usamos direto; senão, tentamos por nome
+        itens.forEach(it => {
+            const nome = it.nome || it.nomeItem || '';
+            const categoria = it.categoria || 'Sem categoria';
+            const id = it.id != null ? String(it.id) : null;
+
+            if (id) {
+                itemMetaById.set(id, { categoria, nome });
+            }
+
+            // Também criamos um índice auxiliar por nome, para fallback
+            if (nome) {
+                const key = `nome::${nome.toLowerCase()}`;
+                if (!itemMetaById.has(key)) {
+                    itemMetaById.set(key, { categoria, nome });
+                }
+            }
+        });
+
+        // 3) Agregar vendas por categoria
+        const counts = new Map(); // categoria -> quantidade vendida
+
         vendas.forEach(v => {
             const itensVenda = getItensVenda(v);
             if (!Array.isArray(itensVenda)) return;
+
             itensVenda.forEach(iv => {
-                const io = iv.item || {};
-                const itemId = String(io.id ?? getItemId(iv) ?? '');
-                const knownItem = itemById.get(itemId);
-                const catIdRaw = io.fkCategoria ?? io.idCategoria ?? io.categoria?.id ?? knownItem?.fkCategoria ?? knownItem?.idCategoria ?? knownItem?.categoria?.id ?? null;
-                const catId = catIdRaw != null ? String(catIdRaw) : 'sem-categoria';
+                const itemIdRaw = getItemId(iv);
+                const itemId = itemIdRaw != null ? String(itemIdRaw) : '';
+                const nomeItem = iv.nomeItem || iv.item?.nome || '';
+
+                // Tentar achar meta por id
+                let meta = itemMetaById.get(itemId) || null;
+
+                // Fallback: procurar por nome
+                if (!meta && nomeItem) {
+                    meta = itemMetaById.get(`nome::${nomeItem.toLowerCase()}`) || null;
+                }
+
+                const categoria = meta?.categoria || 'Sem categoria';
                 const qtd = getItemQtdVendida(iv) || 1;
-                counts.set(catId, (counts.get(catId) || 0) + qtd);
+
+                counts.set(categoria, (counts.get(categoria) || 0) + qtd);
             });
         });
 
-        // Also include categories with zero sales so they appear in inventory listing
-        categoriasArr.forEach(c => {
-            const key = String(c.id);
-            if (!counts.has(key)) counts.set(key, 0);
-        });
-
-        const arr = Array.from(counts.entries()).map(([catId, qtd]) => ({ catId, qtd }));
+        // 4) Preparar dados paginados para o gráfico
+        const arr = Array.from(counts.entries()).map(([categoria, qtd]) => ({ categoria, qtd }));
         arr.sort((a, b) => b.qtd - a.qtd);
 
         const total = arr.length;
@@ -1462,12 +1493,11 @@ export const getCategoriesForPeriod = async (inicio, fim, page = 1, pageSize = 4
         const meta = [];
 
         slice.forEach((t, i) => {
-            const info = catById.get(t.catId) || { id: t.catId === 'sem-categoria' ? null : Number(t.catId), nome: t.catId === 'sem-categoria' ? 'Sem categoria' : `Categoria ${t.catId}` };
-            labels.push(info.nome || `Categoria ${info.id}`);
+            labels.push(t.categoria || 'Sem categoria');
             values.push(t.qtd);
             const cor = palette[(start + i) % palette.length];
             colors.push(cor);
-            meta.push({ categoryId: info.id, categoryName: info.nome, count: t.qtd, color: cor });
+            meta.push({ categoryId: t.categoria, categoryName: t.categoria, count: t.qtd, color: cor });
         });
 
         return { labels, values, colors, meta, metaPagination: { page: p, totalPages, pageSize, total } };
