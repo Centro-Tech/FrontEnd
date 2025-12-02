@@ -15,7 +15,7 @@ export default function DashboardCompleto() {
     const [loading, setLoading] = useState(true);
     
     // KPIs State
-    const [ticketMedio, setTicketMedio] = useState({ valor: 'R$ 0,00', variacao: 0 });
+    const [ticketMedio, setTicketMedio] = useState({ valor: 'R$ 0,00', variacao: 0, variacaoNominal: 0 });
     const [indiceSazional, setIndiceSazional] = useState({ 
         status: 'Calculando...', 
         variacao: 0,
@@ -98,6 +98,7 @@ export default function DashboardCompleto() {
                 setTicketMedio({
                     valor: ticketMedioData.valor || 'R$ 0,00',
                     variacao: ticketMedioData.variacao || 0,
+                    variacaoNominal: ticketMedioData.variacaoNominal || 0,
                     mesesComVendasAnoAtual: ticketMedioData.mesesComVendasAnoAtual || []
                 });
                 if (ticketMedioData.diasComVendas) {

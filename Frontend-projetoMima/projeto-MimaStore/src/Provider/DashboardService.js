@@ -136,189 +136,128 @@ const extractArray = (axiosResponse) => {
  */
 
 // ═══════════════════════════════════════════════════════════════
-// KPI 1: TICKET MÉDIO
+// KPI 1: VARIAÇÃO DO TICKET MÉDIO / FATURAMENTO
 // ═══════════════════════════════════════════════════════════════
-// Versão aceita: dias (modo básico) ou mes+ano (modo avançado)
+// Aceita: número de dias (modo básico) ou objeto {mes, ano, dataInicio, dataFim} (modo avançado)
 export const getAverageTicket = async (diasOuOpcoes = 30) => {
+    console.log('[TICKET MÉDIO] ═══════════════════════════════════════════════');
+    console.log('[TICKET MÉDIO] Chamada com parâmetro:', diasOuOpcoes);
     try {
-        let inicioAtual, fimAtual, inicioAnterior, fimAnterior;
-        let mesesComVendasAnoAtual = [];
-        let diasComVendas = [];
-        
         const hoje = new Date();
-        const anoAtual = hoje.getFullYear();
-        const mesAtual = hoje.getMonth() + 1;
-
-        // SEMPRE calcular meses com vendas no ano atual (necessário para o dropdown)
-        console.log('[TICKET MÉDIO] Calculando meses com vendas para ano:', anoAtual, 'mês atual:', mesAtual);
+        const formatDate = (d) => d.toISOString().split('T')[0];
         
-        for (let m = 1; m <= 12; m++) {
-            // Incluir apenas meses passados (não o atual nem futuros)
-            if (m >= mesAtual) continue;
-            
-            const inicioMes = new Date(anoAtual, m - 1, 1).toISOString().split('T')[0];
-            const fimMes = new Date(anoAtual, m, 0).toISOString().split('T')[0];
-            
-            const vendasMes = await API.get(`/vendas/filtrar-por-data?inicio=${inicioMes}&fim=${fimMes}`);
-            const vendasMesArray = extractArray(vendasMes);
-            
-            console.log(`[TICKET MÉDIO] Mês ${m} (${inicioMes} a ${fimMes}): ${vendasMesArray.length} vendas`);
-            
-            if (vendasMesArray.length > 0) {
-                mesesComVendasAnoAtual.push(m);
-            }
-        }
-        
-        console.log('[TICKET MÉDIO] Meses com vendas no ano atual:', mesesComVendasAnoAtual);
+        let inicioAtual, fimAtual, inicioAnterior, fimAnterior;
+        let dias;
 
         // Verificar se é modo avançado (objeto com mes e ano)
-        if (typeof diasOuOpcoes === 'object' && diasOuOpcoes.mes && diasOuOpcoes.ano) {
-            const { mes, ano, dataInicio, dataFim } = diasOuOpcoes;
+        if (typeof diasOuOpcoes === 'object' && diasOuOpcoes.dataInicio && diasOuOpcoes.dataFim) {
+            // Modo intervalo personalizado
+            const { dataInicio, dataFim } = diasOuOpcoes;
+            const d1 = new Date(dataInicio);
+            const d2 = new Date(dataFim);
+            const duracao = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
             
-            // Modo intervalo: compara dois períodos personalizados
-            if (dataInicio && dataFim) {
-                // Período "início" (para comparação)
-                inicioAnterior = dataInicio;
-                fimAnterior = dataInicio; // Apenas o dia de início
-                
-                // Período "fim" (atual, que será exibido)
-                inicioAtual = dataFim;
-                fimAtual = dataFim; // Apenas o dia de fim
-                
-                console.log('[TICKET MÉDIO] Modo intervalo:', {
-                    periodoInicio: dataInicio,
-                    periodoFim: dataFim,
-                    logica: 'Variação = (Fim - Início) / Início'
-                });
-            } else {
-                // Modo mês completo (legado)
-                inicioAnterior = new Date(ano, mes - 1, 1).toISOString().split('T')[0];
-                fimAnterior = new Date(ano, mes, 0).toISOString().split('T')[0];
-                
-                fimAtual = hoje.toISOString().split('T')[0];
-                inicioAtual = new Date(anoAtual, mesAtual - 1, 1).toISOString().split('T')[0];
-            }
+            inicioAtual = dataInicio;
+            fimAtual = dataFim;
             
-            // Buscar dias com vendas no mês selecionado para o calendário
-            const inicioMesCalendario = new Date(ano, mes - 1, 1).toISOString().split('T')[0];
-            const fimMesCalendario = new Date(ano, mes, 0).toISOString().split('T')[0];
-            const vendasMesCalendario = await API.get(`/vendas/filtrar-por-data?inicio=${inicioMesCalendario}&fim=${fimMesCalendario}`);
-            const vendasMesArray = extractArray(vendasMesCalendario);
+            const fimAnt = new Date(d1);
+            fimAnt.setDate(fimAnt.getDate() - 1);
+            const inicioAnt = new Date(fimAnt);
+            inicioAnt.setDate(inicioAnt.getDate() - duracao + 1);
             
-            // Extrair datas únicas das vendas
-            const datasUnicas = new Set();
-            vendasMesArray.forEach(venda => {
-                if (venda.data) {
-                    const dataVenda = new Date(venda.data).toISOString().split('T')[0];
-                    datasUnicas.add(dataVenda);
-                }
-            });
-            diasComVendas = Array.from(datasUnicas).sort();
-            
+            inicioAnterior = formatDate(inicioAnt);
+            fimAnterior = formatDate(fimAnt);
+            dias = duracao;
         } else {
-            // Modo básico (dias)
-            const dias = diasOuOpcoes;
-            fimAtual = hoje.toISOString().split('T')[0];
-            inicioAtual = new Date(hoje.getTime() - dias * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            // Modo básico: número de dias
+            dias = typeof diasOuOpcoes === 'number' ? diasOuOpcoes : 30;
+            
+            // Período ATUAL: últimos N dias terminando HOJE
+            // Exemplo 7 dias: se hoje é 01/12, período é 25/11 a 01/12
+            fimAtual = formatDate(hoje);
+            const inicioAtualDate = new Date(hoje.getTime());
+            inicioAtualDate.setDate(inicioAtualDate.getDate() - dias + 1);
+            inicioAtual = formatDate(inicioAtualDate);
 
-            fimAnterior = new Date(hoje.getTime() - dias * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-            inicioAnterior = new Date(hoje.getTime() - 2 * dias * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            // Período ANTERIOR: N dias imediatamente antes do período atual
+            // Exemplo 7 dias: 18/11 a 24/11
+            const fimAnteriorDate = new Date(inicioAtualDate.getTime());
+            fimAnteriorDate.setDate(fimAnteriorDate.getDate() - 1);
+            const inicioAnteriorDate = new Date(fimAnteriorDate.getTime());
+            inicioAnteriorDate.setDate(inicioAnteriorDate.getDate() - dias + 1);
+            
+            inicioAnterior = formatDate(inicioAnteriorDate);
+            fimAnterior = formatDate(fimAnteriorDate);
         }
 
-        console.log('[TICKET MÉDIO] Buscando dados:', {
-            periodoAtual: `${inicioAtual} - ${fimAtual}`,
-            periodoAnterior: `${inicioAnterior} - ${fimAnterior}`
-        });
+        console.log(`[TICKET MÉDIO] Filtro: ${dias} dias`);
+        console.log(`[TICKET MÉDIO] Período ATUAL: ${inicioAtual} a ${fimAtual}`);
+        console.log(`[TICKET MÉDIO] Período ANTERIOR: ${inicioAnterior} a ${fimAnterior}`);
 
-        const [vendasAtuais, vendasAnteriores] = await Promise.all([
+        // Buscar vendas dos dois períodos via API
+        const [respAtual, respAnterior] = await Promise.all([
             API.get(`/vendas/filtrar-por-data?inicio=${inicioAtual}&fim=${fimAtual}`),
             API.get(`/vendas/filtrar-por-data?inicio=${inicioAnterior}&fim=${fimAnterior}`)
         ]);
 
-        const vendasAtuaisData = extractArray(vendasAtuais);
-        const vendasAnterioresData = extractArray(vendasAnteriores);
+        const vendasAtual = extractArray(respAtual);
+        const vendasAnterior = extractArray(respAnterior);
 
-        console.log('[TICKET MÉDIO] Vendas encontradas:', {
-            atual: vendasAtuaisData.length,
-            anterior: vendasAnterioresData.length
-        });
-
-        // DEBUG: Ver estrutura da primeira venda
-        if (vendasAtuaisData.length > 0) {
-            console.log('[TICKET MÉDIO] Primeira venda (estrutura):', vendasAtuaisData[0]);
+        console.log(`[TICKET MÉDIO] Vendas período atual: ${vendasAtual.length}`);
+        console.log(`[TICKET MÉDIO] Vendas período anterior: ${vendasAnterior.length}`);
+        
+        // Debug: mostrar primeiras vendas para verificar estrutura
+        if (vendasAtual.length > 0) {
+            console.log('[TICKET MÉDIO] Primeira venda atual:', JSON.stringify(vendasAtual[0]));
+        }
+        if (vendasAnterior.length > 0) {
+            console.log('[TICKET MÉDIO] Primeira venda anterior:', JSON.stringify(vendasAnterior[0]));
         }
 
-        const totalVendasAtual = vendasAtuaisData.length;
-        const faturamentoAtual = vendasAtuaisData.reduce((sum, v) => sum + getVendaTotalWithFallback(v), 0);
-        const ticketMedioAtual = totalVendasAtual > 0 ? faturamentoAtual / totalVendasAtual : 0;
-
-        const totalVendasAnterior = vendasAnterioresData.length;
-        const faturamentoAnterior = vendasAnterioresData.reduce((sum, v) => sum + getVendaTotalWithFallback(v), 0);
-        const ticketMedioAnterior = totalVendasAnterior > 0 ? faturamentoAnterior / totalVendasAnterior : 0;
-
-        console.log('[TICKET MÉDIO] Cálculos:', {
-            ticketAtual: ticketMedioAtual,
-            ticketAnterior: ticketMedioAnterior
-        });
-
-        const modoAvancado = typeof diasOuOpcoes === 'object' && diasOuOpcoes.mes && diasOuOpcoes.ano;
-        const modoIntervalo = modoAvancado && diasOuOpcoes.dataInicio && diasOuOpcoes.dataFim;
+        // Somar valorTotal de cada venda
+        // O backend retorna { valorTotal: number, ... } conforme swagger
+        const somaAtual = vendasAtual.reduce((acc, v) => {
+            const val = toNumber(v.valorTotal ?? v.valor_total ?? 0);
+            return acc + val;
+        }, 0);
         
-        let valorDisplay, variacaoPercentual;
+        const somaAnterior = vendasAnterior.reduce((acc, v) => {
+            const val = toNumber(v.valorTotal ?? v.valor_total ?? 0);
+            return acc + val;
+        }, 0);
+
+        console.log(`[TICKET MÉDIO] Faturamento atual: R$ ${somaAtual.toFixed(2)}`);
+        console.log(`[TICKET MÉDIO] Faturamento anterior: R$ ${somaAnterior.toFixed(2)}`);
+
+        // Variação nominal (diferença em R$)
+        const variacaoNominal = somaAtual - somaAnterior;
         
-        if (modoIntervalo) {
-            // Modo intervalo:
-            // - Mostrar valor do período FIM (ticketMedioAtual = valor na data fim)
-            // - Variação = (Fim - Início) / Início
-            // ticketMedioAtual = ticket médio no dia FIM
-            // ticketMedioAnterior = ticket médio no dia INÍCIO
-            valorDisplay = ticketMedioAtual;
-            
-            if (ticketMedioAnterior > 0 && !isNaN(ticketMedioAtual) && !isNaN(ticketMedioAnterior)) {
-                // Variação = (Fim - Início) / Início * 100
-                variacaoPercentual = ((ticketMedioAtual - ticketMedioAnterior) / ticketMedioAnterior) * 100;
-            } else {
-                variacaoPercentual = 0;
-            }
-            
-            console.log('[TICKET MÉDIO] Cálculo intervalo:', {
-                ticketInicio: ticketMedioAnterior.toFixed(2),
-                ticketFim: ticketMedioAtual.toFixed(2),
-                variacao: variacaoPercentual.toFixed(2) + '%'
-            });
-        } else if (modoAvancado) {
-            // Modo avançado mês completo (legado):
-            // - Mostrar valor do período selecionado (ticketMedioAnterior)
-            // - Variação sempre comparando período selecionado COM o mês/ano atual (hoje)
-            valorDisplay = ticketMedioAnterior;
-            
-            if (ticketMedioAnterior > 0 && !isNaN(ticketMedioAtual) && !isNaN(ticketMedioAnterior)) {
-                variacaoPercentual = ((ticketMedioAtual - ticketMedioAnterior) / ticketMedioAnterior) * 100;
-            } else {
-                variacaoPercentual = 0;
-            }
-        } else {
-            // Modo básico: mostrar valor atual e comparar com período anterior
-            valorDisplay = ticketMedioAtual;
-            
-            if (ticketMedioAnterior > 0 && !isNaN(ticketMedioAtual) && !isNaN(ticketMedioAnterior)) {
-                variacaoPercentual = ((ticketMedioAtual - ticketMedioAnterior) / ticketMedioAnterior) * 100;
-            } else {
-                variacaoPercentual = 0;
-            }
+        // Variação percentual
+        let variacaoPercentual = 0;
+        if (somaAnterior !== 0) {
+            variacaoPercentual = ((somaAtual - somaAnterior) / somaAnterior) * 100;
+        } else if (somaAtual > 0) {
+            variacaoPercentual = 100; // Se anterior era 0 e atual > 0, consideramos +100%
         }
 
-        const variacaoFinal = isNaN(variacaoPercentual) ? 0 : Math.round(variacaoPercentual);
+        console.log(`[TICKET MÉDIO] Variação: R$ ${variacaoNominal.toFixed(2)} (${variacaoPercentual.toFixed(1)}%)`);
+
+        // Formatar valor para exibição
+        const valorFormatado = variacaoNominal.toLocaleString('pt-BR', { 
+            style: 'currency', 
+            currency: 'BRL'
+        });
 
         return {
-            valor: `R$ ${valorDisplay.toFixed(2).replace('.', ',')}`,
-            variacao: variacaoFinal,
-            mesesComVendasAnoAtual, // Incluir para filtrar dropdown
-            diasComVendas // Incluir dias com vendas para o calendário
+            valor: valorFormatado,
+            variacao: Math.round(variacaoPercentual),
+            variacaoNominal,
+            faturamentoAtual: somaAtual,
+            faturamentoAnterior: somaAnterior
         };
     } catch (error) {
-        console.error('Error fetching average ticket:', error);
-        return { valor: 'R$ 0,00', variacao: 0, mesesComVendasAnoAtual: [] };
+        console.error('[TICKET MÉDIO] Erro:', error);
+        return { valor: 'R$ 0,00', variacao: 0, variacaoNominal: 0 };
     }
 };
 
@@ -839,74 +778,60 @@ export const getLoyalCustomersStats = async (mesesOuOpcoes = 12) => {
 // ═══════════════════════════════════════════════════════════════
 // GRÁFICO 1: ESTOQUE X VENDAS (Ranking Semanal)
 // ═══════════════════════════════════════════════════════════════
+// GRÁFICO: PRODUTOS EM RISCO DE RUPTURA (COM REGRESSÃO LINEAR)
+// ═══════════════════════════════════════════════════════════════
+// Usa regressão linear para prever vendas diárias futuras
+// Parâmetros:
+// - dataHistorico: data inicial para buscar vendas (até hoje)
+// - dataPrevisaoInicio: início do período de previsão
+// - dataPrevisaoFim: fim do período de previsão (máx 30 dias)
+// Risco = Demanda Prevista / Estoque Atual
 export const getStockSalesRelation = async (options = {}) => {
     try {
         const page = Math.max(1, parseInt(options.page || 1, 10));
         const pageSize = Math.max(1, parseInt(options.pageSize || 10, 10));
         const order = (options.order || 'desc').toLowerCase();
         
-        // Se data foi fornecida, usar ela como fim do período
-        const hoje = options.data ? new Date(options.data) : new Date();
-        const seteDiasAtras = new Date(hoje);
-        seteDiasAtras.setDate(seteDiasAtras.getDate() - 7);
+        const hoje = new Date();
+        const hojeStr = hoje.toISOString().split('T')[0];
+        
+        // Data de início do histórico (padrão: 30 dias atrás)
+        const dataHistorico = options.dataHistorico || (() => {
+            const d = new Date(hoje);
+            d.setDate(d.getDate() - 30);
+            return d.toISOString().split('T')[0];
+        })();
+        
+        // Período de previsão (padrão: próximos 30 dias)
+        const dataPrevisaoInicio = options.dataPrevisaoInicio || hojeStr;
+        const dataPrevisaoFim = options.dataPrevisaoFim || (() => {
+            const d = new Date(hoje);
+            d.setDate(d.getDate() + 30);
+            return d.toISOString().split('T')[0];
+        })();
+        
+        // Calcular número de dias de previsão
+        const diasPrevisao = Math.ceil((new Date(dataPrevisaoFim) - new Date(dataPrevisaoInicio)) / (1000 * 60 * 60 * 24)) + 1;
 
-        console.log('[ESTOQUE X VENDAS] Período:', {
-            inicio: seteDiasAtras.toISOString().split('T')[0],
-            fim: hoje.toISOString().split('T')[0],
-            dataPersonalizada: options.data || 'não (usando hoje)'
+        console.log('[RISCO RUPTURA] ═══════════════════════════════════════════════');
+        console.log('[RISCO RUPTURA] Parâmetros:', {
+            historicoDesde: dataHistorico,
+            historicoAte: hojeStr,
+            previsaoInicio: dataPrevisaoInicio,
+            previsaoFim: dataPrevisaoFim,
+            diasPrevisao
         });
 
-        const [itensResponse, vendasSemana] = await Promise.all([
-            API.get('/itens?size=10000').catch(e => e), // ✅ AUMENTADO para garantir todos os itens
-            API.get(`/vendas/filtrar-por-data?inicio=${seteDiasAtras.toISOString().split('T')[0]}&fim=${hoje.toISOString().split('T')[0]}`)
+        // Buscar todos os itens e vendas do período histórico
+        const [itensResponse, vendasResponse] = await Promise.all([
+            API.get('/itens?size=10000').catch(e => e),
+            API.get(`/vendas/filtrar-por-data?inicio=${dataHistorico}&fim=${hojeStr}`)
         ]);
 
-        // Fallback for items list if first attempt fails or returns empty
         let todosItens = extractArray(itensResponse);
-        console.log('[ESTOQUE X VENDAS] ✅ Itens obtidos:', todosItens.length);
-        // Se veio paginado ou com estoque zerado, tentar endpoint dedicado de estoque
-        const estoqueSum = todosItens.reduce((acc, it) => acc + (Number(it.qtdEstoque ?? it.quantidadeEstoque ?? it.qtd_estoque ?? it.quantidade_estoque ?? it.estoque ?? 0) || 0), 0);
-        if (todosItens.length && estoqueSum === 0) {
-            try {
-                const respEst = await API.get('/itens/estoque');
-                const itensEstoque = extractArray(respEst);
-                if (itensEstoque.length) {
-                    // Merge por codigo quando disponível
-                    const mapEstoquePorCodigo = new Map(itensEstoque.filter(x => x.codigo).map(x => [x.codigo, x]));
-                    todosItens = todosItens.map(it => {
-                        if (it.codigo && mapEstoquePorCodigo.has(it.codigo)) {
-                            const src = mapEstoquePorCodigo.get(it.codigo);
-                            return {
-                                ...it,
-                                qtdEstoque: src.qtdEstoque ?? it.qtdEstoque
-                            };
-                        }
-                        return it;
-                    });
-                    console.log('[ESTOQUE X VENDAS] Estoque atualizado via /itens/estoque');
-                }
-            } catch (e) {
-                console.warn('[ESTOQUE X VENDAS] Falha ao obter /itens/estoque:', e?.message);
-            }
-        }
+        console.log('[RISCO RUPTURA] Itens obtidos:', todosItens.length);
         
-        if (!todosItens.length) {
-            const altEndpoints = ['/itens?size=10000', '/itens', '/item', '/produtos', '/vestuarios', '/estoque/itens'];
-            for (const ep of altEndpoints) {
-                try {
-                    const resp = await API.get(ep);
-                    todosItens = extractArray(resp);
-                    if (todosItens.length) {
-                        console.log('[ESTOQUE X VENDAS] Catálogo obtido por endpoint alternativo:', ep, 'qtd:', todosItens.length);
-                        break;
-                    }
-                } catch {}
-            }
-        }
-
-        const vendas = extractArray(vendasSemana);
-
-        // Tentar obter um mapa de estoque atualizado via /itens/estoque
+        // Tentar obter estoque atualizado
         let estoquePorCodigo = {};
         try {
             const respEst = await API.get('/itens/estoque');
@@ -919,52 +844,17 @@ export const getStockSalesRelation = async (options = {}) => {
                         estoquePorCodigo[codigo] = toNumber(est);
                     }
                 });
-                console.log('[ESTOQUE X VENDAS] ✅ Estoque obtido via /itens/estoque:', Object.keys(estoquePorCodigo).length);
+                console.log('[RISCO RUPTURA] Estoque via /itens/estoque:', Object.keys(estoquePorCodigo).length);
             }
         } catch (e) {
-            console.warn('[ESTOQUE X VENDAS] Aviso: falha ao consultar /itens/estoque:', e?.message);
+            console.warn('[RISCO RUPTURA] Falha ao consultar /itens/estoque:', e?.message);
         }
 
-        console.log('[ESTOQUE X VENDAS] Dados:', {
-            totalItens: todosItens.length,
-            totalVendas: vendas.length
-        });
+        const vendas = extractArray(vendasResponse);
+        console.log('[RISCO RUPTURA] Vendas no histórico:', vendas.length);
 
-        if (vendas.length > 0) {
-            console.log('[ESTOQUE X VENDAS] Estrutura venda[0]:', vendas[0]);
-            if (Array.isArray(vendas[0]?.itensVenda)) {
-                console.log('[ESTOQUE X VENDAS] itensVenda[0]:', vendas[0].itensVenda[0]);
-            } else {
-                console.warn('[ESTOQUE X VENDAS] itensVenda ausente na venda; verifique backend (lazy/eager).');
-            }
-        }
-
-        const vendasPorItem = {};
-        const vendasPorCodigo = {};
-        vendas.forEach(venda => {
-            const itens = getItensVenda(venda);
-            if (itens && Array.isArray(itens)) {
-                itens.forEach(itemVenda => {
-                    const itemId = getItemId(itemVenda);
-                    const codigo = itemVenda?.item?.codigo || itemVenda?.produto?.codigo || itemVenda?.vestuario?.codigo || itemVenda?.codigo;
-                    if (itemId) {
-                        vendasPorItem[itemId] = (vendasPorItem[itemId] || 0) + getItemQtdVendida(itemVenda);
-                    }
-                    if (codigo) {
-                        vendasPorCodigo[codigo] = (vendasPorCodigo[codigo] || 0) + getItemQtdVendida(itemVenda);
-                    }
-                });
-            }
-        });
-
-        console.log('[ESTOQUE X VENDAS] Vendas por item (por ID):', vendasPorItem);
-        console.log('[ESTOQUE X VENDAS] Vendas por item (por CÓDIGO):', Object.entries(vendasPorCodigo).slice(0,5));
-        if (todosItens.length > 0) {
-            console.log('[ESTOQUE X VENDAS] Primeiro item do catálogo:', todosItens[0]);
-        }
-
-        // Calcular vendas diárias por item para calcular desvio padrão
-        const vendasDiariasPorItem = {};
+        // Organizar vendas por item e por dia para regressão linear
+        const vendasPorItemPorDia = {}; // { itemKey: { 'YYYY-MM-DD': quantidade } }
         vendas.forEach(venda => {
             const dataVenda = getVendaDateISO(venda);
             if (!dataVenda) return;
@@ -974,121 +864,164 @@ export const getStockSalesRelation = async (options = {}) => {
                 itens.forEach(itemVenda => {
                     const itemId = getItemId(itemVenda);
                     const codigo = itemVenda?.item?.codigo || itemVenda?.produto?.codigo || itemVenda?.vestuario?.codigo || itemVenda?.codigo;
-                    const key = itemId || codigo;
+                    const key = codigo || itemId;
+                    const qtdVendida = getItemQtdVendida(itemVenda);
                     
                     if (key) {
-                        if (!vendasDiariasPorItem[key]) {
-                            vendasDiariasPorItem[key] = {};
+                        if (!vendasPorItemPorDia[key]) {
+                            vendasPorItemPorDia[key] = {};
                         }
-                        vendasDiariasPorItem[key][dataVenda] = (vendasDiariasPorItem[key][dataVenda] || 0) + getItemQtdVendida(itemVenda);
+                        vendasPorItemPorDia[key][dataVenda] = (vendasPorItemPorDia[key][dataVenda] || 0) + qtdVendida;
                     }
                 });
             }
         });
 
-        const itensComRazao = todosItens.map(item => {
-            const vendas = (item?.id != null ? vendasPorItem[item.id] : 0) || (item?.codigo ? vendasPorCodigo[item.codigo] : 0) || 0;
-            const estoqueLookup = item?.codigo ? estoquePorCodigo[item.codigo] : undefined;
-            const estoque = (estoqueLookup != null ? estoqueLookup : (item.qtdEstoque || item.quantidadeEstoque || item.qtd_estoque || item.quantidade_estoque || item.estoque)) || 0;
+        // Função para calcular regressão linear simples
+        // y = a + b*x, onde x = índice do dia (0, 1, 2, ...)
+        const calcularRegressaoLinear = (vendasPorDia, dataInicio, dataFim) => {
+            // Criar array de pontos (x=dia, y=vendas)
+            const pontos = [];
+            let dataAtual = new Date(dataInicio);
+            const dataFinal = new Date(dataFim);
+            let x = 0;
             
-            // Calcular μ (média de vendas por dia)
-            const key = item.id || item.codigo;
-            const vendasDiarias = vendasDiariasPorItem[key] || {};
-            const diasComVendas = Object.keys(vendasDiarias).length;
-            const mu = diasComVendas > 0 ? vendas / 7 : 0; // Média de vendas por dia na semana
-            
-            // Calcular σ (desvio padrão das vendas diárias)
-            let sigma = 0;
-            if (diasComVendas > 1) {
-                const valores = Object.values(vendasDiarias);
-                const soma = valores.reduce((a, b) => a + b, 0);
-                const media = soma / valores.length;
-                const variancia = valores.reduce((acc, val) => acc + Math.pow(val - media, 2), 0) / valores.length;
-                sigma = Math.sqrt(variancia);
+            while (dataAtual <= dataFinal) {
+                const dataStr = dataAtual.toISOString().split('T')[0];
+                const y = vendasPorDia[dataStr] || 0;
+                pontos.push({ x, y });
+                dataAtual.setDate(dataAtual.getDate() + 1);
+                x++;
             }
             
-            // Aplicar Fórmula B: Risk = [μ / (S + ε)] × (1 + CV)
-            // onde CV = σ / μ
-            const S = estoque;
-            const epsilon = 0.5; // Constante pequena para evitar divisão por zero
-            const CV = mu > 0 ? sigma / mu : 0;
-            const risk = mu > 0 ? (mu / (S + epsilon)) * (1 + CV) : 0;
+            if (pontos.length < 2) {
+                // Sem dados suficientes, retornar média simples
+                const soma = pontos.reduce((acc, p) => acc + p.y, 0);
+                return { a: soma / Math.max(1, pontos.length), b: 0 };
+            }
+            
+            // Calcular médias
+            const n = pontos.length;
+            const somaX = pontos.reduce((acc, p) => acc + p.x, 0);
+            const somaY = pontos.reduce((acc, p) => acc + p.y, 0);
+            const mediaX = somaX / n;
+            const mediaY = somaY / n;
+            
+            // Calcular coeficientes
+            let numerador = 0;
+            let denominador = 0;
+            pontos.forEach(p => {
+                numerador += (p.x - mediaX) * (p.y - mediaY);
+                denominador += (p.x - mediaX) * (p.x - mediaX);
+            });
+            
+            const b = denominador !== 0 ? numerador / denominador : 0;
+            const a = mediaY - b * mediaX;
+            
+            return { a, b, n, totalVendas: somaY };
+        };
+        
+        // Função para prever vendas em um dia futuro
+        const preverVendasDia = (regressao, diasNoFuturo) => {
+            // y = a + b * x (x = dias desde o início do histórico + diasNoFuturo)
+            const previsao = regressao.a + regressao.b * (regressao.n + diasNoFuturo);
+            // Não pode ser negativo
+            return Math.max(0, previsao);
+        };
+
+        // Calcular risco para cada item
+        const itensComRisco = todosItens.map(item => {
+            const key = item.codigo || item.id;
+            const vendasDiarias = vendasPorItemPorDia[key] || {};
+            
+            // Estoque atual
+            const estoqueLookup = item?.codigo ? estoquePorCodigo[item.codigo] : undefined;
+            const estoqueAtual = (estoqueLookup != null ? estoqueLookup : (item.qtdEstoque || item.quantidadeEstoque || item.qtd_estoque || item.quantidade_estoque || item.estoque)) || 0;
+            
+            // Calcular regressão linear com base no histórico
+            const regressao = calcularRegressaoLinear(vendasDiarias, dataHistorico, hojeStr);
+            
+            // Calcular demanda prevista para o período de previsão
+            let demandaPrevista = 0;
+            for (let i = 0; i < diasPrevisao; i++) {
+                demandaPrevista += preverVendasDia(regressao, i);
+            }
+            
+            // Previsão diária média
+            const previsaoDiaria = demandaPrevista / diasPrevisao;
+            
+            // Calcular risco = Demanda Prevista / Estoque Atual
+            let risco = 0;
+            if (estoqueAtual > 0) {
+                risco = demandaPrevista / estoqueAtual;
+            } else if (demandaPrevista > 0) {
+                risco = 999; // Estoque zerado com demanda = risco máximo
+            }
             
             return {
                 id: item.id,
                 codigo: item.codigo,
                 nome: item.nome,
-                estoque: estoque,
-                vendas: vendas,
-                mu: mu,
-                sigma: sigma,
-                cv: CV,
-                risk: risk,
-                razao: risk // Usar risk como critério de ordenação
+                estoque: estoqueAtual,
+                totalVendasHistorico: regressao.totalVendas || 0,
+                previsaoDiaria: Math.round(previsaoDiaria * 100) / 100,
+                demandaPrevista: Math.round(demandaPrevista * 100) / 100,
+                tendencia: regressao.b > 0.01 ? 'crescente' : (regressao.b < -0.01 ? 'decrescente' : 'estável'),
+                risco: Math.round(risco * 100) / 100
             };
         });
 
-        const matchEstoqueCodigo = itensComRazao.filter(i => i.codigo && (i.estoque ?? 0) > 0 && estoquePorCodigo[i.codigo] != null).length;
-        console.log('[ESTOQUE X VENDAS] Itens com estoque preenchido via /itens/estoque:', { count: matchEstoqueCodigo });
-
-        // Estatística de quantos itens usaram fallback por código
-        const totalMatchCodigo = itensComRazao.filter(i => !i.id && i.codigo && (vendasPorCodigo[i.codigo] || 0) > 0).length;
-        console.log('[ESTOQUE X VENDAS] Itens usando fallback por CÓDIGO:', { totalMatchCodigo });
-
-        // Log de alguns cálculos de risco para debug
-        const itensComRisco = itensComRazao.filter(i => i.risk > 0).slice(0, 3);
-        console.log('[RISCO DE RUPTURA] Exemplos de cálculo (top 3):', itensComRisco.map(i => ({
+        // Log de exemplos de cálculo
+        const exemplos = itensComRisco.filter(i => i.risco > 0).slice(0, 3);
+        console.log('[RISCO RUPTURA] Exemplos de cálculo:', exemplos.map(i => ({
             nome: i.nome?.substring(0, 20),
+            vendasHistorico: i.totalVendasHistorico,
+            previsaoDiaria: i.previsaoDiaria,
+            demandaPrevista: i.demandaPrevista,
             estoque: i.estoque,
-            vendas: i.vendas,
-            μ: i.mu.toFixed(2),
-            σ: i.sigma.toFixed(2),
-            CV: i.cv.toFixed(2),
-            risk: i.risk.toFixed(4)
+            tendencia: i.tendencia,
+            risco: i.risco
         })));
 
-        // Ordenar: maior risco primeiro (risk score)
-        itensComRazao.sort((a, b) => order === 'asc' ? a.risk - b.risk : b.risk - a.risk);
+        // Ordenar: maior risco primeiro
+        itensComRisco.sort((a, b) => order === 'asc' ? a.risco - b.risco : b.risco - a.risco);
 
         // Paginação
-        const totalItems = itensComRazao.length;
+        const totalItems = itensComRisco.length;
         const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
         const safePage = Math.min(page, totalPages);
         const start = (safePage - 1) * pageSize;
         const end = start + pageSize;
-        const pageItens = itensComRazao.slice(start, end);
+        const pageItens = itensComRisco.slice(start, end);
 
-        console.log('[ESTOQUE X VENDAS] Página:', { page: safePage, pageSize, totalPages });
-        console.log('[ESTOQUE X VENDAS] pageItens (primeiros 3):', pageItens.slice(0, 3).map(i => ({ 
-            id: i.id, 
-            codigo: i.codigo, 
-            nome: i.nome?.substring(0, 20), 
-            vendas: i.vendas, 
-            estoque: i.estoque,
-            risk: i.risk?.toFixed(4)
-        })));
+        console.log('[RISCO RUPTURA] Página:', { page: safePage, pageSize, totalPages });
 
+        // Preparar dados para o gráfico
         const labels = pageItens.map(i => i.codigo || (i.nome ? i.nome.substring(0, 15) : `#${i.id}`));
-        const vendasArr = pageItens.map(i => i.vendas);
+        const riscos = pageItens.map(i => i.risco);
         const estoqueArr = pageItens.map(i => i.estoque);
+        const metaItens = pageItens.map(i => ({
+            previsaoDiaria: i.previsaoDiaria,
+            demandaPrevista: i.demandaPrevista,
+            totalVendasHistorico: i.totalVendasHistorico,
+            tendencia: i.tendencia
+        }));
 
-        console.log('[ESTOQUE X VENDAS] ✅ RETORNANDO DADOS:', { 
+        console.log('[RISCO RUPTURA] ✅ Retornando:', { 
             labelsCount: labels.length,
-            labels: labels.slice(0, 5), 
-            vendas: vendasArr.slice(0, 5), 
-            estoque: estoqueArr.slice(0, 5),
-            timestamp: new Date().toISOString()
+            topRiscos: riscos.slice(0, 3)
         });
 
         return {
             labels,
-            vendas: vendasArr,
+            riscos,
             estoque: estoqueArr,
+            metaItens,
             meta: { totalItems, totalPages, page: safePage, pageSize }
         };
     } catch (error) {
-        console.error('Error fetching stock sales relation:', error);
-        return { labels: [], vendas: [], estoque: [], meta: { totalItems: 0, totalPages: 1, page: 1, pageSize: options?.pageSize || 10 } };
+        console.error('[RISCO RUPTURA] Erro:', error);
+        return { labels: [], riscos: [], estoque: [], metaItens: [], meta: { totalItems: 0, totalPages: 1, page: 1, pageSize: options?.pageSize || 10 } };
     }
 };
 

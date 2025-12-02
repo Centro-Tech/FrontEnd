@@ -15,7 +15,7 @@ export default function DashboardSimples() {
     const [loading, setLoading] = useState(true);
     
     // KPIs State
-    const [ticketMedio, setTicketMedio] = useState({ valor: 'R$ 0,00', variacao: 0 });
+    const [ticketMedio, setTicketMedio] = useState({ valor: 'R$ 0,00', variacao: 0, variacaoNominal: 0 });
     const [indiceSazional, setIndiceSazional] = useState({ 
         status: 'Calculando...', 
         variacao: 0,
@@ -39,9 +39,23 @@ export default function DashboardSimples() {
     const [filtroTicket, setFiltroTicket] = useState(30); // dias: 7, 30, 90
     const [filtroFidelizacao, setFiltroFidelizacao] = useState(24); // meses: 24, 36, 48
     const [filtroCategorias, setFiltroCategorias] = useState(3); // meses: 1, 3, 6
-    const [dataEstoqueRuptura, setDataEstoqueRuptura] = useState(new Date().toISOString().split('T')[0]); // data para cálculo de ruptura
-    const [mesEstoqueRuptura, setMesEstoqueRuptura] = useState(new Date().getMonth() + 1); // 1-12
-    const [anoEstoqueRuptura, setAnoEstoqueRuptura] = useState(new Date().getFullYear());
+    
+    // Filtros para Risco de Ruptura (com calendário de intervalo)
+    // Início: data de histórico para regressão linear (padrão: 7 dias atrás)
+    // Fim: data limite da previsão (padrão: amanhã, restrito aos próximos 30 dias)
+    const hoje = new Date();
+    const seteDiasAtras = new Date(hoje);
+    seteDiasAtras.setDate(hoje.getDate() - 7);
+    const amanha = new Date(hoje);
+    amanha.setDate(hoje.getDate() + 1);
+    const trintaDiasFrente = new Date(hoje);
+    trintaDiasFrente.setDate(hoje.getDate() + 30);
+    
+    // Início = data de histórico (padrão: 7 dias atrás)
+    const [rupturaDataInicio, setRupturaDataInicio] = useState(seteDiasAtras.toISOString().split('T')[0]);
+    // Fim = data limite de previsão (padrão: amanhã)
+    const [rupturaDataFim, setRupturaDataFim] = useState(amanha.toISOString().split('T')[0]);
+    
     // Calendário para o gráfico de Categorias
     const [dataCategorias, setDataCategorias] = useState(new Date().toISOString().split('T')[0]);
     const [mesCategorias, setMesCategorias] = useState(new Date().getMonth() + 1); // 1-12
@@ -55,25 +69,6 @@ export default function DashboardSimples() {
     const [filtroEstacao2, setFiltroEstacao2] = useState(null); // null = auto (estação anterior)
     const [filtroSazionalBasico, setFiltroSazionalBasico] = useState(1); // 1, 2 ou 3 estações atrás
     const [filtroAno2, setFiltroAno2] = useState(null); // null = auto (ano da estação anterior)
-
-    // Atualizar dataEstoqueRuptura quando mês ou ano mudarem
-    useEffect(() => {
-        // Obter o último dia do mês selecionado
-        const ultimoDia = new Date(anoEstoqueRuptura, mesEstoqueRuptura, 0).getDate();
-        const dataAtual = new Date();
-        const mesAtual = dataAtual.getMonth() + 1;
-        const anoAtual = dataAtual.getFullYear();
-        const diaAtual = dataAtual.getDate();
-        
-        // Se for o mês/ano atual, usar o dia atual como limite
-        let dia = ultimoDia;
-        if (mesEstoqueRuptura === mesAtual && anoEstoqueRuptura === anoAtual) {
-            dia = Math.min(diaAtual, ultimoDia);
-        }
-        
-        const novaData = `${anoEstoqueRuptura}-${String(mesEstoqueRuptura).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-        setDataEstoqueRuptura(novaData);
-    }, [mesEstoqueRuptura, anoEstoqueRuptura]);
 
     // Atualizar dataCategorias quando mês ou ano das categorias mudarem
     useEffect(() => {
@@ -99,7 +94,8 @@ export default function DashboardSimples() {
         filtroFidelizacao,
         filtroCategorias, 
         filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2,
-        dataEstoqueRuptura,
+        rupturaDataInicio,
+        rupturaDataFim,
         dataCategorias,
         categoriasPagination.page
     ]);
@@ -108,7 +104,7 @@ export default function DashboardSimples() {
     useEffect(() => {
         loadEstoqueChart(estoqueMeta.page);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [estoqueMeta.page]);
+    }, [estoqueMeta.page, rupturaDataInicio, rupturaDataFim]);
 
     const loadDashboardData = async () => {
         setLoading(true);
@@ -116,14 +112,22 @@ export default function DashboardSimples() {
             // Dashboard Simples: Sempre usar filtros básicos
             console.log('[DASHBOARD SIMPLES] Parâmetros básicos:', { 
                 ticket: filtroTicket, 
-                fidelizacao: filtroFidelizacao 
+                fidelizacao: filtroFidelizacao,
+                rupturaInicio: rupturaDataInicio,
+                rupturaFim: rupturaDataFim
             });
 
             const [ticketData, sazonalData, fidelizacaoData, estoqueVendas] = await Promise.all([
                 DashboardService.getAverageTicket(filtroTicket),
                 DashboardService.getSeasonalIndex(filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2),
                 DashboardService.getLoyalCustomersStats(filtroFidelizacao),
-                DashboardService.getStockSalesRelation({ page: 1, pageSize: estoqueMeta.pageSize || 4, order: 'desc', data: dataEstoqueRuptura })
+                DashboardService.getStockSalesRelation({ 
+                    page: 1, 
+                    pageSize: estoqueMeta.pageSize || 4, 
+                    order: 'desc', 
+                    dataHistorico: rupturaDataInicio,
+                    dataPrevisaoFim: rupturaDataFim
+                })
             ]);
 
             // Carregar categorias separadamente (depende do modo: mês inteiro ou dia específico) — agora paginado
@@ -150,6 +154,7 @@ export default function DashboardSimples() {
                 setTicketMedio({ 
                     valor: ticketData.valor || 'R$ 0,00', 
                     variacao: ticketData.variacao || 0,
+                    variacaoNominal: ticketData.variacaoNominal || 0,
                     mesesComVendasAnoAtual: ticketData.mesesComVendasAnoAtual || []
                 });
             }
@@ -208,9 +213,10 @@ export default function DashboardSimples() {
                 const chartData = {
                     labels: estoqueVendas.labels,
                     datasets: [
-                        { label: 'Vendas', data: estoqueVendas.vendas || [], backgroundColor: '#864176', borderRadius: 6, barPercentage: 0.78, categoryPercentage: 0.25, barThickness: 14, maxBarThickness: 18 },
+                        { label: 'Risco', data: estoqueVendas.riscos || [], backgroundColor: '#864176', borderRadius: 6, barPercentage: 0.78, categoryPercentage: 0.25, barThickness: 14, maxBarThickness: 18 },
                         { label: 'Estoque', data: estoqueVendas.estoque || [], backgroundColor: '#B08AAA', borderRadius: 6, barPercentage: 0.78, categoryPercentage: 0.25, barThickness: 14, maxBarThickness: 18 }
-                    ]
+                    ],
+                    metaItens: estoqueVendas.metaItens || []
                 };
                 setEstoqueVendasData(chartData);
                 if (estoqueVendas.meta) setEstoqueMeta(estoqueVendas.meta);
@@ -239,14 +245,21 @@ export default function DashboardSimples() {
 
     const loadEstoqueChart = async (page) => {
         try {
-            const estoqueVendas = await DashboardService.getStockSalesRelation({ page: page || 1, pageSize: estoqueMeta.pageSize || 4, order: 'desc', data: dataEstoqueRuptura });
+            const estoqueVendas = await DashboardService.getStockSalesRelation({ 
+                page: page || 1, 
+                pageSize: estoqueMeta.pageSize || 4, 
+                order: 'desc', 
+                dataHistorico: rupturaDataInicio,
+                dataPrevisaoFim: rupturaDataFim
+            });
             if (estoqueVendas && estoqueVendas.labels) {
                 setEstoqueVendasData({
                     labels: estoqueVendas.labels,
                     datasets: [
-                        { label: 'Vendas', data: estoqueVendas.vendas || [], backgroundColor: '#864176', borderRadius: 6, barPercentage: 0.78, categoryPercentage: 0.25, barThickness: 14, maxBarThickness: 18 },
+                        { label: 'Risco', data: estoqueVendas.riscos || [], backgroundColor: '#864176', borderRadius: 6, barPercentage: 0.78, categoryPercentage: 0.25, barThickness: 14, maxBarThickness: 18 },
                         { label: 'Estoque', data: estoqueVendas.estoque || [], backgroundColor: '#B08AAA', borderRadius: 6, barPercentage: 0.78, categoryPercentage: 0.25, barThickness: 14, maxBarThickness: 18 }
-                    ]
+                    ],
+                    metaItens: estoqueVendas.metaItens || []
                 });
                 if (estoqueVendas.meta) setEstoqueMeta(estoqueVendas.meta);
             }
@@ -395,34 +408,50 @@ export default function DashboardSimples() {
 
                 {/* Charts Section */}
                 <div className={styles.chartsSection}>
-                    {estoqueVendasData && (
+                    {estoqueVendasData && (() => {
+                        // Calcular dias de previsão (desde hoje até a data fim)
+                        const hojeDate = new Date();
+                        const hojeStr = hojeDate.toISOString().split('T')[0];
+                        const diasPrevisao = Math.ceil((new Date(rupturaDataFim) - hojeDate) / (1000 * 60 * 60 * 24)) + 1;
+                        
+                        const formatarDataBR = (dataStr) => {
+                            if (!dataStr) return '';
+                            const [ano, mes, dia] = dataStr.split('-');
+                            return `${dia}/${mes}/${ano}`;
+                        };
+                        
+                        // Limite de 30 dias para a data de fim (previsão)
+                        const limite30Dias = new Date(hojeDate);
+                        limite30Dias.setDate(hojeDate.getDate() + 30);
+                        const dataMinFim = hojeStr;
+                        const dataMaxFim = limite30Dias.toISOString().split('T')[0];
+                        
+                        return (
                         <div>
                             {console.log('[DASHBOARD UI] Renderizando ChartCard com estoqueVendasData:', {
                                 labelsCount: estoqueVendasData?.labels?.length,
                                 hasDatasets: !!estoqueVendasData?.datasets
                             })}
                             <ChartCard
-                                titulo="Produtos em Risco de Ruptura (Risco = Vendas médias / Estoque atual)"
+                                titulo={`Produtos em Risco de Ruptura (próximos ${diasPrevisao} dias)`}
                                 tipo="bar"
                                 dados={estoqueVendasData}
-                                explicacao="Identifica produtos com alta demanda em relação ao estoque atual. Produtos no topo vendem rápido e precisam de reposição urgente para evitar ruptura."
+                                explicacao={`Usa regressão linear do histórico (desde ${formatarDataBR(rupturaDataInicio)}) para prever vendas. Risco > 1 = alta chance de faltar estoque.`}
                                 filtroTemporal={
                                     <FiltroCalendario
-                                        dataSelecionada={dataEstoqueRuptura}
-                                        onDataChange={(novaData) => {
-                                            setDataEstoqueRuptura(novaData);
-                                            // Atualizar também mês e ano
-                                            const [ano, mes] = novaData.split('-');
-                                            setAnoEstoqueRuptura(Number(ano));
-                                            setMesEstoqueRuptura(Number(mes));
-                                        }}
-                                        mesSelecionado={mesEstoqueRuptura}
-                                        anoSelecionado={anoEstoqueRuptura}
-                                        onMesChange={setMesEstoqueRuptura}
-                                        onAnoChange={setAnoEstoqueRuptura}
+                                        dataInicio={rupturaDataInicio}
+                                        dataFim={rupturaDataFim}
+                                        onDataInicioChange={setRupturaDataInicio}
+                                        onDataFimChange={setRupturaDataFim}
+                                        mesSelecionado={new Date().getMonth() + 1}
+                                        anoSelecionado={new Date().getFullYear()}
+                                        onMesChange={() => {}}
+                                        onAnoChange={() => {}}
                                         diasComVendas={[]}
-                                        modoIntervalo={false}
+                                        modoIntervalo={true}
                                         compact={true}
+                                        dataMinFim={dataMinFim}
+                                        dataMaxFim={dataMaxFim}
                                     />
                                 }
                                 opcoes={{
@@ -452,17 +481,36 @@ export default function DashboardSimples() {
                                             callbacks: {
                                                 label: function(ctx) {
                                                     const dsLabel = ctx.dataset?.label || '';
-                                                    const vendas = ctx.chart?.data?.datasets?.[0]?.data?.[ctx.dataIndex] ?? 0;
+                                                    const risco = ctx.chart?.data?.datasets?.[0]?.data?.[ctx.dataIndex] ?? 0;
                                                     const estoque = ctx.chart?.data?.datasets?.[1]?.data?.[ctx.dataIndex] ?? 0;
-                                                    const ratio = estoque > 0 ? (vendas / estoque) : 0;
-                                                    const ratioFmt = isFinite(ratio) ? (ratio).toLocaleString('pt-BR', { maximumFractionDigits: 2 }) : '0';
-                                                    if (dsLabel.toLowerCase().includes('vendas')) {
-                                                        return `Vendas: ${vendas} (razão ${ratioFmt})`;
+                                                    const metaItem = ctx.chart?.data?.metaItens?.[ctx.dataIndex] || {};
+                                                    
+                                                    if (dsLabel.toLowerCase().includes('risco')) {
+                                                        const riscoFmt = risco.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+                                                        let nivel = 'Baixo';
+                                                        if (risco >= 1) nivel = 'ALTO';
+                                                        else if (risco >= 0.5) nivel = 'Moderado';
+                                                        return `Risco: ${riscoFmt} (${nivel})`;
                                                     }
                                                     if (dsLabel.toLowerCase().includes('estoque')) {
-                                                        return `Estoque: ${estoque}`;
+                                                        return `Estoque atual: ${estoque} un`;
                                                     }
                                                     return `${dsLabel}: ${ctx.formattedValue}`;
+                                                },
+                                                afterBody: function(tooltipItems) {
+                                                    const ctx = tooltipItems[0];
+                                                    const metaItem = ctx.chart?.data?.metaItens?.[ctx.dataIndex] || {};
+                                                    const lines = [];
+                                                    if (metaItem.previsaoDiaria !== undefined) {
+                                                        lines.push(`Previsão vendas/dia: ${metaItem.previsaoDiaria.toFixed(2)}`);
+                                                    }
+                                                    if (metaItem.demandaPrevista !== undefined) {
+                                                        lines.push(`Demanda prevista: ${metaItem.demandaPrevista.toFixed(0)} un`);
+                                                    }
+                                                    if (metaItem.totalVendasHistorico !== undefined) {
+                                                        lines.push(`Vendas no histórico: ${metaItem.totalVendasHistorico}`);
+                                                    }
+                                                    return lines;
                                                 }
                                             }
                                         }
@@ -470,7 +518,7 @@ export default function DashboardSimples() {
                                     scales: {
                                         x: {
                                             beginAtZero: true,
-                                            title: { display: true, text: 'Vendas (em relação ao estoque)', font: { family: "'Average Sans', sans-serif", size: 11 } },
+                                            title: { display: true, text: 'Índice de Risco (Demanda Prevista / Estoque)', font: { family: "'Average Sans', sans-serif", size: 11 } },
                                             grid: { display: true }
                                         },
                                         y: { title: { display: false }, grid: { display: false } }
@@ -485,7 +533,8 @@ export default function DashboardSimples() {
                                 }
                             />
                         </div>
-                    )}
+                    );
+                    })()}
 
                     {categoriasData && (
                         <ChartCard
