@@ -1,18 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Componentes - CSS/HistoricoVendas.module.css";
 import { Navbar } from "./Navbar";
 import { FaixaVoltar } from "./FaixaVoltar";
 import API from "../Provider/API";
 import { Tabela } from "./Tabela";
+import FiltroCalendario from "./FiltroCalendario";
 
 export default function HistoricoVendasFixed() {
   const navigate = useNavigate();
+  const hoje = new Date();
+  const inicioAno = new Date(hoje.getFullYear(), 0, 1);
+  const inicioAnoISO = inicioAno.toISOString().split("T")[0];
+  const hojeISO = hoje.toISOString().split("T")[0];
   const [clientes, setClientes] = useState([]);
   const [clientesFiltrados, setClientesFiltrados] = useState([]);
   const [buscaClientes, setBuscaClientes] = useState("");
-  const [filtroInicio, setFiltroInicio] = useState("");
-  const [filtroFim, setFiltroFim] = useState("");
+  const [filtroInicio, setFiltroInicio] = useState(inicioAnoISO);
+  const [filtroFim, setFiltroFim] = useState(hojeISO);
   const [datasDisponiveis, setDatasDisponiveis] = useState([]);
   const [vendasPage, setVendasPage] = useState(0);
   const [totalPaginasVendas, setTotalPaginasVendas] = useState(null);
@@ -23,8 +28,49 @@ export default function HistoricoVendasFixed() {
   const [vendaItens, setVendaItens] = useState([]);
   const [removerConfirm, setRemoverConfirm] = useState(null); // { index, item }
   const [removerLoading, setRemoverLoading] = useState(false);
+  const [calendarioMesBase, setCalendarioMesBase] = useState(hoje.getMonth() + 1);
+  const [calendarioAnoBase, setCalendarioAnoBase] = useState(hoje.getFullYear());
+  const filtroInicialAplicado = useRef(false);
 
   const voltarAoMenu = () => navigate("/menu-inicial");
+
+  const obterValorTotalVenda = (venda) => {
+    if (!venda) return 0;
+    const bruto =
+      venda.valorTotal ??
+      venda.valor_total ??
+      venda.valor ??
+      venda.total ??
+      (venda.dadosVenda ? venda.dadosVenda.valorTotal : undefined);
+    const numero = Number(bruto);
+    return Number.isFinite(numero) ? numero : 0;
+  };
+
+  const filtrarPorData = async () => {
+    if (!filtroInicio || !filtroFim) return;
+    
+    setCarregando(true);
+    const res = await API.get('/vendas/filtrar-por-data', { 
+      params: { inicio: filtroInicio, fim: filtroFim } 
+    });
+    
+    const content = res.data;
+    const clientesComId = content.map((venda) => ({
+      vendaId: venda.id,
+      cliente: venda.clienteId ? `Cliente ${venda.clienteId}` : "Sem cliente",
+      valor_total: obterValorTotalVenda(venda),
+      data: venda.data,
+      id: venda.id,
+      itens: venda.itensVenda || [],
+      __raw: venda,
+    }));
+
+    setClientes(clientesComId);
+    setClientesFiltrados(clientesComId);
+    setTotalVendasCount(clientesComId.length);
+    setTotalPaginasVendas(null);
+    setCarregando(false);
+  };
 
   useEffect(() => {
     const vendasSize = 10;
@@ -42,7 +88,7 @@ export default function HistoricoVendasFixed() {
         const clientesComId = content.map((venda) => ({
           vendaId: venda.id,
           cliente: venda.clienteId ? `Cliente ${venda.clienteId}` : "Sem cliente",
-          valor_total: venda.valorTotal,
+          valor_total: obterValorTotalVenda(venda),
           data: venda.data,
           id: venda.id,
           itens: venda.itensVenda || [],
@@ -51,16 +97,6 @@ export default function HistoricoVendasFixed() {
 
         setClientes(clientesComId);
         setClientesFiltrados(clientesComId);
-
-        // extrair datas únicas das vendas para popular os dropdowns
-        const datas = clientesComId
-          .map((v) => {
-            const d = new Date(v.data);
-            return d.toISOString().split('T')[0];
-          })
-          .filter(Boolean);
-        const unicas = Array.from(new Set(datas)).sort();
-        setDatasDisponiveis(unicas);
 
         setTotalVendasCount(res.data.totalElements);
         setTotalPaginasVendas(res.data.totalPages);
@@ -73,31 +109,12 @@ export default function HistoricoVendasFixed() {
       .finally(() => setCarregando(false));
   }, [vendasPage, filtroInicio, filtroFim]);
 
-  const filtrarPorData = async () => {
-    if (!filtroInicio || !filtroFim) return;
-    
-    setCarregando(true);
-    const res = await API.get('/vendas/filtrar-por-data', { 
-      params: { inicio: filtroInicio, fim: filtroFim } 
-    });
-    
-    const content = res.data;
-    const clientesComId = content.map((venda) => ({
-      vendaId: venda.id,
-      cliente: venda.clienteId ? `Cliente ${venda.clienteId}` : "Sem cliente",
-      valor_total: venda.valorTotal,
-      data: venda.data,
-      id: venda.id,
-      itens: venda.itensVenda || [],
-      __raw: venda,
-    }));
-
-    setClientes(clientesComId);
-    setClientesFiltrados(clientesComId);
-    setTotalVendasCount(clientesComId.length);
-    setTotalPaginasVendas(null);
-    setCarregando(false);
-  };
+  useEffect(() => {
+    if (!filtroInicialAplicado.current && filtroInicio && filtroFim) {
+      filtroInicialAplicado.current = true;
+      filtrarPorData();
+    }
+  }, [filtroInicio, filtroFim]);
 
   const limparFiltro = () => {
     setFiltroInicio('');
@@ -136,7 +153,7 @@ export default function HistoricoVendasFixed() {
       "ID Venda": c.vendaId,
       "Data / Hora": formatarData(c.data),
       "Valor Total": (() => {
-        const raw = c.valor_total ?? 0;
+        const raw = c.valor_total ?? obterValorTotalVenda(c.__raw);
         const num = Number(raw) || 0;
         return num.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
       })(),
@@ -203,6 +220,55 @@ export default function HistoricoVendasFixed() {
     }, 0);
   }
 
+  useEffect(() => {
+    const carregarDiasHistorico = async () => {
+      try {
+        const inicioHistorico = "2015-01-01";
+        const fimHistorico = new Date().toISOString().split("T")[0];
+        const resp = await API.get(`/vendas/filtrar-por-data?inicio=${inicioHistorico}&fim=${fimHistorico}`);
+        const vendas = Array.isArray(resp.data)
+          ? resp.data
+          : Array.isArray(resp.data?.content)
+          ? resp.data.content
+          : [];
+        const dias = vendas
+          .map((v) => {
+            if (!v?.data) return null;
+            try {
+              return new Date(v.data).toISOString().split("T")[0];
+            } catch (e) {
+              return null;
+            }
+          })
+          .filter(Boolean);
+        const unicosOrdenados = Array.from(new Set(dias)).sort();
+        setDatasDisponiveis(unicosOrdenados);
+      } catch (error) {
+        console.error("Erro ao carregar dias com vendas para o calendário:", error);
+        setDatasDisponiveis([]);
+      }
+    };
+
+    carregarDiasHistorico();
+  }, []);
+
+  const handleDataInicioChange = (valor) => {
+    setFiltroInicio(valor);
+    if (filtroFim && valor && valor > filtroFim) {
+      setFiltroFim("");
+    }
+  };
+
+  const handleDataFimChange = (valor) => {
+    if (filtroInicio && valor && valor < filtroInicio) {
+      setFiltroInicio(valor);
+    }
+    setFiltroFim(valor);
+  };
+
+  const dataMinDisponivel = datasDisponiveis.length ? datasDisponiveis[0] : null;
+  const dataMaxDisponivel = datasDisponiveis.length ? datasDisponiveis[datasDisponiveis.length - 1] : null;
+
   return (
     <div className={styles["pagina-container"]}>
       <Navbar />
@@ -211,19 +277,25 @@ export default function HistoricoVendasFixed() {
       <div className={styles["container-gestao"]}>
         <div className={styles["header-gestao"]}>
           <h1 className={styles["titulo-gestao"]}>Histórico de Vendas</h1>
-          <div className={styles["barra-acoes"]} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-              <div className={styles["busca-container"]} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  Início:
-                  <input type="date" value={filtroInicio} onChange={(e) => setFiltroInicio(e.target.value)} style={{ padding: 6 }} />
-                </label>
-
-                <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  Fim:
-                  <input type="date" value={filtroFim} onChange={(e) => setFiltroFim(e.target.value)} style={{ padding: 6 }} />
-                </label>
-              </div>
+          <div className={styles["barra-acoes"]} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+            <div style={{ flex: 1, minWidth: 280 }}>
+              <FiltroCalendario
+                modoIntervalo
+                dataInicio={filtroInicio || ""}
+                dataFim={filtroFim || ""}
+                onDataInicioChange={handleDataInicioChange}
+                onDataFimChange={handleDataFimChange}
+                mesSelecionado={calendarioMesBase}
+                anoSelecionado={calendarioAnoBase}
+                onMesChange={setCalendarioMesBase}
+                onAnoChange={setCalendarioAnoBase}
+                diasComVendas={datasDisponiveis}
+                compact
+                dataMin={dataMinDisponivel}
+                dataMax={dataMaxDisponivel}
+                dataMinFim={filtroInicio || dataMinDisponivel}
+                dataMaxInicio={filtroFim || dataMaxDisponivel}
+              />
             </div>
 
             <div style={{ display: 'flex', gap: 8 }}>

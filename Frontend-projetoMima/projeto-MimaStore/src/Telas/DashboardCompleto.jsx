@@ -30,7 +30,9 @@ export default function DashboardCompleto() {
     
     // Charts Data State
     const [clientesEvolucaoData, setClientesEvolucaoData] = useState(null);
+    const [clientesEvolucaoDataFidelizados, setClientesEvolucaoDataFidelizados] = useState(null);
     const [clientesEvolucaoMeta, setClientesEvolucaoMeta] = useState(null);
+    const [clientesEvolucaoMetaFidelizados, setClientesEvolucaoMetaFidelizados] = useState(null);
     const [tendenciaFaturamentoData, setTendenciaFaturamentoData] = useState(null);
     const [tendenciaVendasData, setTendenciaVendasData] = useState(null);
     
@@ -67,8 +69,8 @@ export default function DashboardCompleto() {
     const [vendasHistoricoMeses, setVendasHistoricoMeses] = useState(10);
     const [vendasPrevisaoMeses, setVendasPrevisaoMeses] = useState(3);
 
-    // Filtro especial apenas para Volume de Clientes: incluir/mostrar somente novos clientes
-    const [clientesMostrarNovos, setClientesMostrarNovos] = useState(false);
+    // Filtro especial apenas para Volume de Clientes: todos x fidelizados
+    const [clientesMostrarFidelizados, setClientesMostrarFidelizados] = useState(false);
 
     useEffect(() => {
         loadDashboardData();
@@ -78,7 +80,8 @@ export default function DashboardCompleto() {
         filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2,
         clientesHistoricoMeses, clientesPrevisaoMeses,
         faturamentoHistoricoMeses, faturamentoPrevisaoMeses,
-        vendasHistoricoMeses, vendasPrevisaoMeses
+        vendasHistoricoMeses, vendasPrevisaoMeses,
+        clientesMostrarFidelizados
     ]);
 
     const loadDashboardData = async () => {
@@ -98,13 +101,14 @@ export default function DashboardCompleto() {
                 dataFim: fidelizacaoDataFim
             };
 
-            const [ticketMedioData, sazionalData, fidelizacaoData, clientesEvolucao, tendenciaFaturamento, tendenciaVendas] = await Promise.all([
+            const [ticketMedioData, sazionalData, fidelizacaoData, clientesEvolucao, clientesEvolucaoFid, tendenciaFaturamento, tendenciaVendas] = await Promise.all([
                 DashboardService.getAverageTicket(ticketParam),
                 DashboardService.getSeasonalIndex(filtroEstacao1, filtroAno1, filtroEstacao2, filtroAno2),
                 DashboardService.getLoyalCustomersStats(fidelizacaoParam),
                 DashboardService.getCustomersEvolution(clientesHistoricoMeses, clientesPrevisaoMeses),
-                DashboardService.getRevenueTrend(faturamentoHistoricoMeses, faturamentoPrevisaoMeses),
-                DashboardService.getSalesTrend(vendasHistoricoMeses, vendasPrevisaoMeses)
+                DashboardService.getLoyalCustomersEvolution(clientesHistoricoMeses, clientesPrevisaoMeses),
+                DashboardService.getRevenueTrend(faturamentoHistoricoMeses, faturamentoPrevisaoMeses, clientesMostrarFidelizados),
+                DashboardService.getSalesTrend(vendasHistoricoMeses, vendasPrevisaoMeses, clientesMostrarFidelizados)
             ]);
 
             // Buscar dias com vendas de TODO o histórico para marcar em verde no calendário
@@ -183,7 +187,7 @@ export default function DashboardCompleto() {
                 });
             }
 
-            // Chart 1 - Clientes únicos por mês + previsão
+            // Chart 1 - Clientes únicos por mês + previsão (Todos)
             if (clientesEvolucao && clientesEvolucao.labels) {
                 const labels = clientesEvolucao.labels;
                 const hist = clientesEvolucao.historico || [];
@@ -215,6 +219,46 @@ export default function DashboardCompleto() {
                 }
                 setClientesEvolucaoData({ labels, datasets });
                 setClientesEvolucaoMeta(clientesEvolucao.meta || null);
+            }
+
+            // Chart 1 - Clientes fidelizados por mês + previsão
+            if (clientesEvolucaoFid && clientesEvolucaoFid.labels) {
+                const labelsFid = clientesEvolucaoFid.labels;
+                const histFid = clientesEvolucaoFid.historico || [];
+                const prevFid = clientesEvolucaoFid.previsao || [];
+
+                const datasetsFid = [
+                    {
+                        type: 'bar',
+                        label: 'Clientes fidelizados',
+                        data: histFid,
+                        backgroundColor: '#864176',
+                        borderRadius: 4,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8,
+                        order: 1
+                    }
+                ];
+
+                if ((prevFid?.length || 0) > 0) {
+                    // Barras para previsão (somente nos meses futuros)
+                    datasetsFid.push({
+                        type: 'bar',
+                        label: 'Fidelizados previstos',
+                        data: prevFid,
+                        backgroundColor: 'rgba(242, 201, 224, 0.7)',
+                        borderRadius: 4,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8,
+                        order: 1
+                    });
+                }
+
+                setClientesEvolucaoDataFidelizados({ labels: labelsFid, datasets: datasetsFid });
+                setClientesEvolucaoMetaFidelizados(clientesEvolucaoFid.meta || null);
+            } else {
+                setClientesEvolucaoDataFidelizados(null);
+                setClientesEvolucaoMetaFidelizados(null);
             }
 
             // Chart 2 - Revenue Billing Trend (Line chart) com previsão
@@ -407,13 +451,14 @@ export default function DashboardCompleto() {
 
                     {/* Charts Grid - 3 columns layout */}
                     <div className={styles.chartsGrid}>
-                        {clientesEvolucaoData && (
+                        {(clientesEvolucaoData || clientesEvolucaoDataFidelizados) && (
                             <div className={styles.chartCard}>
                                 <ChartCard
+                                    key={`volume-clientes-${clientesMostrarFidelizados ? 'fidelizados' : 'todos'}`}
                                     titulo="Volume de Clientes"
                                     tipo="bar"
-                                    dados={clientesEvolucaoData}
-                                    explicacao={`${clientesMostrarNovos ? 'Novos clientes' : 'Clientes únicos'} por mês (últimos ${clientesHistoricoMeses} meses) com previsão de ${clientesPrevisaoMeses} meses. ${clientesMostrarNovos ? 'Mostra apenas clientes que fizeram sua primeira compra no período.' : 'Se a série for curta/ruidosa, a projeção é omitida.'}`}
+                                    dados={clientesMostrarFidelizados && clientesEvolucaoDataFidelizados ? clientesEvolucaoDataFidelizados : clientesEvolucaoData}
+                                    explicacao={`${clientesMostrarFidelizados ? 'Clientes fidelizados' : 'Clientes únicos'} por mês (últimos ${clientesHistoricoMeses} meses) com previsão de ${clientesPrevisaoMeses} meses. ${clientesMostrarFidelizados ? 'Usa os mesmos critérios de fidelização do KPI "Clientes fidelizados".' : 'Se a série for curta/ruidosa, a projeção é omitida.'}`}
                                     filtroTemporal={
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontFamily: 'Average Sans, sans-serif', fontSize: '12px' }}>
                                             <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -446,12 +491,12 @@ export default function DashboardCompleto() {
                                                 <div style={{ display: 'inline-flex', borderRadius: '999px', border: '1px solid #ddd', overflow: 'hidden' }}>
                                                     <button
                                                         type="button"
-                                                        onClick={() => setClientesMostrarNovos(false)}
+                                                        onClick={() => setClientesMostrarFidelizados(false)}
                                                         style={{
                                                             padding: '4px 10px',
                                                             border: 'none',
-                                                            backgroundColor: clientesMostrarNovos ? 'transparent' : '#864176',
-                                                            color: clientesMostrarNovos ? '#555' : '#fff',
+                                                            backgroundColor: clientesMostrarFidelizados ? 'transparent' : '#864176',
+                                                            color: clientesMostrarFidelizados ? '#555' : '#fff',
                                                             cursor: 'pointer',
                                                             fontSize: '11px',
                                                             fontFamily: 'Average Sans, sans-serif'
@@ -461,19 +506,19 @@ export default function DashboardCompleto() {
                                                     </button>
                                                     <button
                                                         type="button"
-                                                        onClick={() => setClientesMostrarNovos(true)}
+                                                        onClick={() => setClientesMostrarFidelizados(true)}
                                                         style={{
                                                             padding: '4px 10px',
                                                             border: 'none',
-                                                            backgroundColor: clientesMostrarNovos ? '#864176' : 'transparent',
-                                                            color: clientesMostrarNovos ? '#fff' : '#555',
+                                                            backgroundColor: clientesMostrarFidelizados ? '#864176' : 'transparent',
+                                                            color: clientesMostrarFidelizados ? '#fff' : '#555',
                                                             cursor: 'pointer',
                                                             fontSize: '11px',
                                                             fontFamily: 'Average Sans, sans-serif',
                                                             borderLeft: '1px solid #ddd'
                                                         }}
                                                     >
-                                                        Apenas Novos
+                                                        Fidelizados
                                                     </button>
                                                 </div>
                                             </div>
