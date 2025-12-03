@@ -16,8 +16,8 @@ API.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    // Força UTF-8 em todas as requisições
-    config.headers['Accept-Charset'] = 'utf-8';
+    // Não definir headers restritos pelo browser (ex: Accept-Charset)
+    // Browser bloqueia certos headers — o servidor/Content-Type já trata charset.
     return config;
   },
   (error) => Promise.reject(error)

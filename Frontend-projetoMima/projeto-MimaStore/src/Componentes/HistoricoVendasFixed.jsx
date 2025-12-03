@@ -121,7 +121,9 @@ export default function HistoricoVendasFixed() {
   }, [buscaClientes, clientes]);
 
   function formatarData(dataString) {
+    if (!dataString) return "-";
     const data = new Date(dataString);
+    if (Number.isNaN(data.getTime())) return "-";
     const pad = (n) => String(n).padStart(2, "0");
     return `${pad(data.getDate())}/${pad(data.getMonth() + 1)}/${data.getFullYear()} - ${pad(
       data.getHours()
@@ -133,10 +135,11 @@ export default function HistoricoVendasFixed() {
       id: c.vendaId,
       "ID Venda": c.vendaId,
       "Data / Hora": formatarData(c.data),
-      "Valor Total": c.valor_total.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      }),
+      "Valor Total": (() => {
+        const raw = c.valor_total ?? 0;
+        const num = Number(raw) || 0;
+        return num.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+      })(),
       __raw: c,
     }));
   }
