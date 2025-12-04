@@ -1569,18 +1569,49 @@ export const getMonthlySalesComparison = async () => {
 
 // ═══════════════════════════════════════════════════════════════
 // GRÁFICO 4: TENDÊNCIA DE FATURAMENTO
+// Aceita: quantidadeMeses (histórico, até 24), previsaoMeses (até 12)
+// e opcionalmente filtra apenas clientes fidelizados (modoFidelizados)
 // ═══════════════════════════════════════════════════════════════
-export const getRevenueTrend = async () => {
+export const getRevenueTrend = async (quantidadeMeses = 10, previsaoMeses = 3, modoFidelizados = false) => {
     try {
-        const quantidadeMeses = 10; // meses históricos
-        const previsaoMeses = 3;    // projeção
+        // Sanitizar limites
+        quantidadeMeses = Math.max(1, Math.min(24, quantidadeMeses));
+        previsaoMeses = Math.max(1, Math.min(12, previsaoMeses));
         const hoje = new Date();
         const dataInicial = new Date(hoje.getFullYear(), hoje.getMonth() - quantidadeMeses + 1, 1);
 
         const response = await API.get(
             `/vendas/filtrar-por-data?inicio=${dataInicial.toISOString().split('T')[0]}&fim=${hoje.toISOString().split('T')[0]}`
         );
-        const todasVendas = extractArray(response);
+        let todasVendas = extractArray(response);
+
+        // Se modo fidelizados, filtrar vendas apenas de clientes considerados fidelizados
+        if (modoFidelizados) {
+            try {
+                const fidResp = await API.get(`/vendas/filtrar-por-data?inicio=${dataInicial.toISOString().split('T')[0]}&fim=${hoje.toISOString().split('T')[0]}`);
+                const vendasFid = extractArray(fidResp);
+
+                // Reutilizar lógica de fidelização simplificada: identificar clientes com compras em ≥3 meses
+                const comprasPorClienteMes = new Map(); // cid -> Set(meses)
+                vendasFid.forEach(v => {
+                    const cid = getClienteId(v);
+                    const dataISO = getVendaDateISO(v);
+                    if (!cid || !dataISO) return;
+                    const mes = dataISO.substring(0, 7);
+                    if (!comprasPorClienteMes.has(cid)) comprasPorClienteMes.set(cid, new Set());
+                    comprasPorClienteMes.get(cid).add(mes);
+                });
+
+                const clientesFid = new Set();
+                comprasPorClienteMes.forEach((setMeses, cid) => {
+                    if (setMeses.size >= 3) clientesFid.add(cid);
+                });
+
+                todasVendas = todasVendas.filter(v => clientesFid.has(getClienteId(v)));
+            } catch (e) {
+                console.error('[REVENUE TREND] Erro filtrando fidelizados, usando todas vendas:', e);
+            }
+        }
 
         const vendasPorMes = {};
         todasVendas.forEach(venda => {
@@ -1660,18 +1691,46 @@ export const getRevenueTrend = async () => {
 
 // ═══════════════════════════════════════════════════════════════
 // GRÁFICO 5: TENDÊNCIA DE VENDAS
+// Aceita: quantidadeMeses (histórico, até 24), previsaoMeses (até 12)
+// e opcionalmente filtra apenas clientes fidelizados (modoFidelizados)
 // ═══════════════════════════════════════════════════════════════
-export const getSalesTrend = async () => {
+export const getSalesTrend = async (quantidadeMeses = 10, previsaoMeses = 3, modoFidelizados = false) => {
     try {
-        const quantidadeMeses = 10; // meses históricos
-        const previsaoMeses = 3;    // projeção
+        quantidadeMeses = Math.max(1, Math.min(24, quantidadeMeses));
+        previsaoMeses = Math.max(1, Math.min(12, previsaoMeses));
         const hoje = new Date();
         const dataInicial = new Date(hoje.getFullYear(), hoje.getMonth() - quantidadeMeses + 1, 1);
 
         const response = await API.get(
             `/vendas/filtrar-por-data?inicio=${dataInicial.toISOString().split('T')[0]}&fim=${hoje.toISOString().split('T')[0]}`
         );
-        const todasVendas = extractArray(response);
+        let todasVendas = extractArray(response);
+
+        if (modoFidelizados) {
+            try {
+                const fidResp = await API.get(`/vendas/filtrar-por-data?inicio=${dataInicial.toISOString().split('T')[0]}&fim=${hoje.toISOString().split('T')[0]}`);
+                const vendasFid = extractArray(fidResp);
+
+                const comprasPorClienteMes = new Map();
+                vendasFid.forEach(v => {
+                    const cid = getClienteId(v);
+                    const dataISO = getVendaDateISO(v);
+                    if (!cid || !dataISO) return;
+                    const mes = dataISO.substring(0, 7);
+                    if (!comprasPorClienteMes.has(cid)) comprasPorClienteMes.set(cid, new Set());
+                    comprasPorClienteMes.get(cid).add(mes);
+                });
+
+                const clientesFid = new Set();
+                comprasPorClienteMes.forEach((setMeses, cid) => {
+                    if (setMeses.size >= 3) clientesFid.add(cid);
+                });
+
+                todasVendas = todasVendas.filter(v => clientesFid.has(getClienteId(v)));
+            } catch (e) {
+                console.error('[SALES TREND] Erro filtrando fidelizados, usando todas vendas:', e);
+            }
+        }
 
         const vendasPorMes = {};
         todasVendas.forEach(venda => {
@@ -1845,6 +1904,168 @@ export const getCustomersEvolution = async (historicoMeses = 10, previsaoMeses =
     }
 };
 
+// Clientes fidelizados por mês (aplica as mesmas regras de fidelização da KPI)
+// Para cada mês no histórico, conta quantos clientes que são considerados fidelizados
+// (segundo a regra dos últimos 12 meses) possuem pelo menos uma venda naquele mês.
+// Inclui previsão via regressão OLS.
+export const getLoyalCustomersEvolution = async (historicoMeses = 10, previsaoMeses = 3) => {
+    try {
+        const hoje = new Date();
+        const inicioHistorico = new Date(hoje.getFullYear(), hoje.getMonth() - historicoMeses + 1, 1);
+        
+        // Precisamos de dados de até 12 meses antes do início do histórico para calcular fidelização
+        const inicioComJanela = new Date(inicioHistorico);
+        inicioComJanela.setMonth(inicioComJanela.getMonth() - 12);
+        
+        const fmt = (d) => d.toISOString().split('T')[0];
+
+        const resp = await API.get(`/vendas/filtrar-por-data?inicio=${fmt(inicioComJanela)}&fim=${fmt(hoje)}`);
+        const vendas = extractArray(resp);
+
+        // Mapas auxiliares
+        const vendasPorCliente = new Map(); // clienteId -> [{ dataISO }]
+        const vendasPorMesCliente = new Map(); // `${clienteId}|${mes}` -> true
+
+        vendas.forEach(v => {
+            const dataISO = getVendaDateISO(v);
+            const cid = getClienteId(v);
+            if (!dataISO || !cid) return;
+
+            if (!vendasPorCliente.has(cid)) vendasPorCliente.set(cid, []);
+            vendasPorCliente.get(cid).push({ dataISO });
+
+            const mes = dataISO.substring(0, 7);
+            const key = `${cid}|${mes}`;
+            if (!vendasPorMesCliente.has(key)) vendasPorMesCliente.set(key, true);
+        });
+
+        // Determinar, mês a mês, quais clientes são fidelizados
+        const mesesAbrev = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        const labelsHistoricos = [];
+        const countsFidelizados = [];
+
+        for (let i = 0; i < historicoMeses; i++) {
+            const refDate = new Date(inicioHistorico.getFullYear(), inicioHistorico.getMonth() + i + 1, 0); // fim do mês
+            const refLabel = `${mesesAbrev[refDate.getMonth()]}/${String(refDate.getFullYear()).slice(-2)}`;
+            labelsHistoricos.push(refLabel);
+
+            const janelaInicio = new Date(refDate);
+            janelaInicio.setMonth(janelaInicio.getMonth() - 12);
+            const inicioJanelaISO = fmt(janelaInicio);
+            const fimJanelaISO = fmt(refDate);
+
+            let totalMesFidelizados = 0;
+
+            vendasPorCliente.forEach((listaVendas, cid) => {
+                // Vendas dentro da janela de 12 meses até o fim do mês de referência
+                const datasJanela = listaVendas
+                    .map(v => v.dataISO)
+                    .filter(d => d >= inicioJanelaISO && d <= fimJanelaISO)
+                    .sort();
+
+                if (datasJanela.length === 0) return;
+
+                // Transformar em meses distintos e pegar a menor data de cada mês
+                const menorDataMes = new Map(); // mes -> Date
+                datasJanela.forEach(dISO => {
+                    const mes = dISO.substring(0, 7);
+                    const d = new Date(dISO);
+                    const prev = menorDataMes.get(mes);
+                    if (!prev || d < prev) menorDataMes.set(mes, d);
+                });
+
+                const mesesOrdenados = Array.from(menorDataMes.entries())
+                    .sort((a, b) => a[1] - b[1])
+                    .map(entry => entry[1]);
+
+                if (mesesOrdenados.length < 3) return;
+
+                // Segue mesma regra da KPI: todos os intervalos consecutivos <= 90 dias
+                const intervalosDias = [];
+                for (let j = 1; j < mesesOrdenados.length; j++) {
+                    const diff = Math.round((mesesOrdenados[j] - mesesOrdenados[j - 1]) / (1000 * 60 * 60 * 24));
+                    intervalosDias.push(diff);
+                }
+
+                const fidelizado = intervalosDias.every(d => d <= 90);
+                if (!fidelizado) return;
+
+                // Se é fidelizado na janela, verificar se tem venda no mês de referência
+                const refMesKey = `${cid}|${refDate.toISOString().substring(0, 7)}`;
+                if (vendasPorMesCliente.has(refMesKey)) {
+                    totalMesFidelizados++;
+                }
+            });
+
+            countsFidelizados.push(totalMesFidelizados);
+        }
+
+        // ===== REGRESSÃO OLS PARA PREVISÃO =====
+        const n = countsFidelizados.length;
+        const xs = Array.from({ length: n }, (_, i) => i);
+        const mean = (arr) => arr.reduce((s, v) => s + v, 0) / (arr.length || 1);
+        const xBar = mean(xs);
+        const yBar = mean(countsFidelizados);
+        let num = 0, den = 0, sst = 0, sse = 0;
+        for (let i = 0; i < n; i++) {
+            num += (xs[i] - xBar) * (countsFidelizados[i] - yBar);
+            den += (xs[i] - xBar) ** 2;
+            sst += (countsFidelizados[i] - yBar) ** 2;
+        }
+        const b = den === 0 ? 0 : num / den;
+        const a = yBar - b * xBar;
+        for (let i = 0; i < n; i++) {
+            const yhat = a + b * xs[i];
+            sse += (countsFidelizados[i] - yhat) ** 2;
+        }
+        const r2 = sst === 0 ? 0 : Math.max(0, 1 - (sse / sst));
+
+        console.log('[LOYAL CUSTOMERS EVOLUTION] Debug:', {
+            n,
+            countsFidelizados,
+            a: a.toFixed(2),
+            b: b.toFixed(4),
+            r2: r2.toFixed(3),
+            sst: sst.toFixed(2),
+            sse: sse.toFixed(2)
+        });
+
+        // Gerar labels e previsões para meses futuros
+        const labelsPrevisao = [];
+        const previstosSomente = [];
+        const base = new Date(inicioHistorico.getFullYear(), inicioHistorico.getMonth() + historicoMeses, 1);
+        for (let j = 0; j < previsaoMeses; j++) {
+            const d = new Date(base.getFullYear(), base.getMonth() + j, 1);
+            labelsPrevisao.push(`${mesesAbrev[d.getMonth()]}/${String(d.getFullYear()).slice(-2)}`);
+            const x = historicoMeses + j;
+            const yPred = Math.max(0, Math.round(a + b * x));
+            previstosSomente.push(yPred);
+        }
+
+        const labels = [...labelsHistoricos, ...labelsPrevisao];
+        let historico = [...countsFidelizados, ...Array(previsaoMeses).fill(null)];
+        let previsao = [...Array(historicoMeses).fill(null), ...previstosSomente];
+
+        const todosZero = countsFidelizados.every(v => v === 0);
+        const warn = (n < 4) || todosZero;
+        if (warn) {
+            // não extrapola se pouco confiável
+            historico = [...countsFidelizados];
+            previsao = [];
+        }
+
+        return {
+            labels,
+            historico,
+            previsao,
+            meta: { warn, r2: Number.isFinite(r2) ? Math.round(r2 * 100) / 100 : 0 }
+        };
+    } catch (error) {
+        console.error('Error fetching loyal customers evolution:', error);
+        return { labels: [], historico: [], previsao: [], meta: { warn: true, r2: 0 } };
+    }
+};
+
 // Default export
 const DashboardService = {
     getAverageTicket,
@@ -1858,6 +2079,7 @@ const DashboardService = {
     getCategoriesForPeriod,
     getMonthlySalesComparison,
     getCustomersEvolution,
+    getLoyalCustomersEvolution,
     getRevenueTrend,
     getSalesTrend,
     API,
