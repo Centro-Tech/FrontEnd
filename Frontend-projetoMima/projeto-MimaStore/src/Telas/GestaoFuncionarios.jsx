@@ -45,20 +45,44 @@ export function GestaoFuncionarios() {
     const carregarFuncionarios = async () => {
         setCarregando(true);
         setErro('');
-        
-        const response = await API.get('/usuarios');
-        const funcionariosData = response.data.content.map(funcionario => ({
-            id: funcionario.id,
-            nome: funcionario.nome,
-            cargo: funcionario.cargo,
-            imagem: funcionario.imagem,
-            email: funcionario.email,
-            telefone: funcionario.telefone,
-            endereco: funcionario.endereco
-        }));
-        
-        setFuncionarios(funcionariosData);
-        setCarregando(false);
+
+        try {
+            const response = await API.get('/usuarios');
+
+            // Tolerância a diferentes formatos de resposta:
+            // - { data: { content: [...] } }
+            // - { data: [...] }
+            const data = response?.data;
+            let lista = [];
+
+            if (Array.isArray(data)) {
+                lista = data;
+            } else if (Array.isArray(data?.content)) {
+                lista = data.content;
+            } else if (Array.isArray(data?.usuarios)) {
+                lista = data.usuarios;
+            } else {
+                lista = [];
+            }
+
+            const funcionariosData = lista.map(funcionario => ({
+                id: funcionario.id,
+                nome: funcionario.nome,
+                cargo: funcionario.cargo,
+                imagem: funcionario.imagem,
+                email: funcionario.email,
+                telefone: funcionario.telefone,
+                endereco: funcionario.endereco
+            }));
+
+            setFuncionarios(funcionariosData);
+        } catch (err) {
+            console.error('Erro carregando funcionários:', err);
+            setErro('Não foi possível carregar os funcionários.');
+            setFuncionarios([]);
+        } finally {
+            setCarregando(false);
+        }
     };
 
     // Filtrar funcionários pela busca
@@ -115,7 +139,6 @@ export function GestaoFuncionarios() {
         id: usuario.id,
         nome: usuario.nome,
         cargo: usuario.cargo,
-        imagem: usuario.imagem,
         email: usuario.email,
         telefone: usuario.telefone,
         endereco: usuario.endereco
@@ -258,7 +281,6 @@ export function GestaoFuncionarios() {
                                 { key: 'id', label: 'ID' },
                                 { key: 'nome', label: 'Nome' },
                                 { key: 'cargo', label: 'Cargo' },
-                                { key: 'imagem', label: 'Imagem' },
                                 { key: 'email', label: 'Email' },
                                 { key: 'telefone', label: 'Telefone' },
                                 { key: 'endereco', label: 'Endereço' },
