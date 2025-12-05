@@ -498,7 +498,7 @@ export default function DashboardSimples() {
                                 hasDatasets: !!estoqueVendasData?.datasets
                             })}
                             <ChartCard
-                                titulo={`Produtos em Risco de Ruptura (próximos ${diasPrevisao} dias)`}
+                                titulo={`Produtos em Risco de Ruptura (Demanda Prevista / Estoque — Próximos ${diasPrevisao} Dias)`}
                                 tipo="bar"
                                 dados={estoqueVendasData}
                                 explicacao={`Usa regressão linear do histórico (desde ${formatarDataBR(rupturaDataInicio)}) para prever vendas. Risco > 1 = alta chance de faltar estoque.`}
@@ -643,7 +643,12 @@ export default function DashboardSimples() {
                                         enabled: false,
                                         external: (context) => {
                                             const { chart, tooltip } = context;
-                                            if (!tooltip || tooltip.opacity === 0) return;
+                                            // Esconde tooltip quando o mouse sai
+                                            if (!tooltip || tooltip.opacity === 0) {
+                                                const stale = document.querySelector(`#ext-tooltip-${chart.id}`);
+                                                if (stale) stale.style.opacity = '0';
+                                                return;
+                                            }
                                             const dp = tooltip.dataPoints?.[0];
                                             if (!dp) return;
                                             const idx = dp.dataIndex;

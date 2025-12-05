@@ -1810,6 +1810,10 @@ export const getSalesTrend = async (quantidadeMeses = 10, previsaoMeses = 3, mod
 // ═══════════════════════════════════════════════════════════════
 export const getCustomersEvolution = async (historicoMeses = 10, previsaoMeses = 3) => {
     try {
+        // Sanitiza entradas para garantir que seguimos o filtro escolhido no dashboard
+        historicoMeses = Math.max(1, Math.min(24, Number(historicoMeses) || 10));
+        previsaoMeses = Math.max(1, Math.min(12, Number(previsaoMeses) || 3));
+
         const hoje = new Date();
         const inicio = new Date(hoje.getFullYear(), hoje.getMonth() - historicoMeses + 1, 1);
         const fmt = (d) => d.toISOString().split('T')[0];
@@ -1861,6 +1865,8 @@ export const getCustomersEvolution = async (historicoMeses = 10, previsaoMeses =
         
         console.log('[CUSTOMERS EVOLUTION] Debug:', {
             n,
+            historicoMeses,
+            previsaoMeses,
             countsHistoricos,
             a: a.toFixed(2),
             b: b.toFixed(4),
@@ -1880,7 +1886,7 @@ export const getCustomersEvolution = async (historicoMeses = 10, previsaoMeses =
             previstosSomente.push(yPred);
         }
 
-        const labels = [...labelsHistoricos, ...labelsPrevisao];
+        let labels = [...labelsHistoricos, ...labelsPrevisao];
         let historico = [...countsHistoricos, ...Array(previsaoMeses).fill(null)];
         let previsao = [...Array(historicoMeses).fill(null), ...previstosSomente];
 
@@ -1888,6 +1894,7 @@ export const getCustomersEvolution = async (historicoMeses = 10, previsaoMeses =
         const warn = (n < 4) || todosZero;
         if (warn) {
             // não extrapola se pouco confiável
+            labels = [...labelsHistoricos];
             historico = [...countsHistoricos];
             previsao = [];
         }
@@ -1910,6 +1917,10 @@ export const getCustomersEvolution = async (historicoMeses = 10, previsaoMeses =
 // Inclui previsão via regressão OLS.
 export const getLoyalCustomersEvolution = async (historicoMeses = 10, previsaoMeses = 3) => {
     try {
+        // Sanitiza entradas para respeitar o horizonte solicitado no filtro
+        historicoMeses = Math.max(1, Math.min(24, Number(historicoMeses) || 10));
+        previsaoMeses = Math.max(1, Math.min(12, Number(previsaoMeses) || 3));
+
         const hoje = new Date();
         const inicioHistorico = new Date(hoje.getFullYear(), hoje.getMonth() - historicoMeses + 1, 1);
         
@@ -2022,6 +2033,8 @@ export const getLoyalCustomersEvolution = async (historicoMeses = 10, previsaoMe
 
         console.log('[LOYAL CUSTOMERS EVOLUTION] Debug:', {
             n,
+            historicoMeses,
+            previsaoMeses,
             countsFidelizados,
             a: a.toFixed(2),
             b: b.toFixed(4),
@@ -2042,7 +2055,7 @@ export const getLoyalCustomersEvolution = async (historicoMeses = 10, previsaoMe
             previstosSomente.push(yPred);
         }
 
-        const labels = [...labelsHistoricos, ...labelsPrevisao];
+        let labels = [...labelsHistoricos, ...labelsPrevisao];
         let historico = [...countsFidelizados, ...Array(previsaoMeses).fill(null)];
         let previsao = [...Array(historicoMeses).fill(null), ...previstosSomente];
 
@@ -2050,6 +2063,7 @@ export const getLoyalCustomersEvolution = async (historicoMeses = 10, previsaoMe
         const warn = (n < 4) || todosZero;
         if (warn) {
             // não extrapola se pouco confiável
+            labels = [...labelsHistoricos];
             historico = [...countsFidelizados];
             previsao = [];
         }
