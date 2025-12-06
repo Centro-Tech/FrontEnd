@@ -3,7 +3,7 @@
  * Garante que imagens do S3 sejam acessadas com URL completa
  */
 
-const S3_BASE = import.meta.env.VITE_S3_BUCKET_URL || 'https://mimaastore-bucket-raw-2025.s3.us-east-1.amazonaws.com';
+const S3_BASE = import.meta.env.VITE_S3_BUCKET_URL || 'https://mmmimastore-bucket-raw-2025.s3.us-east-1.amazonaws.com';
 
 /**
  * Converte um path relativo ou URL em uma URL completa do S3
