@@ -147,6 +147,9 @@ export function Configuracao() {
             setFormErrors({});
         } catch (err) {
             console.error('Erro ao atualizar usuário', err);
+            console.error('Status:', err.response?.status);
+            console.error('Dados do erro:', err.response?.data);
+            console.error('Headers da resposta:', err.response?.headers);
             // Tentar extrair mensagens de validação do servidor
             const data = err.response?.data;
             // formato comum: { violations: [ { propertyPath: 'cargo', message: '...' }, ... ] }
