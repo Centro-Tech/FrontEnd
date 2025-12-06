@@ -139,7 +139,9 @@ export function Configuracao() {
             fd.append('endereco', form.endereco);
             if (form.imagemFile) fd.append('imagem', form.imagemFile);
 
-            const res = await API.put(`/usuarios/${usuario.id}`, fd);
+            const res = await API.put(`/usuarios/${usuario.id}`, fd, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
             setUsuario(res.data);
             setEditMain(false);
             setFormErrors({});
