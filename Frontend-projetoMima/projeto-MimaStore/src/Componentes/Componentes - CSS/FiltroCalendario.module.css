@@ -210,19 +210,22 @@
 }
 
 .calendarioHeader {
+    position: relative;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
     padding-bottom: 12px;
     border-bottom: 2px solid #f0f0f0;
     gap: 8px;
+    padding-right: 36px; /* espaço para o X não empurrar o título */
 }
 
 .navegacaoMesAno {
     display: flex;
     gap: 6px;
-    flex: 1;
+    flex: 1 1 100%;
 }
 
 .selectCompacto {
@@ -271,6 +274,7 @@
     padding: 4px 8px;
     background-color: #f8f0f5;
     border-radius: 4px;
+    flex: 1 1 100%;
 }
 
 .botaoFechar {
@@ -283,6 +287,9 @@
     line-height: 1;
     transition: all 0.2s ease;
     border-radius: 4px;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 .botaoFechar:hover {

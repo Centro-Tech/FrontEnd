@@ -1,0 +1,851 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1765020504401,379,GET Frontend Splash Page,200,OK,Frontend Test 1-32,text,true,,870,154,50,50,http://localhost:5173/splash,379,0,138
+1765020504408,372,GET Frontend Splash Page,200,OK,Frontend Test 1-1,text,true,,870,154,50,50,http://localhost:5173/splash,371,0,117
+1765020504393,387,GET Frontend Splash Page,200,OK,Frontend Test 1-4,text,true,,870,154,50,50,http://localhost:5173/splash,387,0,155
+1765020504375,405,GET Frontend Splash Page,200,OK,Frontend Test 1-23,text,true,,870,154,50,50,http://localhost:5173/splash,405,0,167
+1765020504419,362,GET Frontend Splash Page,200,OK,Frontend Test 1-33,text,true,,870,154,50,50,http://localhost:5173/splash,362,0,133
+1765020504366,414,GET Frontend Splash Page,200,OK,Frontend Test 1-28,text,true,,870,154,50,50,http://localhost:5173/splash,413,0,182
+1765020504394,386,GET Frontend Splash Page,200,OK,Frontend Test 1-20,text,true,,870,154,50,50,http://localhost:5173/splash,386,0,154
+1765020504391,399,GET Frontend Splash Page,200,OK,Frontend Test 1-45,text,true,,870,154,50,50,http://localhost:5173/splash,399,0,135
+1765020504400,380,GET Frontend Splash Page,200,OK,Frontend Test 1-29,text,true,,870,154,50,50,http://localhost:5173/splash,379,0,144
+1765020504392,388,GET Frontend Splash Page,200,OK,Frontend Test 1-17,text,true,,870,154,50,50,http://localhost:5173/splash,387,0,150
+1765020504407,373,GET Frontend Splash Page,200,OK,Frontend Test 1-12,text,true,,870,154,50,50,http://localhost:5173/splash,372,0,118
+1765020504393,387,GET Frontend Splash Page,200,OK,Frontend Test 1-37,text,true,,870,154,50,50,http://localhost:5173/splash,387,0,139
+1765020504421,366,GET Frontend Splash Page,200,OK,Frontend Test 1-8,text,true,,870,154,50,50,http://localhost:5173/splash,365,0,131
+1765020504407,385,GET Frontend Splash Page,200,OK,Frontend Test 1-41,text,true,,870,154,50,50,http://localhost:5173/splash,385,0,123
+1765020504430,350,GET Frontend Splash Page,200,OK,Frontend Test 1-48,text,true,,870,154,50,50,http://localhost:5173/splash,350,0,118
+1765020504408,372,GET Frontend Splash Page,200,OK,Frontend Test 1-9,text,true,,870,154,50,50,http://localhost:5173/splash,371,0,138
+1765020504445,351,GET Frontend Splash Page,200,OK,Frontend Test 1-49,text,true,,870,154,50,50,http://localhost:5173/splash,351,0,101
+1765020504419,380,GET Frontend Splash Page,200,OK,Frontend Test 1-36,text,true,,870,154,50,50,http://localhost:5173/splash,379,0,122
+1765020504395,406,GET Frontend Splash Page,200,OK,Frontend Test 1-18,text,true,,870,154,50,50,http://localhost:5173/splash,406,0,147
+1765020504459,345,GET Frontend Splash Page,200,OK,Frontend Test 1-50,text,true,,870,154,50,50,http://localhost:5173/splash,345,0,85
+1765020504407,400,GET Frontend Splash Page,200,OK,Frontend Test 1-14,text,true,,870,154,50,50,http://localhost:5173/splash,399,0,153
+1765020504409,400,GET Frontend Splash Page,200,OK,Frontend Test 1-46,text,true,,870,154,50,50,http://localhost:5173/splash,400,0,122
+1765020504376,435,GET Frontend Splash Page,200,OK,Frontend Test 1-39,text,true,,870,154,50,50,http://localhost:5173/splash,435,0,157
+1765020504366,447,GET Frontend Splash Page,200,OK,Frontend Test 1-22,text,true,,870,154,50,50,http://localhost:5173/splash,447,0,160
+1765020504408,407,GET Frontend Splash Page,200,OK,Frontend Test 1-7,text,true,,870,154,50,50,http://localhost:5173/splash,407,0,119
+1765020504392,425,GET Frontend Splash Page,200,OK,Frontend Test 1-13,text,true,,870,154,50,50,http://localhost:5173/splash,425,0,137
+1765020504397,423,GET Frontend Splash Page,200,OK,Frontend Test 1-11,text,true,,870,154,50,50,http://localhost:5173/splash,423,0,141
+1765020504419,403,GET Frontend Splash Page,200,OK,Frontend Test 1-24,text,true,,870,154,50,50,http://localhost:5173/splash,403,0,110
+1765020504369,460,GET Frontend Splash Page,200,OK,Frontend Test 1-44,text,true,,870,154,50,50,http://localhost:5173/splash,460,0,170
+1765020504366,466,GET Frontend Splash Page,200,OK,Frontend Test 1-25,text,true,,870,154,50,50,http://localhost:5173/splash,466,0,168
+1765020504408,426,GET Frontend Splash Page,200,OK,Frontend Test 1-40,text,true,,870,154,50,50,http://localhost:5173/splash,426,0,140
+1765020504367,471,GET Frontend Splash Page,200,OK,Frontend Test 1-16,text,true,,870,154,50,50,http://localhost:5173/splash,471,0,174
+1765020504394,446,GET Frontend Splash Page,200,OK,Frontend Test 1-15,text,true,,870,154,50,50,http://localhost:5173/splash,446,0,131
+1765020504366,476,GET Frontend Splash Page,200,OK,Frontend Test 1-5,text,true,,870,154,50,50,http://localhost:5173/splash,476,0,182
+1765020504420,424,GET Frontend Splash Page,200,OK,Frontend Test 1-10,text,true,,870,154,50,50,http://localhost:5173/splash,424,0,108
+1765020504397,449,GET Frontend Splash Page,200,OK,Frontend Test 1-26,text,true,,870,154,50,50,http://localhost:5173/splash,449,0,176
+1765020504420,429,GET Frontend Splash Page,200,OK,Frontend Test 1-27,text,true,,870,154,50,50,http://localhost:5173/splash,429,0,125
+1765020504429,423,GET Frontend Splash Page,200,OK,Frontend Test 1-47,text,true,,870,154,50,50,http://localhost:5173/splash,423,0,113
+1765020504419,436,GET Frontend Splash Page,200,OK,Frontend Test 1-19,text,true,,870,154,50,50,http://localhost:5173/splash,436,0,121
+1765020504394,463,GET Frontend Splash Page,200,OK,Frontend Test 1-2,text,true,,870,154,50,50,http://localhost:5173/splash,463,0,136
+1765020504397,462,GET Frontend Splash Page,200,OK,Frontend Test 1-6,text,true,,870,154,50,50,http://localhost:5173/splash,462,0,179
+1765020504392,469,GET Frontend Splash Page,200,OK,Frontend Test 1-31,text,true,,870,154,50,50,http://localhost:5173/splash,469,0,137
+1765020504408,456,GET Frontend Splash Page,200,OK,Frontend Test 1-3,text,true,,870,154,50,50,http://localhost:5173/splash,456,0,157
+1765020504380,486,GET Frontend Splash Page,200,OK,Frontend Test 1-43,text,true,,870,154,50,50,http://localhost:5173/splash,486,0,196
+1765020504376,494,GET Frontend Splash Page,200,OK,Frontend Test 1-42,text,true,,870,154,50,50,http://localhost:5173/splash,494,0,200
+1765020504407,466,GET Frontend Splash Page,200,OK,Frontend Test 1-38,text,true,,870,154,50,50,http://localhost:5173/splash,466,0,170
+1765020504420,455,GET Frontend Splash Page,200,OK,Frontend Test 1-21,text,true,,870,154,50,50,http://localhost:5173/splash,455,0,153
+1765020504393,485,GET Frontend Splash Page,200,OK,Frontend Test 1-34,text,true,,870,154,50,50,http://localhost:5173/splash,485,0,181
+1765020504393,489,GET Frontend Splash Page,200,OK,Frontend Test 1-35,text,true,,870,154,50,50,http://localhost:5173/splash,488,0,183
+1765020504397,489,GET Frontend Splash Page,200,OK,Frontend Test 1-30,text,true,,870,154,50,50,http://localhost:5173/splash,488,0,179
+1765020504826,199,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-20,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,130,0,0
+1765020504823,201,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-45,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,132,0,0
+1765020504826,199,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-32,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,130,0,0
+1765020504826,198,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-33,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,130,0,0
+1765020504826,198,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-9,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,130,0,0
+1765020504826,200,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-28,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,131,0,0
+1765020504825,202,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-1,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,132,0,0
+1765020504828,202,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-23,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,129,0,0
+1765020504828,203,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-17,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,130,0,0
+1765020504828,204,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-12,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,131,0,0
+1765020504830,204,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-8,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,130,0,0
+1765020504828,205,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-41,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,131,0,0
+1765020504830,206,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-48,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,130,0,0
+1765020504831,208,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-29,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,130,0,0
+1765020504834,205,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-4,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,127,0,0
+1765020504843,196,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-14,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,119,0,0
+1765020504843,196,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-18,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,119,0,0
+1765020504831,207,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-37,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,129,0,0
+1765020504834,206,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-49,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,127,0,0
+1765020504839,201,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-36,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,123,0,0
+1765020504845,196,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-50,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,117,0,0
+1765020504845,197,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-46,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,118,0,0
+1765020504848,194,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-39,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,115,0,0
+1765020504851,193,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-7,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,112,0,0
+1765020504854,191,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-24,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,109,0,0
+1765020504856,190,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-22,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,108,0,0
+1765020504856,191,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-13,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,108,0,0
+1765020504862,185,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-11,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,102,0,0
+1765020504868,180,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-40,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,97,0,0
+1765020504868,180,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-44,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,97,0,0
+1765020504873,176,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-16,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,92,0,0
+1765020504880,170,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-15,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,87,0,0
+1765020504875,175,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-5,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,91,0,0
+1765020504873,176,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-25,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,93,0,0
+1765020504882,168,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-27,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,85,0,0
+1765020504882,171,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-10,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,87,0,0
+1765020504886,168,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-26,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,84,0,0
+1765020504887,168,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-47,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,83,0,0
+1765020504888,174,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-19,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,84,0,0
+1765020504893,184,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-6,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,95,0,0
+1765020504897,180,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-2,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,91,0,0
+1765020504898,181,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-31,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,90,0,0
+1765020504902,178,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-3,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,87,0,0
+1765020504903,178,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-43,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,86,0,0
+1765020504909,181,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-38,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,80,0,0
+1765020504911,179,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-42,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,79,0,0
+1765020504913,179,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-21,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,78,0,0
+1765020504916,176,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-35,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,76,0,0
+1765020504919,176,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-34,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,73,0,0
+1765020504926,172,GET Login Image (RoupasLogin.png),200,OK,Frontend Test 1-30,bin,true,,203337,186,50,50,http://localhost:5173/src/Componentes/assets/RoupasLogin.png,66,0,0
+1765020505140,1658,GET Google Font Average Sans,200,OK,Frontend Test 1-30,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1655,0,1573
+1765020505072,1727,GET Google Font Average Sans,200,OK,Frontend Test 1-41,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1726,0,1635
+1765020505091,1708,GET Google Font Average Sans,200,OK,Frontend Test 1-40,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1708,0,1633
+1765020505065,1736,GET Google Font Average Sans,200,OK,Frontend Test 1-32,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1735,0,1646
+1765020505085,1716,GET Google Font Average Sans,200,OK,Frontend Test 1-46,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1716,0,1640
+1765020505065,1737,GET Google Font Average Sans,200,OK,Frontend Test 1-33,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1737,0,1645
+1765020505082,1720,GET Google Font Average Sans,200,OK,Frontend Test 1-29,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1720,0,1627
+1765020505090,1713,GET Google Font Average Sans,200,OK,Frontend Test 1-13,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1712,0,1626
+1765020505075,1724,GET Google Font Average Sans,200,OK,Frontend Test 1-17,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1723,0,1633
+1765020505130,1673,GET Google Font Average Sans,200,OK,Frontend Test 1-38,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1673,0,1591
+1765020505088,1716,GET Google Font Average Sans,200,OK,Frontend Test 1-7,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1716,0,1629
+1765020505065,1739,GET Google Font Average Sans,200,OK,Frontend Test 1-45,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1739,0,1660
+1765020505089,1716,GET Google Font Average Sans,200,OK,Frontend Test 1-11,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1706,0,1626
+1765020505115,1691,GET Google Font Average Sans,200,OK,Frontend Test 1-6,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1691,0,1588
+1765020505129,1678,GET Google Font Average Sans,200,OK,Frontend Test 1-34,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1677,0,1598
+1765020505094,1713,GET Google Font Average Sans,200,OK,Frontend Test 1-5,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1713,0,1614
+1765020505095,1713,GET Google Font Average Sans,200,OK,Frontend Test 1-47,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1700,0,1609
+1765020505103,1705,GET Google Font Average Sans,200,OK,Frontend Test 1-19,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1705,0,1597
+1765020505097,1711,GET Google Font Average Sans,200,OK,Frontend Test 1-22,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1711,0,1603
+1765020505099,1702,GET Google Font Average Sans,200,OK,Frontend Test 1-16,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1698,0,1617
+1765020505130,1669,GET Google Font Average Sans,200,OK,Frontend Test 1-35,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1668,0,1570
+1765020505120,1690,GET Google Font Average Sans,200,OK,Frontend Test 1-43,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1690,0,1585
+1765020505072,1738,GET Google Font Average Sans,200,OK,Frontend Test 1-18,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1737,0,1630
+1765020505082,1725,GET Google Font Average Sans,200,OK,Frontend Test 1-39,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1725,0,1621
+1765020505119,1692,GET Google Font Average Sans,200,OK,Frontend Test 1-3,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1692,0,1603
+1765020505099,1706,GET Google Font Average Sans,200,OK,Frontend Test 1-24,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1698,0,1604
+1765020505083,1721,GET Google Font Average Sans,200,OK,Frontend Test 1-15,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1712,0,1640
+1765020505092,1711,GET Google Font Average Sans,200,OK,Frontend Test 1-26,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1711,0,1616
+1765020505086,1728,GET Google Font Average Sans,200,OK,Frontend Test 1-48,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1728,0,1635
+1765020505064,1751,GET Google Font Average Sans,200,OK,Frontend Test 1-20,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1751,0,1646
+1765020505089,1724,GET Google Font Average Sans,200,OK,Frontend Test 1-44,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1723,0,1611
+1765020505097,1718,GET Google Font Average Sans,200,OK,Frontend Test 1-25,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1718,0,1610
+1765020505132,1683,GET Google Font Average Sans,200,OK,Frontend Test 1-21,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1683,0,1577
+1765020505075,1744,GET Google Font Average Sans,200,OK,Frontend Test 1-49,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1743,0,1634
+1765020505130,1690,GET Google Font Average Sans,200,OK,Frontend Test 1-42,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1689,0,1588
+1765020505071,1751,GET Google Font Average Sans,200,OK,Frontend Test 1-23,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1750,0,1645
+1765020505096,1728,GET Google Font Average Sans,200,OK,Frontend Test 1-10,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1727,0,1606
+1765020505117,1707,GET Google Font Average Sans,200,OK,Frontend Test 1-31,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1706,0,1603
+1765020505085,1740,GET Google Font Average Sans,200,OK,Frontend Test 1-4,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1739,0,1620
+1765020505073,1754,GET Google Font Average Sans,200,OK,Frontend Test 1-12,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1753,0,1640
+1765020505079,1750,GET Google Font Average Sans,200,OK,Frontend Test 1-50,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1749,0,1635
+1765020505086,1743,GET Google Font Average Sans,200,OK,Frontend Test 1-27,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1743,0,1628
+1765020505116,1711,GET Google Font Average Sans,200,OK,Frontend Test 1-2,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1711,0,1585
+1765020505079,1752,GET Google Font Average Sans,200,OK,Frontend Test 1-37,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1751,0,1628
+1765020505069,1762,GET Google Font Average Sans,200,OK,Frontend Test 1-28,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1761,0,1657
+1765020505073,1748,GET Google Font Average Sans,200,OK,Frontend Test 1-8,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1748,0,1640
+1765020505078,1749,GET Google Font Average Sans,200,OK,Frontend Test 1-36,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1748,0,1631
+1765020505062,1769,GET Google Font Average Sans,200,OK,Frontend Test 1-9,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1769,0,1647
+1765020505077,1752,GET Google Font Average Sans,200,OK,Frontend Test 1-14,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1752,0,1626
+1765020505063,1766,GET Google Font Average Sans,200,OK,Frontend Test 1-1,text,true,,828,191,50,50,https://fonts.googleapis.com/css2?family=Average+Sans&display=swap,1765,0,1664
+1765020506832,97,GET Favicon (Group 2.png),200,OK,Frontend Test 1-40,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,97,0,0
+1765020504272,2658,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-40,,true,,205905,703,50,50,null,2328,0,1773
+1765020506836,95,GET Favicon (Group 2.png),200,OK,Frontend Test 1-46,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,95,0,0
+1765020504373,2559,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-46,,true,,205905,703,50,50,null,2329,0,1762
+1765020506832,101,GET Favicon (Group 2.png),200,OK,Frontend Test 1-41,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,101,0,0
+1765020504290,2645,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-41,,true,,205905,703,50,50,null,2343,0,1758
+1765020506837,100,GET Favicon (Group 2.png),200,OK,Frontend Test 1-45,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,100,0,0
+1765020504340,2598,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-45,,true,,205905,703,50,50,null,2370,0,1795
+1765020506837,105,GET Favicon (Group 2.png),200,OK,Frontend Test 1-30,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,105,0,0
+1765020504099,2844,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-30,,true,,205905,703,50,50,null,2314,0,1752
+1765020506839,105,GET Favicon (Group 2.png),200,OK,Frontend Test 1-29,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,105,0,0
+1765020504081,2864,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-29,,true,,205905,703,50,50,null,2334,0,1771
+1765020506839,110,GET Favicon (Group 2.png),200,OK,Frontend Test 1-5,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,110,0,0
+1765020503777,3173,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-5,,true,,205905,703,50,50,null,2390,0,1796
+1765020506840,112,GET Favicon (Group 2.png),200,OK,Frontend Test 1-7,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,112,0,0
+1765020503776,3177,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-7,,true,,205905,703,50,50,null,2347,0,1748
+1765020506841,114,GET Favicon (Group 2.png),200,OK,Frontend Test 1-13,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,114,0,0
+1765020503870,3086,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-13,,true,,205905,703,50,50,null,2359,0,1763
+1765020506841,116,GET Favicon (Group 2.png),200,OK,Frontend Test 1-32,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,116,0,0
+1765020504147,2811,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-32,,true,,205905,703,50,50,null,2360,0,1784
+1765020506842,117,GET Favicon (Group 2.png),200,OK,Frontend Test 1-11,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,117,0,0
+1765020503825,3135,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-11,,true,,205905,703,50,50,null,2348,0,1767
+1765020506842,119,GET Favicon (Group 2.png),200,OK,Frontend Test 1-38,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,119,0,0
+1765020504224,2739,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-38,,true,,205905,703,50,50,null,2338,0,1761
+1765020506843,121,GET Favicon (Group 2.png),200,OK,Frontend Test 1-3,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,120,0,0
+1765020503776,3188,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-3,,true,,205905,703,50,50,null,2355,0,1760
+1765020506843,123,GET Favicon (Group 2.png),200,OK,Frontend Test 1-39,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,123,0,0
+1765020504274,2693,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-39,,true,,205905,703,50,50,null,2398,0,1778
+1765020506843,127,GET Favicon (Group 2.png),200,OK,Frontend Test 1-17,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,126,0,0
+1765020503927,3044,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-17,,true,,205905,703,50,50,null,2366,0,1783
+1765020506842,132,GET Favicon (Group 2.png),200,OK,Frontend Test 1-33,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,132,0,0
+1765020504170,2805,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-33,,true,,205905,703,50,50,null,2361,0,1778
+1765020506844,133,GET Favicon (Group 2.png),200,OK,Frontend Test 1-6,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,133,0,0
+1765020503777,3201,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-6,,true,,205905,703,50,50,null,2381,0,1767
+1765020506844,136,GET Favicon (Group 2.png),200,OK,Frontend Test 1-47,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,136,0,0
+1765020504394,2587,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-47,,true,,205905,703,50,50,null,2342,0,1722
+1765020506845,143,GET Favicon (Group 2.png),200,OK,Frontend Test 1-34,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,143,0,0
+1765020504223,2766,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-34,,true,,205905,703,50,50,null,2378,0,1779
+1765020506845,151,GET Favicon (Group 2.png),200,OK,Frontend Test 1-16,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,151,0,0
+1765020503905,3092,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-16,,true,,205905,703,50,50,null,2412,0,1791
+1765020506846,164,GET Favicon (Group 2.png),200,OK,Frontend Test 1-43,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,164,0,0
+1765020504344,2667,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-43,,true,,205905,703,50,50,null,2426,0,1781
+1765020506846,174,GET Favicon (Group 2.png),200,OK,Frontend Test 1-35,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,174,0,0
+1765020504223,2798,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-35,,true,,205905,703,50,50,null,2406,0,1753
+1765020506847,190,GET Favicon (Group 2.png),200,OK,Frontend Test 1-18,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,189,0,0
+1765020503975,3063,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-18,,true,,205905,703,50,50,null,2451,0,1777
+1765020506847,198,GET Favicon (Group 2.png),200,OK,Frontend Test 1-22,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,198,0,0
+1765020503999,3047,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-22,,true,,205905,703,50,50,null,2464,0,1763
+1765020506849,205,GET Favicon (Group 2.png),200,OK,Frontend Test 1-15,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,204,0,0
+1765020503881,3174,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-15,,true,,205905,703,50,50,null,2449,0,1771
+1765020506849,223,GET Favicon (Group 2.png),200,OK,Frontend Test 1-19,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,223,0,0
+1765020503977,3097,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-19,,true,,205905,703,50,50,null,2448,0,1718
+1765020506852,227,GET Favicon (Group 2.png),200,OK,Frontend Test 1-26,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,227,0,0
+1765020504071,3009,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-26,,true,,205905,703,50,50,null,2471,0,1792
+1765020506853,236,GET Favicon (Group 2.png),200,OK,Frontend Test 1-24,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,236,0,0
+1765020504030,3060,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-24,,true,,205905,703,50,50,null,2446,0,1714
+1765020506854,238,GET Favicon (Group 2.png),200,OK,Frontend Test 1-48,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,238,0,0
+1765020504387,2706,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-48,,true,,205905,703,50,50,null,2446,0,1753
+1765020506855,239,GET Favicon (Group 2.png),200,OK,Frontend Test 1-20,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,239,0,0
+1765020503973,3122,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-20,,true,,205905,703,50,50,null,2506,0,1800
+1765020506855,241,GET Favicon (Group 2.png),200,OK,Frontend Test 1-44,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,241,0,0
+1765020504325,2772,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-44,,true,,205905,703,50,50,null,2521,0,1781
+1765020506856,248,GET Favicon (Group 2.png),200,OK,Frontend Test 1-21,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,248,0,0
+1765020503989,3116,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-21,,true,,205905,703,50,50,null,2464,0,1730
+1765020506857,252,GET Favicon (Group 2.png),200,OK,Frontend Test 1-25,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,252,0,0
+1765020504053,3057,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-25,,true,,205905,703,50,50,null,2529,0,1778
+1765020506857,254,GET Favicon (Group 2.png),200,OK,Frontend Test 1-49,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,254,0,0
+1765020504405,2707,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-49,,true,,205905,703,50,50,null,2475,0,1735
+1765020506859,254,GET Favicon (Group 2.png),200,OK,Frontend Test 1-42,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,254,0,0
+1765020504309,2805,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-42,,true,,205905,703,50,50,null,2516,0,1788
+1765020506862,253,GET Favicon (Group 2.png),200,OK,Frontend Test 1-12,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,253,0,0
+1765020503825,3293,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-12,,true,,205905,703,50,50,null,2509,0,1758
+1765020506864,262,GET Favicon (Group 2.png),200,OK,Frontend Test 1-50,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,262,0,0
+1765020504423,2704,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-50,,true,,205905,703,50,50,null,2473,0,1720
+1765020506865,274,GET Favicon (Group 2.png),200,OK,Frontend Test 1-23,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,274,0,0
+1765020504045,3096,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-23,,true,,205905,703,50,50,null,2558,0,1812
+1765020506862,283,GET Favicon (Group 2.png),200,OK,Frontend Test 1-31,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,282,0,0
+1765020504147,2998,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-31,,true,,205905,703,50,50,null,2547,0,1740
+1765020506871,283,GET Favicon (Group 2.png),200,OK,Frontend Test 1-2,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,283,0,0
+1765020503777,3378,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-2,,true,,205905,703,50,50,null,2548,0,1721
+1765020506872,290,GET Favicon (Group 2.png),200,OK,Frontend Test 1-1,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,290,0,0
+1765020503776,3387,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-1,,true,,205905,703,50,50,null,2558,0,1781
+1765020506872,292,GET Favicon (Group 2.png),200,OK,Frontend Test 1-27,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,292,0,0
+1765020504077,3088,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-27,,true,,205905,703,50,50,null,2549,0,1753
+1765020506867,299,GET Favicon (Group 2.png),200,OK,Frontend Test 1-10,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,299,0,0
+1765020503836,3331,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-10,,true,,205905,703,50,50,null,2537,0,1714
+1765020506875,303,GET Favicon (Group 2.png),200,OK,Frontend Test 1-14,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,303,0,0
+1765020503862,3317,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-14,,true,,205905,703,50,50,null,2573,0,1779
+1765020506866,327,GET Favicon (Group 2.png),200,OK,Frontend Test 1-4,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,327,0,0
+1765020503777,3417,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-4,,true,,205905,703,50,50,null,2580,0,1775
+1765020506877,319,GET Favicon (Group 2.png),200,OK,Frontend Test 1-28,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,319,0,0
+1765020504081,3116,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-28,,true,,205905,703,50,50,null,2624,0,1839
+1765020506870,327,GET Favicon (Group 2.png),200,OK,Frontend Test 1-36,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,327,0,0
+1765020504203,2995,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-36,,true,,205905,703,50,50,null,2577,0,1753
+1765020506878,321,GET Favicon (Group 2.png),200,OK,Frontend Test 1-8,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,321,0,0
+1765020503793,3408,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-8,,true,,205905,703,50,50,null,2564,0,1771
+1765020506879,331,GET Favicon (Group 2.png),200,OK,Frontend Test 1-37,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,331,0,0
+1765020504223,2990,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-37,,true,,205905,703,50,50,null,2598,0,1767
+1765020506887,336,GET Favicon (Group 2.png),200,OK,Frontend Test 1-9,text,true,,870,172,50,50,http://localhost:5173/src/assets/Group%202.png,336,0,0
+1765020503814,3410,Load Login Page,200,"Number of samples in transaction : 4, number of failing samples : 0",Frontend Test 1-9,,true,,205905,703,50,50,null,2606,0,1785
+1765020507023,920,POST Login,200,,Frontend Test 1-47,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,920,0,2
+1765020506975,900,POST Login,200,,Frontend Test 1-41,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,900,0,18
+1765020506982,1039,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-47,,true,,661,226,50,50,null,920,0,2
+1765020506935,1086,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-41,,true,,661,226,50,50,null,900,0,18
+1765020506997,905,POST Login,200,,Frontend Test 1-3,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,878,0,13
+1765020506965,1058,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-3,,true,,660,226,50,50,null,878,0,13
+1765020506988,888,POST Login,200,,Frontend Test 1-7,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,888,0,5
+1765020506976,1002,POST Login,200,,Frontend Test 1-40,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1002,0,19
+1765020506931,1093,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-40,,true,,661,226,50,50,null,1002,0,19
+1765020506953,1071,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-7,,true,,660,226,50,50,null,888,0,5
+1765020506975,1113,POST Login,200,,Frontend Test 1-45,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1113,0,21
+1765020506939,1150,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-45,,true,,661,226,50,50,null,1113,0,21
+1765020506977,1127,POST Login,200,,Frontend Test 1-30,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1127,0,13
+1765020506943,1162,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-30,,true,,661,226,50,50,null,1127,0,13
+1765020507003,1146,POST Login,200,,Frontend Test 1-11,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1146,0,3
+1765020506960,1190,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-11,,true,,661,226,50,50,null,1146,0,3
+1765020506975,1190,POST Login,200,,Frontend Test 1-46,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1190,0,15
+1765020506932,1236,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-46,,true,,661,226,50,50,null,1190,0,15
+1765020506980,1209,POST Login,200,,Frontend Test 1-29,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1209,0,13
+1765020506945,1245,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-29,,true,,661,226,50,50,null,1209,0,13
+1765020506995,1454,POST Login,200,,Frontend Test 1-32,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1453,0,13
+1765020506958,1493,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-32,,true,,661,226,50,50,null,1453,0,13
+1765020507057,1501,POST Login,200,,Frontend Test 1-35,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1500,0,2
+1765020507021,1538,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-35,,true,,661,226,50,50,null,1500,0,2
+1765020507006,1632,POST Login,200,,Frontend Test 1-38,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1632,0,10
+1765020506963,1676,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-38,,true,,661,226,50,50,null,1632,0,10
+1765020507112,1657,POST Login,200,,Frontend Test 1-19,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1657,0,12
+1765020507074,1697,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-19,,true,,661,226,50,50,null,1657,0,12
+1765020507022,1783,POST Login,200,,Frontend Test 1-34,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1783,0,2
+1765020506989,1817,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-34,,true,,661,226,50,50,null,1783,0,2
+1765020507082,1746,POST Login,200,,Frontend Test 1-22,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1746,0,2
+1765020507046,1783,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-22,,true,,661,226,50,50,null,1746,0,2
+1765020507205,1632,POST Login,200,,Frontend Test 1-10,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1632,0,2
+1765020507167,1672,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-10,,true,,661,226,50,50,null,1632,0,2
+1765020507020,1859,POST Login,200,,Frontend Test 1-6,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1859,0,13
+1765020506978,1903,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-6,,true,,661,226,50,50,null,1859,0,13
+1765020507087,1984,POST Login,200,,Frontend Test 1-15,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1984,0,3
+1765020507055,2018,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-15,,true,,661,226,50,50,null,1984,0,3
+1765020507116,2038,POST Login,200,,Frontend Test 1-26,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2038,0,14
+1765020507080,2075,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-26,,true,,661,226,50,50,null,2038,0,14
+1765020507153,2246,POST Login,200,,Frontend Test 1-42,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2245,0,3
+1765020507114,2288,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-42,,true,,661,226,50,50,null,2245,0,3
+1765020507189,2290,POST Login,200,,Frontend Test 1-2,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,2289,0,2
+1765020507155,2325,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-2,,true,,660,226,50,50,null,2289,0,2
+1765020507080,2427,POST Login,200,,Frontend Test 1-33,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2427,0,61
+1765020506975,2533,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-33,,true,,661,226,50,50,null,2427,0,61
+1765020506985,2579,POST Login,200,,Frontend Test 1-5,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,2579,0,114
+1765020506950,2615,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-5,,true,,660,226,50,50,null,2579,0,114
+1765020507161,2458,POST Login,200,,Frontend Test 1-50,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2458,0,10
+1765020507127,2493,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-50,,true,,661,226,50,50,null,2458,0,10
+1765020506999,2708,POST Login,200,,Frontend Test 1-13,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2707,0,107
+1765020506956,2751,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-13,,true,,661,226,50,50,null,2707,0,107
+1765020507205,2572,POST Login,200,,Frontend Test 1-48,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2568,0,74
+1765020507094,2684,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-48,,true,,661,226,50,50,null,2568,0,74
+1765020507216,2578,POST Login,200,,Frontend Test 1-14,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2578,0,16
+1765020507179,2616,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-14,,true,,661,226,50,50,null,2578,0,16
+1765020507180,2704,POST Login,200,,Frontend Test 1-23,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2704,0,3
+1765020507141,2744,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-23,,true,,661,226,50,50,null,2704,0,3
+1765020507049,2936,POST Login,200,,Frontend Test 1-43,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2933,0,8
+1765020507011,2975,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-43,,true,,661,226,50,50,null,2933,0,8
+1765020507123,2913,POST Login,200,,Frontend Test 1-24,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2913,0,143
+1765020507090,2962,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-24,,true,,661,226,50,50,null,2913,0,143
+1765020507039,3041,POST Login,200,,Frontend Test 1-16,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3041,0,105
+1765020506998,3083,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-16,,true,,661,226,50,50,null,3041,0,105
+1765020507137,2964,POST Login,200,,Frontend Test 1-44,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2964,0,138
+1765020507097,3006,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-44,,true,,661,226,50,50,null,2964,0,138
+1765020507139,3083,POST Login,200,,Frontend Test 1-20,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3083,0,143
+1765020507096,3127,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-20,,true,,661,226,50,50,null,3083,0,143
+1765020507072,3194,POST Login,200,,Frontend Test 1-18,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3191,0,3
+1765020507038,3229,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-18,,true,,661,226,50,50,null,3191,0,3
+1765020507202,3218,POST Login,200,,Frontend Test 1-27,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3218,0,27
+1765020507165,3256,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-27,,true,,661,226,50,50,null,3218,0,27
+1765020507031,3434,POST Login,200,,Frontend Test 1-17,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3433,0,111
+1765020506971,3495,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-17,,true,,661,226,50,50,null,3433,0,111
+1765020507231,3283,POST Login,200,,Frontend Test 1-4,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,3283,0,116
+1765020507195,3320,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-4,,true,,660,226,50,50,null,3283,0,116
+1765020507185,3465,POST Login,200,,Frontend Test 1-31,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3464,0,3
+1765020507146,3506,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-31,,true,,661,226,50,50,null,3464,0,3
+1765020507165,3514,POST Login,200,,Frontend Test 1-12,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3514,0,190
+1765020507119,3561,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-12,,true,,661,226,50,50,null,3514,0,190
+1765020507236,3501,POST Login,200,,Frontend Test 1-28,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3501,0,73
+1765020507197,3541,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-28,,true,,661,226,50,50,null,3501,0,73
+1765020507221,3532,POST Login,200,,Frontend Test 1-49,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3532,0,123
+1765020507112,3642,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-49,,true,,661,226,50,50,null,3532,0,123
+1765020508070,2756,GET Clientes,200,,Frontend Test 1-47,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2755,0,0
+1765020507142,3718,POST Login,200,,Frontend Test 1-21,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3718,0,199
+1765020507106,3756,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-21,,true,,661,226,50,50,null,3718,0,199
+1765020508486,2405,GET Clientes,200,,Frontend Test 1-32,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2405,0,0
+1765020508061,2831,GET Clientes,200,,Frontend Test 1-40,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2831,0,0
+1765020508060,2856,GET Clientes,200,,Frontend Test 1-41,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2856,0,0
+1765020508061,2880,GET Clientes,200,,Frontend Test 1-3,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2879,0,0
+1765020508078,2868,GET Clientes,200,,Frontend Test 1-7,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2868,0,0
+1765020508125,2840,GET Clientes,200,,Frontend Test 1-45,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2839,0,0
+1765020508186,2807,GET Clientes,200,,Frontend Test 1-11,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2806,0,0
+1765020508145,2862,GET Clientes,200,,Frontend Test 1-30,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2862,0,0
+1765020508228,2790,GET Clientes,200,,Frontend Test 1-29,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2790,0,0
+1765020508674,2353,GET Clientes,200,,Frontend Test 1-38,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2353,0,0
+1765020507153,3881,POST Login,200,,Frontend Test 1-25,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3881,0,241
+1765020507110,3925,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-25,,true,,661,226,50,50,null,3881,0,241
+1765020508205,2844,GET Clientes,200,,Frontend Test 1-46,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2844,0,0
+1765020507246,3813,POST Login,200,,Frontend Test 1-37,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3813,0,107
+1765020508843,2214,GET Clientes,200,,Frontend Test 1-34,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2214,0,0
+1765020507213,3847,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-37,,true,,661,226,50,50,null,3813,0,107
+1765020508873,2191,GET Clientes,200,,Frontend Test 1-10,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2191,0,0
+1765020508803,2282,GET Clientes,200,,Frontend Test 1-19,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2282,0,0
+1765020509187,1905,GET Clientes,200,,Frontend Test 1-26,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,1905,0,0
+1765020507265,3832,POST Login,200,,Frontend Test 1-9,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3829,0,9
+1765020507225,3873,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-9,,true,,661,226,50,50,null,3829,0,9
+1765020509105,2005,GET Clientes,200,,Frontend Test 1-15,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2005,0,0
+1765020509597,1525,GET Clientes,200,,Frontend Test 1-5,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,1525,0,0
+1765020509651,1471,GET Clientes,200,,Frontend Test 1-50,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,1471,0,0
+1765020508593,2550,GET Clientes,200,,Frontend Test 1-35,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2550,0,0
+1765020508912,2234,GET Clientes,200,,Frontend Test 1-6,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2234,0,0
+1765020509515,1632,GET Clientes,200,,Frontend Test 1-2,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,1632,0,0
+1765020508859,2294,GET Clientes,200,,Frontend Test 1-22,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,2294,0,0
+1765020509437,1725,GET Clientes,200,,Frontend Test 1-42,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,1725,0,0
+1765020507238,3937,POST Login,200,,Frontend Test 1-8,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3937,0,71
+1765020509813,1361,GET Clientes,200,,Frontend Test 1-48,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,1361,0,0
+1765020507202,3974,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-8,,true,,661,226,50,50,null,3937,0,71
+1765020510017,1164,GET Clientes,200,,Frontend Test 1-43,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,1162,0,0
+1765020509917,1276,GET Clientes,200,,Frontend Test 1-23,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,1276,0,0
+1765020509827,1367,GET Clientes,200,,Frontend Test 1-14,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,1367,0,0
+1765020509543,1652,GET Clientes,200,,Frontend Test 1-33,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,1652,0,0
+1765020510090,1111,GET Clientes,200,,Frontend Test 1-24,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,1110,0,0
+1765020510551,679,GET Clientes,200,,Frontend Test 1-4,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,679,0,0
+1765020510134,1105,GET Clientes,200,,Frontend Test 1-44,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,1105,0,0
+1765020510119,1144,GET Clientes,200,,Frontend Test 1-16,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,1143,0,0
+1765020510302,961,GET Clientes,200,,Frontend Test 1-18,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,960,0,0
+1765020507241,4071,POST Login,200,,Frontend Test 1-36,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,4057,0,111
+1765020507198,4115,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-36,,true,,661,226,50,50,null,4057,0,111
+1765020510265,1057,GET Clientes,200,,Frontend Test 1-20,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,1057,0,0
+1765020510453,872,GET Clientes,200,,Frontend Test 1-27,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,872,0,0
+1765020511051,320,GET Vendas Filtrar,200,,Frontend Test 1-29,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,320,0,0
+1765020510504,934,GET Clientes,200,,Frontend Test 1-17,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,933,0,0
+1765020507205,4265,POST Login,200,,Frontend Test 1-1,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,4265,0,172
+1765020507163,4308,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-1,,true,,660,226,50,50,null,4265,0,172
+1765020511186,331,GET Vendas Filtrar,200,,Frontend Test 1-6,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,321,0,0
+1765020510926,595,GET Vendas Filtrar,200,,Frontend Test 1-32,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,595,0,0
+1765020510771,762,GET Clientes,200,,Frontend Test 1-28,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,762,0,0
+1765020510926,623,GET Vendas Filtrar,200,,Frontend Test 1-40,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,623,0,0
+1765020510687,896,GET Clientes,200,,Frontend Test 1-31,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,895,0,0
+1765020510984,604,GET Vendas Filtrar,200,,Frontend Test 1-7,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,604,0,0
+1765020511033,560,GET Vendas Filtrar,200,,Frontend Test 1-11,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,560,0,0
+1765020507008,4589,POST Login,200,,Frontend Test 1-39,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,4589,0,6
+1765020506967,4631,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-39,,true,,661,226,50,50,null,4589,0,6
+1765020511005,601,GET Vendas Filtrar,200,,Frontend Test 1-45,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,600,0,0
+1765020510904,737,GET Vendas Filtrar,200,,Frontend Test 1-47,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,737,0,0
+1765020511069,574,GET Vendas Filtrar,200,,Frontend Test 1-38,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,574,0,0
+1765020509739,1914,GET Clientes,200,,Frontend Test 1-13,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,1914,0,0
+1765020510975,680,GET Vendas Filtrar,200,,Frontend Test 1-3,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,680,0,0
+1765020510711,955,GET Clientes,200,,Frontend Test 1-12,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,955,0,0
+1765020510950,721,GET Vendas Filtrar,200,,Frontend Test 1-41,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,720,0,0
+1765020511422,252,GET Fornecedores,200,,Frontend Test 1-29,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,252,0,0
+1765020511245,452,GET Vendas Filtrar,200,,Frontend Test 1-24,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,452,0,0
+1765020511070,636,GET Clientes,200,,Frontend Test 1-25,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,636,0,0
+1765020511310,402,GET Vendas Filtrar,200,,Frontend Test 1-16,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,392,0,0
+1765020510789,930,GET Clientes,200,,Frontend Test 1-49,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,929,0,0
+1765020511403,334,GET Vendas Filtrar,200,,Frontend Test 1-27,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,333,0,0
+1765020511316,428,GET Vendas Filtrar,200,,Frontend Test 1-18,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,428,0,0
+1765020511272,485,GET Vendas Filtrar,200,,Frontend Test 1-4,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,485,0,0
+1765020511207,562,GET Vendas Filtrar,200,,Frontend Test 1-48,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,562,0,0
+1765020511104,671,GET Vendas Filtrar,200,,Frontend Test 1-10,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,671,0,0
+1765020511105,671,GET Vendas Filtrar,200,,Frontend Test 1-34,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,671,0,0
+1765020511087,697,GET Vendas Filtrar,200,,Frontend Test 1-46,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,697,0,0
+1765020511220,570,GET Vendas Filtrar,200,,Frontend Test 1-43,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,570,0,0
+1765020511349,449,GET Clientes,200,,Frontend Test 1-36,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,449,0,0
+1765020511233,574,GET Vendas Filtrar,200,,Frontend Test 1-33,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,574,0,0
+1765020511128,688,GET Clientes,200,,Frontend Test 1-9,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,688,0,0
+1765020511097,722,GET Clientes,200,,Frontend Test 1-37,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,722,0,0
+1765020511205,633,GET Clientes,200,,Frontend Test 1-8,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,633,0,0
+1765020510897,952,GET Clientes,200,,Frontend Test 1-21,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,951,0,0
+1765020511044,823,GET Vendas Filtrar,200,,Frontend Test 1-30,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,823,0,0
+1765020511233,640,GET Vendas Filtrar,200,,Frontend Test 1-23,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,640,0,0
+1765020511135,757,GET Vendas Filtrar,200,,Frontend Test 1-26,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,750,0,0
+1765020511160,745,GET Vendas Filtrar,200,,Frontend Test 1-50,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,745,0,0
+1765020511567,356,GET Vendas Filtrar,200,,Frontend Test 1-28,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,355,0,0
+1765020511126,800,GET Vendas Filtrar,200,,Frontend Test 1-19,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,800,0,0
+1765020511557,375,GET Fornecedores,200,,Frontend Test 1-32,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,375,0,0
+1765020511286,657,GET Vendas Filtrar,200,,Frontend Test 1-44,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,657,0,0
+1765020511556,387,GET Fornecedores,200,,Frontend Test 1-6,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,387,0,0
+1765020511195,750,GET Vendas Filtrar,200,,Frontend Test 1-22,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,749,0,0
+1765020511160,791,GET Vendas Filtrar,200,,Frontend Test 1-5,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,791,0,0
+1765020511645,312,GET Fornecedores,200,,Frontend Test 1-45,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,312,0,0
+1765020511203,755,GET Vendas Filtrar,200,,Frontend Test 1-42,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,755,0,0
+1765020511183,775,GET Vendas Filtrar,200,,Frontend Test 1-2,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,775,0,0
+1765020511590,370,GET Fornecedores,200,,Frontend Test 1-40,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,370,0,0
+1765020511793,171,GET Fornecedores,200,,Frontend Test 1-4,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,171,0,0
+1765020511229,741,GET Vendas Filtrar,200,,Frontend Test 1-14,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,741,0,0
+1765020511689,283,GET Fornecedores,200,,Frontend Test 1-3,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,283,0,0
+1765020511684,288,GET Fornecedores,200,,Frontend Test 1-47,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,288,0,0
+1765020511626,368,GET Fornecedores,200,,Frontend Test 1-7,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,368,0,0
+1765020511840,173,GET Fornecedores,200,,Frontend Test 1-33,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,173,0,0
+1765020511358,657,GET Vendas Filtrar,200,,Frontend Test 1-20,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,657,0,0
+1765020511745,280,GET Fornecedores,200,,Frontend Test 1-16,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,280,0,0
+1765020511712,315,GET Fornecedores,200,,Frontend Test 1-41,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,315,0,0
+1765020511709,318,GET Usuarios (Funcionarios),200,,Frontend Test 1-29,text,true,,7989,366,50,50,http://localhost:8080/usuarios,317,0,0
+1765020511504,539,GET Clientes,200,,Frontend Test 1-1,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,539,0,0
+1765020511633,415,GET Clientes,200,,Frontend Test 1-39,text,true,,1738,381,50,50,http://localhost:8080/clientes?page=0&size=10,415,0,0
+1765020511681,383,GET Fornecedores,200,,Frontend Test 1-38,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,383,0,0
+1765020511737,339,GET Fornecedores,200,,Frontend Test 1-24,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,339,0,0
+1765020511486,591,GET Vendas Filtrar,200,,Frontend Test 1-17,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,590,0,0
+1765020511146,940,GET Vendas Filtrar,200,,Frontend Test 1-15,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,939,0,0
+1765020511632,454,GET Fornecedores,200,,Frontend Test 1-11,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,454,0,0
+1765020511774,312,GET Fornecedores,200,,Frontend Test 1-27,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,312,0,0
+1765020511778,308,GET Fornecedores,200,,Frontend Test 1-18,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,308,0,0
+1765020511184,923,GET Vendas Filtrar,200,,Frontend Test 1-35,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,923,0,0
+1765020511819,289,GET Fornecedores,200,,Frontend Test 1-10,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,289,0,0
+1765020511823,285,GET Fornecedores,200,,Frontend Test 1-46,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,285,0,0
+1765020511819,290,GET Fornecedores,200,,Frontend Test 1-34,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,290,0,0
+1765020511766,359,GET Vendas Filtrar,200,,Frontend Test 1-49,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,359,0,0
+1765020511810,323,GET Fornecedores,200,,Frontend Test 1-48,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,301,0,0
+1765020511619,537,GET Vendas Filtrar,200,,Frontend Test 1-31,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,536,0,0
+1765020511913,263,GET Fornecedores,200,,Frontend Test 1-23,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,263,0,0
+1765020511828,349,GET Fornecedores,200,,Frontend Test 1-43,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,349,0,0
+1765020512006,173,GET Usuarios (Funcionarios),200,,Frontend Test 1-47,text,true,,7989,366,50,50,http://localhost:8080/usuarios,173,0,0
+1765020511926,259,GET Fornecedores,200,,Frontend Test 1-26,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,259,0,0
+1765020511696,492,GET Vendas Filtrar,200,,Frontend Test 1-13,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,491,0,0
+1765020511900,293,GET Fornecedores,200,,Frontend Test 1-30,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,292,0,0
+1765020511984,209,GET Fornecedores,200,,Frontend Test 1-5,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,209,0,0
+1765020511708,493,GET Vendas Filtrar,200,,Frontend Test 1-12,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,493,0,0
+1765020511964,245,GET Fornecedores,200,,Frontend Test 1-19,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,245,0,0
+1765020511891,319,GET Vendas Filtrar,200,,Frontend Test 1-21,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,319,0,0
+1765020512003,213,GET Fornecedores,200,,Frontend Test 1-14,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,213,0,0
+1765020511959,265,GET Fornecedores,200,,Frontend Test 1-28,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,265,0,0
+1765020511972,255,GET Usuarios (Funcionarios),200,,Frontend Test 1-32,text,true,,7989,366,50,50,http://localhost:8080/usuarios,255,0,0
+1765020512011,216,GET Usuarios (Funcionarios),200,,Frontend Test 1-3,text,true,,7989,366,50,50,http://localhost:8080/usuarios,216,0,0
+1765020511834,396,GET Vendas Filtrar,200,,Frontend Test 1-36,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,395,0,0
+1765020511772,459,GET Vendas Filtrar,200,,Frontend Test 1-25,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,457,0,0
+1765020511977,258,GET Usuarios (Funcionarios),200,,Frontend Test 1-6,text,true,,7989,366,50,50,http://localhost:8080/usuarios,258,0,0
+1765020511998,247,GET Fornecedores,200,,Frontend Test 1-2,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,247,0,0
+1765020511985,260,GET Fornecedores,200,,Frontend Test 1-22,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,260,0,0
+1765020511980,271,GET Fornecedores,200,,Frontend Test 1-44,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,271,0,0
+1765020512049,205,GET Fornecedores,200,,Frontend Test 1-20,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,204,0,0
+1765020512001,256,GET Usuarios (Funcionarios),200,,Frontend Test 1-40,text,true,,7989,366,50,50,http://localhost:8080/usuarios,255,0,0
+1765020512033,232,GET Usuarios (Funcionarios),200,,Frontend Test 1-7,text,true,,7989,366,50,50,http://localhost:8080/usuarios,232,0,0
+1765020512063,202,GET Usuarios (Funcionarios),200,,Frontend Test 1-41,text,true,,7989,366,50,50,http://localhost:8080/usuarios,202,0,0
+1765020511854,430,GET Vendas Filtrar,200,,Frontend Test 1-9,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,423,0,0
+1765020511891,393,GET Vendas Filtrar,200,,Frontend Test 1-8,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,392,0,0
+1765020511861,424,GET Vendas Filtrar,200,,Frontend Test 1-37,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,417,0,0
+1765020512108,178,GET Fornecedores,200,,Frontend Test 1-17,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,178,0,0
+1765020511940,350,GET Fornecedores,200,,Frontend Test 1-50,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,350,0,0
+1765020512064,230,GET Usuarios (Funcionarios),200,,Frontend Test 1-16,text,true,,7989,366,50,50,http://localhost:8080/usuarios,230,0,0
+1765020511992,326,GET Usuarios (Funcionarios),200,,Frontend Test 1-45,text,true,,7989,366,50,50,http://localhost:8080/usuarios,307,0,0
+1765020512092,235,GET Vendas Filtrar,200,,Frontend Test 1-39,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,235,0,0
+1765020511998,357,GET Usuarios (Funcionarios),200,,Frontend Test 1-4,text,true,,7989,366,50,50,http://localhost:8080/usuarios,357,0,0
+1765020512065,290,GET Itens (Produtos),200,,Frontend Test 1-29,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,290,0,0
+1765020512093,272,GET Vendas Filtrar,200,,Frontend Test 1-1,text,true,,960,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-11-06&fim=2025-12-06,271,0,0
+1765020512053,319,GET Usuarios (Funcionarios),200,,Frontend Test 1-33,text,true,,7989,366,50,50,http://localhost:8080/usuarios,319,0,0
+1765020512175,197,GET Usuarios (Funcionarios),200,,Frontend Test 1-48,text,true,,7989,366,50,50,http://localhost:8080/usuarios,197,0,0
+1765020511993,384,GET Fornecedores,200,,Frontend Test 1-42,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,383,0,0
+1765020512126,277,GET Usuarios (Funcionarios),200,,Frontend Test 1-18,text,true,,7989,366,50,50,http://localhost:8080/usuarios,276,0,0
+1765020512101,317,GET Usuarios (Funcionarios),200,,Frontend Test 1-38,text,true,,7989,366,50,50,http://localhost:8080/usuarios,317,0,0
+1765020512270,153,GET Fornecedores,200,,Frontend Test 1-25,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,153,0,0
+1765020512128,295,GET Usuarios (Funcionarios),200,,Frontend Test 1-27,text,true,,7989,366,50,50,http://localhost:8080/usuarios,295,0,0
+1765020512141,283,GET Usuarios (Funcionarios),200,,Frontend Test 1-10,text,true,,7989,366,50,50,http://localhost:8080/usuarios,282,0,0
+1765020512146,282,GET Fornecedores,200,,Frontend Test 1-35,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,281,0,0
+1765020512124,316,GET Fornecedores,200,,Frontend Test 1-15,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,315,0,0
+1765020512279,162,GET Usuarios (Funcionarios),200,,Frontend Test 1-2,text,true,,7989,366,50,50,http://localhost:8080/usuarios,162,0,0
+1765020512166,280,GET Fornecedores,200,,Frontend Test 1-49,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,280,0,0
+1765020512225,226,GET Usuarios (Funcionarios),200,,Frontend Test 1-30,text,true,,7989,366,50,50,http://localhost:8080/usuarios,226,0,0
+1765020512151,321,GET Usuarios (Funcionarios),200,,Frontend Test 1-34,text,true,,7989,366,50,50,http://localhost:8080/usuarios,320,0,0
+1765020512268,209,GET Fornecedores,200,,Frontend Test 1-36,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,208,0,0
+1765020512364,127,GET Fornecedores,200,,Frontend Test 1-39,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,127,0,0
+1765020512141,359,GET Usuarios (Funcionarios),200,,Frontend Test 1-46,text,true,,7989,366,50,50,http://localhost:8080/usuarios,359,0,0
+1765020512229,286,GET Usuarios (Funcionarios),200,,Frontend Test 1-5,text,true,,7989,366,50,50,http://localhost:8080/usuarios,286,0,0
+1765020512214,304,GET Usuarios (Funcionarios),200,,Frontend Test 1-43,text,true,,7989,366,50,50,http://localhost:8080/usuarios,304,0,0
+1765020512292,242,GET Itens (Produtos),200,,Frontend Test 1-40,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,241,0,0
+1765020512108,429,GET Usuarios (Funcionarios),200,,Frontend Test 1-24,text,true,,7989,366,50,50,http://localhost:8080/usuarios,429,0,0
+1765020512212,327,GET Usuarios (Funcionarios),200,,Frontend Test 1-23,text,true,,7989,366,50,50,http://localhost:8080/usuarios,326,0,0
+1765020512321,224,GET Usuarios (Funcionarios),200,,Frontend Test 1-17,text,true,,7989,366,50,50,http://localhost:8080/usuarios,224,0,0
+1765020512226,334,GET Fornecedores,200,,Frontend Test 1-13,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,334,0,0
+1765020512244,330,GET Fornecedores,200,,Frontend Test 1-12,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,330,0,0
+1765020512242,347,GET Fornecedores,200,,Frontend Test 1-21,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,337,0,0
+1765020512319,278,GET Fornecedores,200,,Frontend Test 1-37,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,277,0,0
+1765020512256,345,GET Usuarios (Funcionarios),200,,Frontend Test 1-28,text,true,,7989,366,50,50,http://localhost:8080/usuarios,345,0,0
+1765020512248,353,GET Usuarios (Funcionarios),200,,Frontend Test 1-19,text,true,,7989,366,50,50,http://localhost:8080/usuarios,353,0,0
+1765020512220,382,GET Usuarios (Funcionarios),200,,Frontend Test 1-26,text,true,,7989,366,50,50,http://localhost:8080/usuarios,381,0,0
+1765020512277,335,GET Itens (Produtos),200,,Frontend Test 1-6,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,335,0,0
+1765020512258,354,GET Usuarios (Funcionarios),200,,Frontend Test 1-14,text,true,,7989,366,50,50,http://localhost:8080/usuarios,354,0,0
+1765020512456,161,GET Usuarios (Funcionarios),200,,Frontend Test 1-25,text,true,,7989,366,50,50,http://localhost:8080/usuarios,161,0,0
+1765020512324,303,GET Fornecedores,200,,Frontend Test 1-9,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,302,0,0
+1765020512285,342,GET Usuarios (Funcionarios),200,,Frontend Test 1-22,text,true,,7989,366,50,50,http://localhost:8080/usuarios,342,0,0
+1765020512266,363,GET Itens (Produtos),200,,Frontend Test 1-3,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,363,0,0
+1765020512331,305,GET Usuarios (Funcionarios),200,,Frontend Test 1-50,text,true,,7989,366,50,50,http://localhost:8080/usuarios,302,0,0
+1765020512193,444,GET Fornecedores,200,,Frontend Test 1-31,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,441,0,0
+1765020512413,233,GET Usuarios (Funcionarios),200,,Frontend Test 1-42,text,true,,7989,366,50,50,http://localhost:8080/usuarios,233,0,0
+1765020512325,327,GET Fornecedores,200,,Frontend Test 1-8,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,327,0,0
+1765020512216,454,GET Itens (Produtos),200,,Frontend Test 1-47,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,454,0,0
+1765020512291,391,GET Usuarios (Funcionarios),200,,Frontend Test 1-44,text,true,,7989,366,50,50,http://localhost:8080/usuarios,391,0,0
+1765020512123,561,GET Usuarios (Funcionarios),200,,Frontend Test 1-11,text,true,,7989,366,50,50,http://localhost:8080/usuarios,561,0,0
+1765020512272,438,GET Itens (Produtos),200,,Frontend Test 1-32,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,438,0,0
+1765020512402,318,GET Fornecedores,200,,Frontend Test 1-1,text,true,,1257,385,50,50,http://localhost:8080/fornecedores?page=0&size=10,318,0,0
+1765020512404,335,GET Itens (Produtos),200,,Frontend Test 1-33,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,335,0,0
+1765020512391,352,GET Itens (Produtos),200,,Frontend Test 1-4,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,351,0,0
+1765020512302,473,GET Itens (Produtos),200,,Frontend Test 1-7,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,473,0,0
+1765020512480,296,GET Usuarios (Funcionarios),200,,Frontend Test 1-49,text,true,,7989,366,50,50,http://localhost:8080/usuarios,296,0,0
+1765020512435,375,GET Itens (Produtos),200,,Frontend Test 1-18,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,375,0,0
+1765020512356,477,GET Itens (Produtos),200,,Frontend Test 1-45,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,477,0,0
+1765020512331,503,GET Itens (Produtos),200,,Frontend Test 1-16,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,503,0,0
+1765020512408,449,GET Itens (Produtos),200,,Frontend Test 1-48,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,447,0,0
+1765020512389,472,GET Itens Estoque,200,,Frontend Test 1-29,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,472,0,0
+1765020512477,384,GET Itens (Produtos),200,,Frontend Test 1-2,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,383,0,0
+1765020512306,556,GET Itens (Produtos),200,,Frontend Test 1-41,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,555,0,0
+1765020512461,422,GET Usuarios (Funcionarios),200,,Frontend Test 1-35,text,true,,7989,366,50,50,http://localhost:8080/usuarios,422,0,0
+1765020512459,440,GET Itens (Produtos),200,,Frontend Test 1-10,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,440,0,0
+1765020512512,392,GET Usuarios (Funcionarios),200,,Frontend Test 1-36,text,true,,7989,366,50,50,http://localhost:8080/usuarios,392,0,0
+1765020512475,429,GET Usuarios (Funcionarios),200,,Frontend Test 1-15,text,true,,7989,366,50,50,http://localhost:8080/usuarios,429,0,0
+1765020512527,401,GET Usuarios (Funcionarios),200,,Frontend Test 1-39,text,true,,7989,366,50,50,http://localhost:8080/usuarios,401,0,0
+1765020512459,482,GET Itens (Produtos),200,,Frontend Test 1-38,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,482,0,0
+1765020512578,395,GET Itens (Produtos),200,,Frontend Test 1-23,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,395,0,0
+1765020512466,522,GET Itens (Produtos),200,,Frontend Test 1-27,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,521,0,0
+1765020512289,700,GET Usuarios (Funcionarios),200,,Frontend Test 1-20,text,true,,7989,366,50,50,http://localhost:8080/usuarios,700,0,0
+1765020512653,359,GET Itens (Produtos),200,,Frontend Test 1-25,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,359,0,0
+1765020512483,529,GET Itens (Produtos),200,,Frontend Test 1-30,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,528,0,0
+1765020512578,467,GET Itens (Produtos),200,,Frontend Test 1-17,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,466,0,0
+1765020512627,418,GET Usuarios (Funcionarios),200,,Frontend Test 1-21,text,true,,7989,366,50,50,http://localhost:8080/usuarios,418,0,0
+1765020512560,489,GET Itens (Produtos),200,,Frontend Test 1-43,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,489,0,0
+1765020512596,489,GET Usuarios (Funcionarios),200,,Frontend Test 1-13,text,true,,7989,366,50,50,http://localhost:8080/usuarios,485,0,0
+1765020512572,515,GET Itens Estoque,200,,Frontend Test 1-40,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,515,0,0
+1765020512552,556,GET Itens (Produtos),200,,Frontend Test 1-5,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,550,0,0
+1765020512514,604,GET Itens (Produtos),200,,Frontend Test 1-34,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,603,0,0
+1765020512652,470,GET Itens (Produtos),200,,Frontend Test 1-14,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,469,0,0
+1765020512533,598,GET Itens (Produtos),200,,Frontend Test 1-46,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,554,0,0
+1765020512643,506,GET Itens (Produtos),200,,Frontend Test 1-26,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,504,0,0
+1765020512614,549,GET Usuarios (Funcionarios),200,,Frontend Test 1-12,text,true,,7989,366,50,50,http://localhost:8080/usuarios,549,0,0
+1765020512717,465,GET Itens (Produtos),200,,Frontend Test 1-44,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,465,0,0
+1765020512690,497,GET Usuarios (Funcionarios),200,,Frontend Test 1-8,text,true,,7989,366,50,50,http://localhost:8080/usuarios,496,0,0
+1765020512637,554,GET Usuarios (Funcionarios),200,,Frontend Test 1-37,text,true,,7989,366,50,50,http://localhost:8080/usuarios,554,0,0
+1765020512678,513,GET Usuarios (Funcionarios),200,,Frontend Test 1-31,text,true,,7989,366,50,50,http://localhost:8080/usuarios,513,0,0
+1765020512659,551,GET Usuarios (Funcionarios),200,,Frontend Test 1-9,text,true,,7989,366,50,50,http://localhost:8080/usuarios,551,0,0
+1765020512649,562,GET Itens Estoque,200,,Frontend Test 1-6,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,561,0,0
+1765020512642,570,GET Itens (Produtos),200,,Frontend Test 1-28,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,570,0,0
+1765020512662,552,GET Itens Estoque,200,,Frontend Test 1-3,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,551,0,0
+1765020512576,656,GET Itens (Produtos),200,,Frontend Test 1-24,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,627,0,0
+1765020512756,479,GET Usuarios (Funcionarios),200,,Frontend Test 1-1,text,true,,7989,366,50,50,http://localhost:8080/usuarios,479,0,0
+1765020512662,609,GET Itens (Produtos),200,,Frontend Test 1-22,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,609,0,0
+1765020512670,653,GET Itens (Produtos),200,,Frontend Test 1-50,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,652,0,0
+1765020512640,684,GET Itens (Produtos),200,,Frontend Test 1-19,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,684,0,0
+1765020512706,643,GET Itens Estoque,200,,Frontend Test 1-47,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,643,0,0
+1765020512846,508,GET Itens Estoque,200,,Frontend Test 1-18,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,508,0,0
+1765020512815,550,GET Itens (Produtos),200,,Frontend Test 1-49,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,550,0,0
+1765020512895,472,GET Categorias,200,,Frontend Test 1-29,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,472,0,0
+1765020512781,586,GET Itens Estoque,200,,Frontend Test 1-4,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,586,0,0
+1765020512808,562,GET Itens Estoque,200,,Frontend Test 1-7,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,555,0,0
+1765020512745,630,GET Itens Estoque,200,,Frontend Test 1-32,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,630,0,0
+1765020512681,704,GET Itens (Produtos),200,,Frontend Test 1-42,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,704,0,0
+1765020513008,398,GET Itens Estoque,200,,Frontend Test 1-23,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,397,0,0
+1765020512771,680,GET Itens Estoque,200,,Frontend Test 1-33,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,680,0,0
+1765020512895,597,GET Itens Estoque,200,,Frontend Test 1-41,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,597,0,0
+1765020512945,549,GET Itens (Produtos),200,,Frontend Test 1-15,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,549,0,0
+1765020512966,529,GET Itens (Produtos),200,,Frontend Test 1-39,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,528,0,0
+1765020513025,482,GET Itens Estoque,200,,Frontend Test 1-27,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,482,0,0
+1765020513127,383,GET Categorias,200,,Frontend Test 1-40,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,383,0,0
+1765020513081,460,GET Itens Estoque,200,,Frontend Test 1-17,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,459,0,0
+1765020512893,651,GET Itens Estoque,200,,Frontend Test 1-48,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,651,0,0
+1765020512874,683,GET Itens Estoque,200,,Frontend Test 1-16,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,683,0,0
+1765020512725,839,GET Itens (Produtos),200,,Frontend Test 1-11,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,839,0,0
+1765020513156,422,GET Itens Estoque,200,,Frontend Test 1-14,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,422,0,0
+1765020512938,664,GET Itens (Produtos),200,,Frontend Test 1-36,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,663,0,0
+1765020513053,576,GET Itens Estoque,200,,Frontend Test 1-25,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,576,0,0
+1765020512923,715,GET Itens (Produtos),200,,Frontend Test 1-35,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,715,0,0
+1765020512902,736,GET Itens Estoque,200,,Frontend Test 1-2,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,736,0,0
+1765020513045,601,GET Itens Estoque,200,,Frontend Test 1-30,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,600,0,0
+1765020513183,473,GET Itens Estoque,200,,Frontend Test 1-26,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,472,0,0
+1765020512935,751,GET Itens Estoque,200,,Frontend Test 1-10,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,751,0,0
+1765020513143,550,GET Itens Estoque,200,,Frontend Test 1-5,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,550,0,0
+1765020513118,575,GET Itens (Produtos),200,,Frontend Test 1-13,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,575,0,0
+1765020512977,725,GET Itens Estoque,200,,Frontend Test 1-38,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,724,0,0
+1765020513029,694,GET Itens (Produtos),200,,Frontend Test 1-20,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,694,0,0
+1765020513250,524,GET Itens (Produtos),200,,Frontend Test 1-9,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,524,0,0
+1765020513090,684,GET Itens Estoque,200,,Frontend Test 1-43,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,684,0,0
+1765020513251,530,GET Categorias,200,,Frontend Test 1-3,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,530,0,0
+1765020513275,509,GET Itens (Produtos),200,,Frontend Test 1-1,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,509,0,0
+1765020513088,698,GET Itens (Produtos),200,,Frontend Test 1-21,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,683,0,0
+1765020513242,545,GET Categorias,200,,Frontend Test 1-6,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,544,0,0
+1765020513172,644,GET Itens Estoque,200,,Frontend Test 1-46,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,644,0,0
+1765020512870,975,GET Itens Estoque,200,,Frontend Test 1-45,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,975,0,0
+1765020513204,657,GET Itens (Produtos),200,,Frontend Test 1-12,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,656,0,0
+1765020513230,637,GET Itens (Produtos),200,,Frontend Test 1-31,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,637,0,0
+1765020513157,720,GET Itens Estoque,200,,Frontend Test 1-34,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,720,0,0
+1765020513403,490,GET Categorias,200,,Frontend Test 1-4,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,490,0,0
+1765020513227,673,GET Itens (Produtos),200,,Frontend Test 1-37,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,658,0,0
+1765020513251,657,GET Itens Estoque,200,,Frontend Test 1-28,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,657,0,0
+1765020513411,505,GET Categorias,200,,Frontend Test 1-32,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,505,0,0
+1765020513273,644,GET Itens Estoque,200,,Frontend Test 1-24,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,644,0,0
+1765020513486,441,GET Categorias,200,,Frontend Test 1-33,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,441,0,0
+1765020513221,708,GET Itens Estoque,200,,Frontend Test 1-44,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,708,0,0
+1765020513226,703,GET Itens (Produtos),200,,Frontend Test 1-8,text,true,,2690,372,50,50,http://localhost:8080/itens?size=100,703,0,0
+1765020513390,547,GET Categorias,200,,Frontend Test 1-18,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,547,0,0
+1765020513386,555,GET Categorias,200,,Frontend Test 1-47,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,555,0,0
+1765020513442,499,GET Categorias,200,,Frontend Test 1-23,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,499,0,0
+1765020513674,283,GET Categorias,200,,Frontend Test 1-2,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,283,0,0
+1765020513309,697,GET Itens Estoque,200,,Frontend Test 1-22,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,697,0,0
+1765020513547,474,GET Categorias,200,,Frontend Test 1-27,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,474,0,0
+1765020513364,667,GET Itens Estoque,200,,Frontend Test 1-50,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,667,0,0
+1765020513591,440,GET Categorias,200,,Frontend Test 1-16,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,440,0,0
+1765020513578,468,GET Categorias,200,,Frontend Test 1-48,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,468,0,0
+1765020513581,469,GET Categorias,200,,Frontend Test 1-17,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,469,0,0
+1765020513425,640,GET Itens Estoque,200,,Frontend Test 1-42,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,640,0,0
+1765020513408,665,GET Categorias,200,,Frontend Test 1-7,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,664,0,0
+1765020513638,446,GET Itens Estoque,200,,Frontend Test 1-36,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,446,0,0
+1765020513736,359,GET Categorias,200,,Frontend Test 1-5,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,359,0,0
+1765020513688,413,GET Categorias,200,,Frontend Test 1-26,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,412,0,0
+1765020513727,378,GET Categorias,200,,Frontend Test 1-10,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,378,0,0
+1765020513356,747,GET Itens Estoque,200,,Frontend Test 1-19,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,747,0,0
+1765020513857,262,GET Categorias,200,,Frontend Test 1-46,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,262,0,0
+1765020513683,438,GET Categorias,200,,Frontend Test 1-30,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,438,0,0
+1765020513668,487,GET Categorias,200,,Frontend Test 1-25,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,487,0,0
+1765020513526,637,GET Categorias,200,,Frontend Test 1-41,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,637,0,0
+1765020513821,356,GET Categorias,200,,Frontend Test 1-43,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,356,0,0
+1765020513530,664,GET Itens Estoque,200,,Frontend Test 1-15,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,663,0,0
+1765020513407,793,GET Itens Estoque,200,,Frontend Test 1-49,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,793,0,0
+1765020513619,595,GET Categorias,200,,Frontend Test 1-14,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,595,0,0
+1765020513527,694,GET Itens Estoque,200,,Frontend Test 1-39,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,689,0,0
+1765020513600,636,GET Itens Estoque,200,,Frontend Test 1-11,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,636,0,0
+1765020513745,501,GET Categorias,200,,Frontend Test 1-38,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,501,0,0
+1765020513733,594,GET Itens Estoque,200,,Frontend Test 1-13,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,593,0,0
+1765020513825,535,GET Itens Estoque,200,,Frontend Test 1-1,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,534,0,0
+1765020513950,430,GET Categorias,200,,Frontend Test 1-28,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,430,0,0
+1765020513815,566,GET Itens Estoque,200,,Frontend Test 1-9,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,511,0,0
+1765020513760,676,GET Itens Estoque,200,,Frontend Test 1-20,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,675,0,0
+1765020513887,558,GET Categorias,200,,Frontend Test 1-45,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,558,0,0
+1765020513827,622,GET Itens Estoque,200,,Frontend Test 1-21,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,620,0,0
+1765020513917,535,GET Categorias,200,,Frontend Test 1-34,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,535,0,0
+1765020513961,499,GET Categorias,200,,Frontend Test 1-24,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,499,0,0
+1765020513969,499,GET Categorias,200,,Frontend Test 1-44,text,true,,1095,378,50,50,http://localhost:8080/categorias?size=1000,499,0,0
+1765020513910,669,GET Itens Estoque,200,,Frontend Test 1-31,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,668,0,0
+1765020513674,906,GET Itens Estoque,200,,Frontend Test 1-35,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,906,0,0
+1765020513940,672,GET Itens Estoque,200,,Frontend Test 1-37,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,672,0,0
+1765020513898,735,GET Itens Estoque,200,,Frontend Test 1-12,text,true,,685,371,50,50,http://localhost:8080/itens/estoque,734,0,0
+1765020513558,1176,GET Vendas 6 Meses,200,,Frontend Test 1-40,text,true,,35468,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1173,0,0
+1765020514771,22,GET Frontend Dashboard Page,200,OK,Frontend Test 1-40,text,true,,870,157,50,50,http://localhost:5173/dashboard,22,0,10
+1765020513405,1402,GET Vendas 6 Meses,200,,Frontend Test 1-29,text,true,,35468,414,50,50,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1400,0,0
+1765020514828,15,GET Frontend Menu Page,200,OK,Frontend Test 1-40,text,true,,870,160,50,50,http://localhost:5173/menu-inicial,15,0,0
+1765020514846,25,GET Frontend Dashboard Page,200,OK,Frontend Test 1-29,text,true,,870,157,49,49,http://localhost:5173/dashboard,25,0,11
+1765020513993,899,GET Vendas 6 Meses,200,,Frontend Test 1-2,text,true,,35468,414,49,49,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,897,0,0
+1765020514070,836,GET Categorias,200,,Frontend Test 1-50,text,true,,1095,378,49,49,http://localhost:8080/categorias?size=1000,836,0,0
+1765020514045,879,GET Categorias,200,,Frontend Test 1-22,text,true,,1095,378,49,49,http://localhost:8080/categorias?size=1000,879,0,0
+1765020514911,13,GET Frontend Menu Page,200,OK,Frontend Test 1-29,text,true,,870,160,49,49,http://localhost:5173/menu-inicial,13,0,0
+1765020514925,26,GET Frontend Dashboard Page,200,OK,Frontend Test 1-2,text,true,,870,157,48,48,http://localhost:5173/dashboard,25,0,8
+1765020513840,1135,GET Vendas 6 Meses,200,,Frontend Test 1-3,text,true,,35468,414,48,48,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1130,0,0
+1765020514985,16,GET Frontend Menu Page,200,OK,Frontend Test 1-2,text,true,,870,160,48,48,http://localhost:5173/menu-inicial,16,0,0
+1765020515015,24,GET Frontend Dashboard Page,200,OK,Frontend Test 1-3,text,true,,870,157,47,47,http://localhost:5173/dashboard,24,0,13
+1765020513832,1245,GET Vendas 6 Meses,200,,Frontend Test 1-6,text,true,,35468,414,47,47,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1233,0,0
+1765020513964,1128,GET Itens Estoque,200,,Frontend Test 1-8,text,true,,685,371,47,47,http://localhost:8080/itens/estoque,1128,0,0
+1765020515078,15,GET Frontend Menu Page,200,OK,Frontend Test 1-3,text,true,,870,160,47,47,http://localhost:5173/menu-inicial,15,0,0
+1765020513972,1132,GET Vendas 6 Meses,200,,Frontend Test 1-32,text,true,,35468,414,46,46,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1130,0,0
+1765020514362,744,GET Categorias,200,,Frontend Test 1-13,text,true,,1095,378,46,46,http://localhost:8080/categorias?size=1000,743,0,0
+1765020514105,1008,GET Categorias,200,,Frontend Test 1-42,text,true,,1095,378,46,46,http://localhost:8080/categorias?size=1000,1008,0,0
+1765020515141,26,GET Frontend Dashboard Page,200,OK,Frontend Test 1-32,text,true,,870,157,46,46,http://localhost:5173/dashboard,25,0,5
+1765020515114,54,GET Frontend Dashboard Page,200,OK,Frontend Test 1-6,text,true,,870,157,46,46,http://localhost:5173/dashboard,54,0,33
+1765020513970,1241,GET Vendas 6 Meses,200,,Frontend Test 1-33,text,true,,35468,414,46,46,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1239,0,0
+1765020515207,25,GET Frontend Menu Page,200,OK,Frontend Test 1-6,text,true,,870,160,46,46,http://localhost:5173/menu-inicial,25,0,0
+1765020515213,24,GET Frontend Menu Page,200,OK,Frontend Test 1-32,text,true,,870,160,46,46,http://localhost:5173/menu-inicial,24,0,0
+1765020513962,1309,GET Vendas 6 Meses,200,,Frontend Test 1-4,text,true,,35468,414,44,44,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1304,0,0
+1765020515247,25,GET Frontend Dashboard Page,200,OK,Frontend Test 1-33,text,true,,870,157,44,44,http://localhost:5173/dashboard,25,0,10
+1765020514121,1158,GET Categorias,200,,Frontend Test 1-36,text,true,,1095,378,44,44,http://localhost:8080/categorias?size=1000,1158,0,0
+1765020513981,1300,GET Vendas 6 Meses,200,,Frontend Test 1-23,text,true,,35468,414,44,44,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1289,0,0
+1765020513991,1309,GET Vendas 6 Meses,200,,Frontend Test 1-47,text,true,,35468,414,44,44,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1292,0,0
+1765020515306,16,GET Frontend Menu Page,200,OK,Frontend Test 1-33,text,true,,870,160,44,44,http://localhost:5173/menu-inicial,16,0,0
+1765020515308,34,GET Frontend Dashboard Page,200,OK,Frontend Test 1-4,text,true,,870,157,43,43,http://localhost:5173/dashboard,34,0,10
+1765020515313,32,GET Frontend Dashboard Page,200,OK,Frontend Test 1-23,text,true,,870,157,43,43,http://localhost:5173/dashboard,32,0,15
+1765020513976,1406,GET Vendas 6 Meses,200,,Frontend Test 1-18,text,true,,35468,414,43,43,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1403,0,0
+1765020515377,19,GET Frontend Menu Page,200,OK,Frontend Test 1-23,text,true,,870,160,43,43,http://localhost:5173/menu-inicial,19,0,0
+1765020515386,15,GET Frontend Menu Page,200,OK,Frontend Test 1-4,text,true,,870,160,43,43,http://localhost:5173/menu-inicial,15,0,0
+1765020514142,1258,GET Categorias,200,,Frontend Test 1-19,text,true,,1095,378,43,43,http://localhost:8080/categorias?size=1000,1258,0,0
+1765020514229,1184,GET Categorias,200,,Frontend Test 1-15,text,true,,1095,378,41,41,http://localhost:8080/categorias?size=1000,1184,0,0
+1765020515334,92,GET Frontend Dashboard Page,200,OK,Frontend Test 1-47,text,true,,870,157,41,41,http://localhost:5173/dashboard,92,0,81
+1765020515414,111,GET Frontend Dashboard Page,200,OK,Frontend Test 1-18,text,true,,870,157,41,41,http://localhost:5173/dashboard,111,0,15
+1765020515470,62,GET Frontend Menu Page,200,OK,Frontend Test 1-47,text,true,,870,160,41,41,http://localhost:5173/menu-inicial,62,0,0
+1765020514066,1494,GET Vendas 6 Meses,200,,Frontend Test 1-27,text,true,,35468,414,40,40,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1489,0,0
+1765020515561,51,GET Frontend Menu Page,200,OK,Frontend Test 1-18,text,true,,870,160,40,40,http://localhost:5173/menu-inicial,51,0,0
+1765020515596,52,GET Frontend Dashboard Page,200,OK,Frontend Test 1-27,text,true,,870,157,39,39,http://localhost:5173/dashboard,52,0,12
+1765020514098,1562,GET Vendas 6 Meses,200,,Frontend Test 1-48,text,true,,35468,414,39,39,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1560,0,0
+1765020514426,1256,GET Vendas 6 Meses,200,,Frontend Test 1-28,text,true,,35468,414,39,39,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1253,0,0
+1765020514239,1452,GET Categorias,200,,Frontend Test 1-49,text,true,,1095,378,39,39,http://localhost:8080/categorias?size=1000,1452,0,0
+1765020515689,18,GET Frontend Menu Page,200,OK,Frontend Test 1-27,text,true,,870,160,39,39,http://localhost:5173/menu-inicial,18,0,0
+1765020515696,31,GET Frontend Dashboard Page,200,OK,Frontend Test 1-48,text,true,,870,157,38,38,http://localhost:5173/dashboard,31,0,12
+1765020514075,1667,GET Vendas 6 Meses,200,,Frontend Test 1-16,text,true,,35468,414,38,38,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1658,0,0
+1765020514257,1488,GET Categorias,200,,Frontend Test 1-39,text,true,,1095,378,38,38,http://localhost:8080/categorias?size=1000,1488,0,0
+1765020515717,31,GET Frontend Dashboard Page,200,OK,Frontend Test 1-28,text,true,,870,157,38,38,http://localhost:5173/dashboard,31,0,21
+1765020514276,1476,GET Categorias,200,,Frontend Test 1-11,text,true,,1095,378,38,38,http://localhost:8080/categorias?size=1000,1476,0,0
+1765020515771,19,GET Frontend Menu Page,200,OK,Frontend Test 1-48,text,true,,870,160,38,38,http://localhost:5173/menu-inicial,19,0,0
+1765020515786,23,GET Frontend Menu Page,200,OK,Frontend Test 1-28,text,true,,870,160,37,37,http://localhost:5173/menu-inicial,23,0,0
+1765020515779,33,GET Frontend Dashboard Page,200,OK,Frontend Test 1-16,text,true,,870,157,37,37,http://localhost:5173/dashboard,33,0,17
+1765020515853,10,GET Frontend Menu Page,200,OK,Frontend Test 1-16,text,true,,870,160,36,36,http://localhost:5173/menu-inicial,10,0,0
+1765020514138,1787,GET Vendas 6 Meses,200,,Frontend Test 1-26,text,true,,35468,414,35,35,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1785,0,0
+1765020514112,1816,GET Vendas 6 Meses,200,,Frontend Test 1-7,text,true,,35468,414,35,35,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1814,0,0
+1765020514487,1452,GET Categorias,200,,Frontend Test 1-21,text,true,,1095,378,35,35,http://localhost:8080/categorias?size=1000,1452,0,0
+1765020514094,1850,GET Vendas 6 Meses,200,,Frontend Test 1-17,text,true,,35468,414,35,35,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1848,0,0
+1765020514397,1556,GET Categorias,200,,Frontend Test 1-1,text,true,,1095,378,35,35,http://localhost:8080/categorias?size=1000,1556,0,0
+1765020514478,1489,GET Categorias,200,,Frontend Test 1-20,text,true,,1095,378,35,35,http://localhost:8080/categorias?size=1000,1489,0,0
+1765020514128,1865,GET Vendas 6 Meses,200,,Frontend Test 1-5,text,true,,35468,414,35,35,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1865,0,0
+1765020515959,35,GET Frontend Dashboard Page,200,OK,Frontend Test 1-26,text,true,,870,157,35,35,http://localhost:5173/dashboard,34,0,7
+1765020515968,42,GET Frontend Dashboard Page,200,OK,Frontend Test 1-7,text,true,,870,157,35,35,http://localhost:5173/dashboard,42,0,29
+1765020515976,47,GET Frontend Dashboard Page,200,OK,Frontend Test 1-17,text,true,,870,157,35,35,http://localhost:5173/dashboard,47,0,33
+1765020514206,1821,GET Vendas 6 Meses,200,,Frontend Test 1-25,text,true,,35468,414,35,35,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1815,0,0
+1765020514425,1609,GET Categorias,200,,Frontend Test 1-9,text,true,,1095,378,35,35,http://localhost:8080/categorias?size=1000,1609,0,0
+1765020516035,70,GET Frontend Menu Page,200,OK,Frontend Test 1-26,text,true,,870,160,35,35,http://localhost:5173/menu-inicial,70,0,0
+1765020514139,1973,GET Vendas 6 Meses,200,,Frontend Test 1-10,text,true,,35468,414,34,34,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1971,0,0
+1765020516034,80,GET Frontend Dashboard Page,200,OK,Frontend Test 1-5,text,true,,870,157,34,34,http://localhost:5173/dashboard,79,0,7
+1765020516048,73,GET Frontend Menu Page,200,OK,Frontend Test 1-7,text,true,,870,160,34,34,http://localhost:5173/menu-inicial,73,0,0
+1765020516057,68,GET Frontend Menu Page,200,OK,Frontend Test 1-17,text,true,,870,160,33,33,http://localhost:5173/menu-inicial,68,0,0
+1765020514621,1513,GET Categorias,200,,Frontend Test 1-35,text,true,,1095,378,32,32,http://localhost:8080/categorias?size=1000,1513,0,0
+1765020516069,67,GET Frontend Dashboard Page,200,OK,Frontend Test 1-25,text,true,,870,157,32,32,http://localhost:5173/dashboard,67,0,10
+1765020514619,1531,GET Categorias,200,,Frontend Test 1-31,text,true,,1095,378,32,32,http://localhost:8080/categorias?size=1000,1528,0,0
+1765020514647,1518,GET Categorias,200,,Frontend Test 1-37,text,true,,1095,378,32,32,http://localhost:8080/categorias?size=1000,1518,0,0
+1765020514668,1504,GET Categorias,200,,Frontend Test 1-12,text,true,,1095,378,32,32,http://localhost:8080/categorias?size=1000,1504,0,0
+1765020516151,54,GET Frontend Menu Page,200,OK,Frontend Test 1-5,text,true,,870,160,32,32,http://localhost:5173/menu-inicial,54,0,0
+1765020516152,56,GET Frontend Dashboard Page,200,OK,Frontend Test 1-10,text,true,,870,157,32,32,http://localhost:5173/dashboard,56,0,5
+1765020516173,40,GET Frontend Menu Page,200,OK,Frontend Test 1-25,text,true,,870,160,31,31,http://localhost:5173/menu-inicial,40,0,0
+1765020516244,16,GET Frontend Menu Page,200,OK,Frontend Test 1-10,text,true,,870,160,30,30,http://localhost:5173/menu-inicial,16,0,0
+1765020514161,2123,GET Vendas 6 Meses,200,,Frontend Test 1-30,text,true,,35468,414,29,29,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,2120,0,0
+1765020516324,16,GET Frontend Dashboard Page,200,OK,Frontend Test 1-30,text,true,,870,157,29,29,http://localhost:5173/dashboard,16,0,5
+1765020514156,2200,GET Vendas 6 Meses,200,,Frontend Test 1-46,text,true,,35468,414,29,29,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,2195,0,0
+1765020516372,10,GET Frontend Menu Page,200,OK,Frontend Test 1-30,text,true,,870,160,29,29,http://localhost:5173/menu-inicial,10,0,0
+1765020516396,26,GET Frontend Dashboard Page,200,OK,Frontend Test 1-46,text,true,,870,157,28,28,http://localhost:5173/dashboard,26,0,13
+1765020516460,14,GET Frontend Menu Page,200,OK,Frontend Test 1-46,text,true,,870,160,28,28,http://localhost:5173/menu-inicial,14,0,0
+1765020514214,2264,GET Vendas 6 Meses,200,,Frontend Test 1-43,text,true,,35468,414,28,28,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,2261,0,0
+1765020515126,1371,GET Categorias,200,,Frontend Test 1-8,text,true,,1095,378,27,27,http://localhost:8080/categorias?size=1000,1370,0,0
+1765020514240,2291,GET Vendas 6 Meses,200,,Frontend Test 1-41,text,true,,35468,414,27,27,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,2287,0,0
+1765020516517,30,GET Frontend Dashboard Page,200,OK,Frontend Test 1-43,text,true,,870,157,27,27,http://localhost:5173/dashboard,30,0,13
+1765020516569,31,GET Frontend Dashboard Page,200,OK,Frontend Test 1-41,text,true,,870,157,27,27,http://localhost:5173/dashboard,31,0,11
+1765020516588,16,GET Frontend Menu Page,200,OK,Frontend Test 1-43,text,true,,870,160,27,27,http://localhost:5173/menu-inicial,15,0,0
+1765020516636,14,GET Frontend Menu Page,200,OK,Frontend Test 1-41,text,true,,870,160,26,26,http://localhost:5173/menu-inicial,14,0,0
+1765020514297,2389,GET Vendas 6 Meses,200,,Frontend Test 1-38,text,true,,35468,414,25,25,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,2384,0,0
+1765020514256,2458,GET Vendas 6 Meses,200,,Frontend Test 1-14,text,true,,35468,414,25,25,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,2456,0,0
+1765020514489,2239,GET Vendas 6 Meses,200,,Frontend Test 1-45,text,true,,35468,414,25,25,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,2237,0,0
+1765020514494,2259,GET Vendas 6 Meses,200,,Frontend Test 1-34,text,true,,35468,414,25,25,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,2256,0,0
+1765020516720,38,GET Frontend Dashboard Page,200,OK,Frontend Test 1-38,text,true,,870,157,25,25,http://localhost:5173/dashboard,38,0,3
+1765020516752,23,GET Frontend Dashboard Page,200,OK,Frontend Test 1-14,text,true,,870,157,25,25,http://localhost:5173/dashboard,23,0,9
+1765020516768,24,GET Frontend Dashboard Page,200,OK,Frontend Test 1-45,text,true,,870,157,25,25,http://localhost:5173/dashboard,24,0,8
+1765020514502,2328,GET Vendas 6 Meses,200,,Frontend Test 1-24,text,true,,35468,414,25,25,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,2318,0,0
+1765020514948,1895,GET Vendas 6 Meses,200,,Frontend Test 1-50,text,true,,35468,414,25,25,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1893,0,0
+1765020514959,1991,GET Vendas 6 Meses,200,,Frontend Test 1-22,text,true,,35468,414,25,25,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1989,0,0
+1765020516809,157,GET Frontend Menu Page,200,OK,Frontend Test 1-14,text,true,,870,160,25,25,http://localhost:5173/menu-inicial,157,0,0
+1765020516806,166,GET Frontend Menu Page,200,OK,Frontend Test 1-38,text,true,,870,160,24,24,http://localhost:5173/menu-inicial,166,0,0
+1765020514516,2482,GET Vendas 6 Meses,200,,Frontend Test 1-44,text,true,,35468,414,23,23,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,2480,0,0
+1765020516793,207,GET Frontend Dashboard Page,200,OK,Frontend Test 1-34,text,true,,870,157,23,23,http://localhost:5173/dashboard,207,0,20
+1765020516833,177,GET Frontend Menu Page,200,OK,Frontend Test 1-45,text,true,,870,160,23,23,http://localhost:5173/menu-inicial,177,0,0
+1765020516871,159,GET Frontend Dashboard Page,200,OK,Frontend Test 1-24,text,true,,870,157,22,22,http://localhost:5173/dashboard,159,0,6
+1765020516883,179,GET Frontend Dashboard Page,200,OK,Frontend Test 1-50,text,true,,870,157,22,22,http://localhost:5173/dashboard,179,0,13
+1765020515155,2007,GET Vendas 6 Meses,200,,Frontend Test 1-42,text,true,,35468,414,22,22,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1999,0,0
+1765020515321,1845,GET Vendas 6 Meses,200,,Frontend Test 1-36,text,true,,35468,414,22,22,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1838,0,0
+1765020516991,211,GET Frontend Dashboard Page,200,OK,Frontend Test 1-22,text,true,,870,157,22,22,http://localhost:5173/dashboard,211,0,10
+1765020517040,167,GET Frontend Menu Page,200,OK,Frontend Test 1-34,text,true,,870,160,22,22,http://localhost:5173/menu-inicial,167,0,0
+1765020517039,179,GET Frontend Dashboard Page,200,OK,Frontend Test 1-44,text,true,,870,157,21,21,http://localhost:5173/dashboard,179,0,9
+1765020517063,155,GET Frontend Menu Page,200,OK,Frontend Test 1-24,text,true,,870,160,21,21,http://localhost:5173/menu-inicial,155,0,0
+1765020515148,2189,GET Vendas 6 Meses,200,,Frontend Test 1-13,text,true,,35468,414,20,20,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,2186,0,0
+1765020517095,264,GET Frontend Menu Page,200,OK,Frontend Test 1-50,text,true,,870,160,20,20,http://localhost:5173/menu-inicial,263,0,0
+1765020515731,1674,GET Vendas 6 Meses,200,,Frontend Test 1-49,text,true,,35468,414,19,19,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1625,0,0
+1765020515446,1981,GET Vendas 6 Meses,200,,Frontend Test 1-15,text,true,,35468,414,19,19,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1973,0,0
+1765020515796,1697,GET Vendas 6 Meses,200,,Frontend Test 1-11,text,true,,35468,414,19,19,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1695,0,0
+1765020515438,2088,GET Vendas 6 Meses,200,,Frontend Test 1-19,text,true,,35468,414,19,19,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,2086,0,0
+1765020515787,1856,GET Vendas 6 Meses,200,,Frontend Test 1-39,text,true,,35468,414,19,19,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1777,0,0
+1765020515996,1663,GET Vendas 6 Meses,200,,Frontend Test 1-21,text,true,,35468,414,19,19,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1661,0,0
+1765020516003,1664,GET Vendas 6 Meses,200,,Frontend Test 1-20,text,true,,35468,414,19,19,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1660,0,0
+1765020516177,1609,GET Vendas 6 Meses,200,,Frontend Test 1-35,text,true,,35468,414,19,19,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1608,0,0
+1765020516191,1611,GET Vendas 6 Meses,200,,Frontend Test 1-31,text,true,,35468,414,19,19,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1608,0,0
+1765020516074,1736,GET Vendas 6 Meses,200,,Frontend Test 1-9,text,true,,35468,414,19,19,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1734,0,0
+1765020517199,632,GET Frontend Dashboard Page,200,OK,Frontend Test 1-42,text,true,,870,157,19,19,http://localhost:5173/dashboard,632,0,8
+1765020515997,1835,GET Vendas 6 Meses,200,,Frontend Test 1-1,text,true,,35468,414,19,19,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1833,0,0
+1765020517261,587,GET Frontend Menu Page,200,OK,Frontend Test 1-44,text,true,,870,160,19,19,http://localhost:5173/menu-inicial,587,0,0
+1765020517203,649,GET Frontend Dashboard Page,200,OK,Frontend Test 1-36,text,true,,870,157,19,19,http://localhost:5173/dashboard,649,0,21
+1765020517242,613,GET Frontend Menu Page,200,OK,Frontend Test 1-22,text,true,,870,160,18,18,http://localhost:5173/menu-inicial,613,0,0
+1765020517442,429,GET Frontend Dashboard Page,200,OK,Frontend Test 1-49,text,true,,870,157,17,17,http://localhost:5173/dashboard,429,0,13
+1765020517372,503,GET Frontend Dashboard Page,200,OK,Frontend Test 1-13,text,true,,870,157,17,17,http://localhost:5173/dashboard,503,0,4
+1765020517464,426,GET Frontend Dashboard Page,200,OK,Frontend Test 1-15,text,true,,870,157,17,17,http://localhost:5173/dashboard,426,0,159
+1765020517561,331,GET Frontend Dashboard Page,200,OK,Frontend Test 1-19,text,true,,870,157,17,17,http://localhost:5173/dashboard,331,0,68
+1765020517526,368,GET Frontend Dashboard Page,200,OK,Frontend Test 1-11,text,true,,870,157,17,17,http://localhost:5173/dashboard,368,0,101
+1765020517696,200,GET Frontend Dashboard Page,200,OK,Frontend Test 1-21,text,true,,870,157,17,17,http://localhost:5173/dashboard,200,0,4
+1765020517680,219,GET Frontend Dashboard Page,200,OK,Frontend Test 1-39,text,true,,870,157,17,17,http://localhost:5173/dashboard,219,0,27
+1765020516205,1700,GET Vendas 6 Meses,200,,Frontend Test 1-37,text,true,,35468,414,17,17,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1698,0,0
+1765020517701,213,GET Frontend Dashboard Page,200,OK,Frontend Test 1-20,text,true,,870,157,17,17,http://localhost:5173/dashboard,213,0,8
+1765020517817,114,GET Frontend Dashboard Page,200,OK,Frontend Test 1-35,text,true,,870,157,17,17,http://localhost:5173/dashboard,114,0,5
+1765020517836,109,GET Frontend Dashboard Page,200,OK,Frontend Test 1-31,text,true,,870,157,17,17,http://localhost:5173/dashboard,109,0,6
+1765020517846,101,GET Frontend Dashboard Page,200,OK,Frontend Test 1-9,text,true,,870,157,17,17,http://localhost:5173/dashboard,101,0,8
+1765020517865,104,GET Frontend Menu Page,200,OK,Frontend Test 1-42,text,true,,870,160,17,17,http://localhost:5173/menu-inicial,104,0,0
+1765020516535,1441,GET Vendas 6 Meses,200,,Frontend Test 1-8,text,true,,35468,414,16,16,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1439,0,0
+1765020517867,122,GET Frontend Dashboard Page,200,OK,Frontend Test 1-1,text,true,,870,157,16,16,http://localhost:5173/dashboard,122,0,5
+1765020517892,99,GET Frontend Menu Page,200,OK,Frontend Test 1-36,text,true,,870,160,16,16,http://localhost:5173/menu-inicial,99,0,0
+1765020517906,87,GET Frontend Menu Page,200,OK,Frontend Test 1-49,text,true,,870,160,16,16,http://localhost:5173/menu-inicial,87,0,0
+1765020517909,99,GET Frontend Menu Page,200,OK,Frontend Test 1-13,text,true,,870,160,14,14,http://localhost:5173/menu-inicial,99,0,0
+1765020517924,86,GET Frontend Menu Page,200,OK,Frontend Test 1-15,text,true,,870,160,14,14,http://localhost:5173/menu-inicial,86,0,0
+1765020516212,1801,GET Vendas 6 Meses,200,,Frontend Test 1-12,text,true,,35468,414,12,12,http://localhost:8080/vendas/filtrar-por-data?inicio=2025-06-09&fim=2025-12-06,1799,0,0
+1765020517925,89,GET Frontend Menu Page,200,OK,Frontend Test 1-19,text,true,,870,160,12,12,http://localhost:5173/menu-inicial,89,0,0
+1765020517932,84,GET Frontend Menu Page,200,OK,Frontend Test 1-11,text,true,,870,160,12,12,http://localhost:5173/menu-inicial,84,0,0
+1765020517932,88,GET Frontend Menu Page,200,OK,Frontend Test 1-21,text,true,,870,160,10,10,http://localhost:5173/menu-inicial,88,0,0
+1765020517939,83,GET Frontend Menu Page,200,OK,Frontend Test 1-39,text,true,,870,160,10,10,http://localhost:5173/menu-inicial,83,0,0
+1765020517952,74,GET Frontend Menu Page,200,OK,Frontend Test 1-20,text,true,,870,160,8,8,http://localhost:5173/menu-inicial,74,0,0
+1765020517943,85,GET Frontend Dashboard Page,200,OK,Frontend Test 1-37,text,true,,870,157,8,8,http://localhost:5173/dashboard,85,0,3
+1765020517966,71,GET Frontend Menu Page,200,OK,Frontend Test 1-35,text,true,,870,160,7,7,http://localhost:5173/menu-inicial,71,0,0
+1765020517986,53,GET Frontend Menu Page,200,OK,Frontend Test 1-31,text,true,,870,160,7,7,http://localhost:5173/menu-inicial,53,0,0
+1765020517986,63,GET Frontend Menu Page,200,OK,Frontend Test 1-9,text,true,,870,160,5,5,http://localhost:5173/menu-inicial,62,0,0
+1765020518014,40,GET Frontend Dashboard Page,200,OK,Frontend Test 1-8,text,true,,870,157,4,4,http://localhost:5173/dashboard,40,0,5
+1765020518024,36,GET Frontend Menu Page,200,OK,Frontend Test 1-1,text,true,,870,160,4,4,http://localhost:5173/menu-inicial,36,0,0
+1765020518048,14,GET Frontend Dashboard Page,200,OK,Frontend Test 1-12,text,true,,870,157,3,3,http://localhost:5173/dashboard,14,0,5
+1765020518064,9,GET Frontend Menu Page,200,OK,Frontend Test 1-37,text,true,,870,160,3,3,http://localhost:5173/menu-inicial,9,0,0
+1765020518088,6,GET Frontend Menu Page,200,OK,Frontend Test 1-8,text,true,,870,160,2,2,http://localhost:5173/menu-inicial,6,0,0
+1765020518096,8,GET Frontend Menu Page,200,OK,Frontend Test 1-12,text,true,,870,160,1,1,http://localhost:5173/menu-inicial,8,0,0

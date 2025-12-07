@@ -1,0 +1,501 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1765020137076,922,POST Login,200,,Frontend Test 1-29,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,920,0,90
+1765020137082,1093,POST Login,200,,Frontend Test 1-30,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1087,0,90
+1765020137047,1137,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-30,,true,,661,226,50,50,null,1087,0,90
+1765020137120,885,POST Login,200,,Frontend Test 1-31,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,885,0,53
+1765020137027,1035,POST Login,200,,Frontend Test 1-19,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1034,0,149
+1765020137035,1112,POST Login,200,,Frontend Test 1-21,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1111,0,134
+1765020136880,1307,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-19,,true,,661,226,50,50,null,1034,0,149
+1765020136904,1283,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-21,,true,,661,226,50,50,null,1111,0,134
+1765020137083,1105,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-31,,true,,661,226,50,50,null,885,0,53
+1765020137029,1160,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-29,,true,,661,226,50,50,null,920,0,90
+1765020137031,1171,POST Login,200,,Frontend Test 1-20,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1162,0,148
+1765020136888,1315,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-20,,true,,661,226,50,50,null,1162,0,148
+1765020137030,1205,POST Login,200,,Frontend Test 1-7,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1190,0,141
+1765020136743,1493,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-7,,true,,661,226,50,50,null,1190,0,141
+1765020137038,1226,POST Login,200,,Frontend Test 1-11,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1226,0,129
+1765020136766,1500,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-11,,true,,661,226,50,50,null,1226,0,129
+1765020137038,1250,POST Login,200,,Frontend Test 1-14,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1250,0,133
+1765020136806,1484,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-14,,true,,661,226,50,50,null,1250,0,133
+1765020137031,1281,POST Login,200,,Frontend Test 1-24,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1281,0,136
+1765020136950,1364,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-24,,true,,661,226,50,50,null,1281,0,136
+1765020137030,1336,POST Login,200,,Frontend Test 1-8,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1336,0,137
+1765020136743,1624,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-8,,true,,661,226,50,50,null,1336,0,137
+1765020137031,1638,POST Login,200,,Frontend Test 1-15,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1638,0,140
+1765020136810,1861,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-15,,true,,661,226,50,50,null,1638,0,140
+1765020137036,1644,POST Login,200,,Frontend Test 1-27,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1637,0,134
+1765020136995,1686,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-27,,true,,661,226,50,50,null,1637,0,134
+1765020137030,1672,POST Login,200,,Frontend Test 1-1,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,1672,0,135
+1765020136741,1963,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-1,,true,,660,226,50,50,null,1672,0,135
+1765020137030,1741,POST Login,200,,Frontend Test 1-5,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,1740,0,138
+1765020136741,2032,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-5,,true,,660,226,50,50,null,1740,0,138
+1765020137035,1781,POST Login,200,,Frontend Test 1-6,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,1781,0,135
+1765020136741,2077,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-6,,true,,660,226,50,50,null,1781,0,135
+1765020137030,1802,POST Login,200,,Frontend Test 1-16,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1801,0,135
+1765020136835,1998,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-16,,true,,661,226,50,50,null,1801,0,135
+1765020137034,1803,POST Login,200,,Frontend Test 1-13,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1799,0,136
+1765020136800,2038,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-13,,true,,661,226,50,50,null,1799,0,136
+1765020137027,1989,POST Login,200,,Frontend Test 1-2,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,1989,0,146
+1765020136742,2275,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-2,,true,,660,226,50,50,null,1989,0,146
+1765020137076,1949,POST Login,200,,Frontend Test 1-28,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1948,0,91
+1765020137029,1998,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-28,,true,,661,226,50,50,null,1948,0,91
+1765020137030,2108,POST Login,200,,Frontend Test 1-22,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2108,0,136
+1765020137035,2103,POST Login,200,,Frontend Test 1-26,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2103,0,133
+1765020136922,2217,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-22,,true,,661,226,50,50,null,2108,0,136
+1765020136992,2147,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-26,,true,,661,226,50,50,null,2103,0,133
+1765020137038,2145,POST Login,200,,Frontend Test 1-25,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2144,0,140
+1765020137178,2005,POST Login,200,,Frontend Test 1-34,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2005,0,23
+1765020137139,2045,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-34,,true,,661,226,50,50,null,2005,0,23
+1765020136969,2215,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-25,,true,,661,226,50,50,null,2144,0,140
+1765020137027,2157,POST Login,200,,Frontend Test 1-18,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2157,0,146
+1765020136881,2304,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-18,,true,,661,226,50,50,null,2157,0,146
+1765020137027,2203,POST Login,200,,Frontend Test 1-4,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,2203,0,139
+1765020136742,2489,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-4,,true,,660,226,50,50,null,2203,0,139
+1765020137027,2350,POST Login,200,,Frontend Test 1-12,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2350,0,146
+1765020136785,2593,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-12,,true,,661,226,50,50,null,2350,0,146
+1765020137141,2320,POST Login,200,,Frontend Test 1-33,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2307,0,26
+1765020137100,2362,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-33,,true,,661,226,50,50,null,2307,0,26
+1765020137031,2602,POST Login,200,,Frontend Test 1-10,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2594,0,134
+1765020136753,2881,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-10,,true,,661,226,50,50,null,2594,0,134
+1765020137035,2614,POST Login,200,,Frontend Test 1-23,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2614,0,132
+1765020136936,2715,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-23,,true,,661,226,50,50,null,2614,0,132
+1765020137219,2436,POST Login,200,,Frontend Test 1-36,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2435,0,57
+1765020137156,2500,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-36,,true,,661,226,50,50,null,2435,0,57
+1765020137030,2639,POST Login,200,,Frontend Test 1-9,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2639,0,137
+1765020136756,2914,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-9,,true,,661,226,50,50,null,2639,0,137
+1765020137225,2517,POST Login,200,,Frontend Test 1-37,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2506,0,51
+1765020137179,2564,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-37,,true,,661,226,50,50,null,2506,0,51
+1765020137141,2682,POST Login,200,,Frontend Test 1-32,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2677,0,37
+1765020137097,2728,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-32,,true,,661,226,50,50,null,2677,0,37
+1765020137034,2844,POST Login,200,,Frontend Test 1-17,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2835,0,140
+1765020136855,3024,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-17,,true,,661,226,50,50,null,2835,0,140
+1765020137030,2881,POST Login,200,,Frontend Test 1-3,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,2880,0,146
+1765020136742,3170,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-3,,true,,660,226,50,50,null,2880,0,146
+1765020137318,2659,POST Login,200,,Frontend Test 1-40,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2655,0,6
+1765020137273,2705,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-40,,true,,661,226,50,50,null,2655,0,6
+1765020137244,2763,POST Login,200,,Frontend Test 1-35,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2762,0,16
+1765020137144,2864,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-35,,true,,661,226,50,50,null,2762,0,16
+1765020137323,2804,POST Login,200,,Frontend Test 1-41,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2804,0,6
+1765020137275,2853,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-41,,true,,661,226,50,50,null,2804,0,6
+1765020137320,2862,POST Login,200,,Frontend Test 1-39,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2862,0,18
+1765020137273,2910,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-39,,true,,661,226,50,50,null,2862,0,18
+1765020137365,2845,POST Login,200,,Frontend Test 1-45,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2844,0,10
+1765020137323,2888,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-45,,true,,661,226,50,50,null,2844,0,10
+1765020138220,2027,POST Criar Cliente Teste,201,,Frontend Test 1-21,text,true,,484,545,50,50,http://localhost:8080/clientes,2026,0,0
+1765020138234,2111,POST Criar Cliente Teste,201,,Frontend Test 1-29,text,true,,484,545,50,50,http://localhost:8080/clientes,2111,0,0
+1765020140290,70,GET Frontend Dashboard Page,200,OK,Frontend Test 1-21,text,true,,870,157,50,50,http://localhost:5173/dashboard,69,0,37
+1765020138271,2093,POST Criar Cliente Teste,201,,Frontend Test 1-7,text,true,,483,543,50,50,http://localhost:8080/clientes,2092,0,0
+1765020137330,3040,POST Login,200,,Frontend Test 1-38,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3040,0,17
+1765020137276,3096,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-38,,true,,661,226,50,50,null,3040,0,17
+1765020140384,15,GET Frontend Dashboard Page,200,OK,Frontend Test 1-29,text,true,,870,157,50,50,http://localhost:5173/dashboard,15,0,3
+1765020140396,12,GET Frontend Menu Page,200,OK,Frontend Test 1-21,text,true,,870,160,50,50,http://localhost:5173/menu-inicial,12,0,0
+1765020138238,2172,POST Criar Cliente Teste,201,,Frontend Test 1-20,text,true,,484,545,50,50,http://localhost:8080/clientes,2172,0,0
+1765020139703,709,POST Criar Cliente Teste,201,,Frontend Test 1-9,text,true,,483,543,50,50,http://localhost:8080/clientes,709,0,0
+1765020138720,1705,POST Criar Cliente Teste,201,,Frontend Test 1-27,text,true,,484,545,49,49,http://localhost:8080/clientes,1705,0,0
+1765020140434,13,GET Frontend Menu Page,200,OK,Frontend Test 1-29,text,true,,870,160,49,49,http://localhost:5173/menu-inicial,13,0,0
+1765020137350,3119,POST Login,200,,Frontend Test 1-43,text,true,,661,226,48,48,http://localhost:8080/usuarios/login,3118,0,29
+1765020137300,3170,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-43,,true,,661,226,48,48,null,3118,0,29
+1765020138872,1602,POST Criar Cliente Teste,201,,Frontend Test 1-16,text,true,,484,545,48,48,http://localhost:8080/clientes,1602,0,0
+1765020138875,1601,POST Criar Cliente Teste,201,,Frontend Test 1-13,text,true,,484,545,48,48,http://localhost:8080/clientes,1601,0,0
+1765020138239,2250,POST Criar Cliente Teste,201,,Frontend Test 1-19,text,true,,484,545,48,48,http://localhost:8080/clientes,2250,0,0
+1765020139272,1217,POST Criar Cliente Teste,201,,Frontend Test 1-4,text,true,,483,543,48,48,http://localhost:8080/clientes,1217,0,0
+1765020138225,2267,POST Criar Cliente Teste,201,,Frontend Test 1-30,text,true,,484,545,48,48,http://localhost:8080/clientes,2263,0,0
+1765020137430,3093,POST Login,200,,Frontend Test 1-49,text,true,,661,226,48,48,http://localhost:8080/usuarios/login,3092,0,2
+1765020137368,3156,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-49,,true,,661,226,48,48,null,3092,0,2
+1765020139066,1460,POST Criar Cliente Teste,201,,Frontend Test 1-28,text,true,,484,545,48,48,http://localhost:8080/clientes,1460,0,0
+1765020138855,1672,POST Criar Cliente Teste,201,,Frontend Test 1-6,text,true,,483,543,48,48,http://localhost:8080/clientes,1672,0,0
+1765020138707,1820,POST Criar Cliente Teste,201,,Frontend Test 1-15,text,true,,484,545,48,48,http://localhost:8080/clientes,1820,0,0
+1765020138744,1793,POST Criar Cliente Teste,201,,Frontend Test 1-1,text,true,,483,543,48,48,http://localhost:8080/clientes,1793,0,0
+1765020139693,859,POST Criar Cliente Teste,201,,Frontend Test 1-36,text,true,,484,545,48,48,http://localhost:8080/clientes,859,0,0
+1765020139058,1509,POST Criar Cliente Teste,201,,Frontend Test 1-2,text,true,,483,543,48,48,http://localhost:8080/clientes,1508,0,0
+1765020139862,705,POST Criar Cliente Teste,201,,Frontend Test 1-32,text,true,,484,545,48,48,http://localhost:8080/clientes,705,0,0
+1765020139945,622,POST Criar Cliente Teste,201,,Frontend Test 1-3,text,true,,483,543,48,48,http://localhost:8080/clientes,622,0,0
+1765020138298,2269,POST Criar Cliente Teste,201,,Frontend Test 1-11,text,true,,484,545,48,48,http://localhost:8080/clientes,2269,0,0
+1765020139413,1248,POST Criar Cliente Teste,201,,Frontend Test 1-12,text,true,,484,545,48,48,http://localhost:8080/clientes,1248,0,0
+1765020139218,1444,POST Criar Cliente Teste,201,,Frontend Test 1-25,text,true,,484,545,48,48,http://localhost:8080/clientes,1444,0,0
+1765020139783,879,POST Criar Cliente Teste,201,,Frontend Test 1-37,text,true,,484,545,48,48,http://localhost:8080/clientes,879,0,0
+1765020138402,2261,POST Criar Cliente Teste,201,,Frontend Test 1-8,text,true,,483,543,48,48,http://localhost:8080/clientes,2261,0,0
+1765020137361,3383,POST Login,200,,Frontend Test 1-42,text,true,,661,226,48,48,http://localhost:8080/usuarios/login,3383,0,6
+1765020137284,3461,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-42,,true,,661,226,48,48,null,3383,0,6
+1765020137422,3343,POST Login,200,,Frontend Test 1-46,text,true,,661,226,48,48,http://localhost:8080/usuarios/login,3343,0,3
+1765020137359,3408,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-46,,true,,661,226,48,48,null,3343,0,3
+1765020137423,3347,POST Login,200,,Frontend Test 1-47,text,true,,661,226,48,48,http://localhost:8080/usuarios/login,3347,0,22
+1765020137361,3411,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-47,,true,,661,226,48,48,null,3347,0,22
+1765020140010,782,POST Criar Cliente Teste,201,,Frontend Test 1-40,text,true,,484,545,48,48,http://localhost:8080/clientes,782,0,0
+1765020138256,2537,POST Criar Cliente Teste,201,,Frontend Test 1-31,text,true,,484,545,48,48,http://localhost:8080/clientes,2537,0,0
+1765020139672,1120,POST Criar Cliente Teste,201,,Frontend Test 1-10,text,true,,484,545,48,48,http://localhost:8080/clientes,1120,0,0
+1765020139501,1377,POST Criar Cliente Teste,201,,Frontend Test 1-33,text,true,,484,545,48,48,http://localhost:8080/clientes,1377,0,0
+1765020139177,1715,POST Criar Cliente Teste,201,,Frontend Test 1-22,text,true,,484,545,48,48,http://localhost:8080/clientes,1715,0,0
+1765020139913,980,POST Criar Cliente Teste,201,,Frontend Test 1-17,text,true,,484,545,48,48,http://localhost:8080/clientes,979,0,0
+1765020139682,1211,POST Criar Cliente Teste,201,,Frontend Test 1-23,text,true,,484,545,48,48,http://localhost:8080/clientes,1211,0,0
+1765020138347,2545,POST Criar Cliente Teste,201,,Frontend Test 1-24,text,true,,484,545,48,48,http://localhost:8080/clientes,2545,0,0
+1765020138807,2085,POST Criar Cliente Teste,201,,Frontend Test 1-5,text,true,,483,543,48,48,http://localhost:8080/clientes,2085,0,0
+1765020139177,1718,POST Criar Cliente Teste,201,,Frontend Test 1-26,text,true,,484,545,48,48,http://localhost:8080/clientes,1717,0,0
+1765020140048,855,POST Criar Cliente Teste,201,,Frontend Test 1-35,text,true,,484,545,48,48,http://localhost:8080/clientes,855,0,0
+1765020137422,3490,POST Login,200,,Frontend Test 1-48,text,true,,661,226,48,48,http://localhost:8080/usuarios/login,3489,0,16
+1765020137367,3546,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-48,,true,,661,226,48,48,null,3489,0,16
+1765020140225,726,POST Criar Cliente Teste,201,,Frontend Test 1-39,text,true,,484,545,48,48,http://localhost:8080/clientes,725,0,0
+1765020140509,450,POST Criar Cliente Teste,201,,Frontend Test 1-43,text,true,,484,545,48,48,http://localhost:8080/clientes,450,0,0
+1765020140252,707,POST Criar Cliente Teste,201,,Frontend Test 1-45,text,true,,484,545,48,48,http://localhost:8080/clientes,707,0,0
+1765020139221,1739,POST Criar Cliente Teste,201,,Frontend Test 1-18,text,true,,484,545,48,48,http://localhost:8080/clientes,1738,0,0
+1765020139224,1737,POST Criar Cliente Teste,201,,Frontend Test 1-34,text,true,,484,545,48,48,http://localhost:8080/clientes,1737,0,0
+1765020140164,797,POST Criar Cliente Teste,201,,Frontend Test 1-41,text,true,,484,545,48,48,http://localhost:8080/clientes,795,0,0
+1765020138326,2636,POST Criar Cliente Teste,201,,Frontend Test 1-14,text,true,,484,545,48,48,http://localhost:8080/clientes,2633,0,0
+1765020140413,561,POST Criar Cliente Teste,201,,Frontend Test 1-38,text,true,,484,545,48,48,http://localhost:8080/clientes,560,0,0
+1765020140563,412,POST Criar Cliente Teste,201,,Frontend Test 1-49,text,true,,484,545,48,48,http://localhost:8080/clientes,411,0,0
+1765020140783,192,POST Criar Cliente Teste,201,,Frontend Test 1-42,text,true,,484,545,48,48,http://localhost:8080/clientes,192,0,0
+1765020140809,196,POST Criar Cliente Teste,201,,Frontend Test 1-47,text,true,,484,545,48,48,http://localhost:8080/clientes,195,0,0
+1765020140809,197,POST Criar Cliente Teste,201,,Frontend Test 1-46,text,true,,484,545,48,48,http://localhost:8080/clientes,196,0,0
+1765020137353,3665,POST Login,200,,Frontend Test 1-44,text,true,,661,226,48,48,http://localhost:8080/usuarios/login,3665,0,9
+1765020137307,3712,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-44,,true,,661,226,48,48,null,3665,0,9
+1765020137449,3579,POST Login,200,,Frontend Test 1-50,text,true,,661,226,48,48,http://localhost:8080/usuarios/login,3579,0,3
+1765020137383,3647,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-50,,true,,661,226,48,48,null,3579,0,3
+1765020140953,80,POST Criar Cliente Teste,201,,Frontend Test 1-48,text,true,,484,545,48,48,http://localhost:8080/clientes,78,0,0
+1765020141054,39,POST Criar Cliente Teste,201,,Frontend Test 1-44,text,true,,484,545,48,48,http://localhost:8080/clientes,39,0,0
+1765020141067,38,POST Criar Cliente Teste,201,,Frontend Test 1-50,text,true,,484,545,48,48,http://localhost:8080/clientes,38,0,0
+1765020140451,836,GET Frontend Dashboard Page,200,OK,Frontend Test 1-9,text,true,,870,157,48,48,http://localhost:5173/dashboard,836,0,4
+1765020140444,847,GET Frontend Dashboard Page,200,OK,Frontend Test 1-20,text,true,,870,157,48,48,http://localhost:5173/dashboard,847,0,15
+1765020140403,892,GET Frontend Dashboard Page,200,OK,Frontend Test 1-7,text,true,,870,157,48,48,http://localhost:5173/dashboard,892,0,60
+1765020140462,850,GET Frontend Dashboard Page,200,OK,Frontend Test 1-27,text,true,,870,157,48,48,http://localhost:5173/dashboard,850,0,59
+1765020140516,801,GET Frontend Dashboard Page,200,OK,Frontend Test 1-13,text,true,,870,157,48,48,http://localhost:5173/dashboard,801,0,7
+1765020140517,802,GET Frontend Dashboard Page,200,OK,Frontend Test 1-16,text,true,,870,157,48,48,http://localhost:5173/dashboard,802,0,7
+1765020140528,793,GET Frontend Dashboard Page,200,OK,Frontend Test 1-4,text,true,,870,157,48,48,http://localhost:5173/dashboard,793,0,13
+1765020140546,777,GET Frontend Dashboard Page,200,OK,Frontend Test 1-19,text,true,,870,157,48,48,http://localhost:5173/dashboard,777,0,5
+1765020140536,789,GET Frontend Dashboard Page,200,OK,Frontend Test 1-30,text,true,,870,157,48,48,http://localhost:5173/dashboard,789,0,26
+1765020140573,754,GET Frontend Dashboard Page,200,OK,Frontend Test 1-15,text,true,,870,157,48,48,http://localhost:5173/dashboard,754,0,3
+1765020140569,760,GET Frontend Dashboard Page,200,OK,Frontend Test 1-28,text,true,,870,157,48,48,http://localhost:5173/dashboard,760,0,9
+1765020140573,761,GET Frontend Dashboard Page,200,OK,Frontend Test 1-1,text,true,,870,157,48,48,http://localhost:5173/dashboard,761,0,5
+1765020140593,743,GET Frontend Dashboard Page,200,OK,Frontend Test 1-36,text,true,,870,157,48,48,http://localhost:5173/dashboard,743,0,4
+1765020140563,775,GET Frontend Dashboard Page,200,OK,Frontend Test 1-6,text,true,,870,157,48,48,http://localhost:5173/dashboard,775,0,75
+1765020140632,708,GET Frontend Dashboard Page,200,OK,Frontend Test 1-3,text,true,,870,157,48,48,http://localhost:5173/dashboard,708,0,20
+1765020140606,738,GET Frontend Dashboard Page,200,OK,Frontend Test 1-32,text,true,,870,157,48,48,http://localhost:5173/dashboard,738,0,48
+1765020140601,745,GET Frontend Dashboard Page,200,OK,Frontend Test 1-11,text,true,,870,157,48,48,http://localhost:5173/dashboard,745,0,54
+1765020140699,650,GET Frontend Dashboard Page,200,OK,Frontend Test 1-8,text,true,,870,157,48,48,http://localhost:5173/dashboard,650,0,6
+1765020140634,719,GET Frontend Dashboard Page,200,OK,Frontend Test 1-2,text,true,,870,157,48,48,http://localhost:5173/dashboard,719,0,24
+1765020140700,657,GET Frontend Dashboard Page,200,OK,Frontend Test 1-25,text,true,,870,157,48,48,http://localhost:5173/dashboard,657,0,9
+1765020140703,657,GET Frontend Dashboard Page,200,OK,Frontend Test 1-37,text,true,,870,157,48,48,http://localhost:5173/dashboard,657,0,8
+1765020140705,658,GET Frontend Dashboard Page,200,OK,Frontend Test 1-12,text,true,,870,157,48,48,http://localhost:5173/dashboard,658,0,7
+1765020140827,541,GET Frontend Dashboard Page,200,OK,Frontend Test 1-40,text,true,,870,157,48,48,http://localhost:5173/dashboard,541,0,8
+1765020140833,541,GET Frontend Dashboard Page,200,OK,Frontend Test 1-10,text,true,,870,157,48,48,http://localhost:5173/dashboard,540,0,4
+1765020140835,543,GET Frontend Dashboard Page,200,OK,Frontend Test 1-31,text,true,,870,157,48,48,http://localhost:5173/dashboard,543,0,4
+1765020140934,452,GET Frontend Dashboard Page,200,OK,Frontend Test 1-24,text,true,,870,157,48,48,http://localhost:5173/dashboard,452,0,4
+1765020140929,461,GET Frontend Dashboard Page,200,OK,Frontend Test 1-5,text,true,,870,157,48,48,http://localhost:5173/dashboard,461,0,14
+1765020140917,475,GET Frontend Dashboard Page,200,OK,Frontend Test 1-33,text,true,,870,157,48,48,http://localhost:5173/dashboard,475,0,28
+1765020140935,460,GET Frontend Dashboard Page,200,OK,Frontend Test 1-17,text,true,,870,157,48,48,http://localhost:5173/dashboard,460,0,17
+1765020140953,450,GET Frontend Dashboard Page,200,OK,Frontend Test 1-22,text,true,,870,157,48,48,http://localhost:5173/dashboard,450,0,17
+1765020140928,478,GET Frontend Dashboard Page,200,OK,Frontend Test 1-23,text,true,,870,157,48,48,http://localhost:5173/dashboard,478,0,25
+1765020140940,469,GET Frontend Dashboard Page,200,OK,Frontend Test 1-35,text,true,,870,157,48,48,http://localhost:5173/dashboard,469,0,29
+1765020140939,473,GET Frontend Dashboard Page,200,OK,Frontend Test 1-26,text,true,,870,157,48,48,http://localhost:5173/dashboard,473,0,30
+1765020140988,433,GET Frontend Dashboard Page,200,OK,Frontend Test 1-39,text,true,,870,157,48,48,http://localhost:5173/dashboard,433,0,29
+1765020141001,423,GET Frontend Dashboard Page,200,OK,Frontend Test 1-41,text,true,,870,157,48,48,http://localhost:5173/dashboard,423,0,9
+1765020141001,425,GET Frontend Dashboard Page,200,OK,Frontend Test 1-45,text,true,,870,157,48,48,http://localhost:5173/dashboard,425,0,10
+1765020141007,421,GET Frontend Dashboard Page,200,OK,Frontend Test 1-34,text,true,,870,157,48,48,http://localhost:5173/dashboard,421,0,13
+1765020141003,428,GET Frontend Dashboard Page,200,OK,Frontend Test 1-43,text,true,,870,157,48,48,http://localhost:5173/dashboard,428,0,18
+1765020141010,425,GET Frontend Dashboard Page,200,OK,Frontend Test 1-38,text,true,,870,157,48,48,http://localhost:5173/dashboard,424,0,16
+1765020141010,427,GET Frontend Dashboard Page,200,OK,Frontend Test 1-49,text,true,,870,157,48,48,http://localhost:5173/dashboard,427,0,13
+1765020141007,432,GET Frontend Dashboard Page,200,OK,Frontend Test 1-18,text,true,,870,157,48,48,http://localhost:5173/dashboard,432,0,19
+1765020141008,433,GET Frontend Dashboard Page,200,OK,Frontend Test 1-14,text,true,,870,157,48,48,http://localhost:5173/dashboard,433,0,18
+1765020141016,427,GET Frontend Dashboard Page,200,OK,Frontend Test 1-42,text,true,,870,157,48,48,http://localhost:5173/dashboard,427,0,11
+1765020141050,395,GET Frontend Dashboard Page,200,OK,Frontend Test 1-47,text,true,,870,157,48,48,http://localhost:5173/dashboard,395,0,6
+1765020141069,378,GET Frontend Dashboard Page,200,OK,Frontend Test 1-48,text,true,,870,157,48,48,http://localhost:5173/dashboard,378,0,9
+1765020141045,405,GET Frontend Dashboard Page,200,OK,Frontend Test 1-46,text,true,,870,157,48,48,http://localhost:5173/dashboard,405,0,7
+1765020141129,427,GET Frontend Dashboard Page,200,OK,Frontend Test 1-44,text,true,,870,157,48,48,http://localhost:5173/dashboard,427,0,5
+1765020141142,416,GET Frontend Dashboard Page,200,OK,Frontend Test 1-50,text,true,,870,157,48,48,http://localhost:5173/dashboard,416,0,3
+1765020141325,332,GET Frontend Menu Page,200,OK,Frontend Test 1-9,text,true,,870,160,48,48,http://localhost:5173/menu-inicial,332,0,0
+1765020141332,327,GET Frontend Menu Page,200,OK,Frontend Test 1-20,text,true,,870,160,47,47,http://localhost:5173/menu-inicial,327,0,0
+1765020141336,325,GET Frontend Menu Page,200,OK,Frontend Test 1-7,text,true,,870,160,46,46,http://localhost:5173/menu-inicial,325,0,0
+1765020141351,313,GET Frontend Menu Page,200,OK,Frontend Test 1-27,text,true,,870,160,45,45,http://localhost:5173/menu-inicial,313,0,0
+1765020141351,317,GET Frontend Menu Page,200,OK,Frontend Test 1-16,text,true,,870,160,44,44,http://localhost:5173/menu-inicial,317,0,0
+1765020141352,320,GET Frontend Menu Page,200,OK,Frontend Test 1-13,text,true,,870,160,43,43,http://localhost:5173/menu-inicial,320,0,0
+1765020141354,320,GET Frontend Menu Page,200,OK,Frontend Test 1-4,text,true,,870,160,42,42,http://localhost:5173/menu-inicial,320,0,0
+1765020141361,316,GET Frontend Menu Page,200,OK,Frontend Test 1-30,text,true,,870,160,41,41,http://localhost:5173/menu-inicial,316,0,0
+1765020141362,317,GET Frontend Menu Page,200,OK,Frontend Test 1-15,text,true,,870,160,40,40,http://localhost:5173/menu-inicial,317,0,0
+1765020141363,319,GET Frontend Menu Page,200,OK,Frontend Test 1-19,text,true,,870,160,39,39,http://localhost:5173/menu-inicial,318,0,0
+1765020141368,318,GET Frontend Menu Page,200,OK,Frontend Test 1-28,text,true,,870,160,38,38,http://localhost:5173/menu-inicial,318,0,0
+1765020141372,317,GET Frontend Menu Page,200,OK,Frontend Test 1-36,text,true,,870,160,37,37,http://localhost:5173/menu-inicial,317,0,0
+1765020141375,318,GET Frontend Menu Page,200,OK,Frontend Test 1-1,text,true,,870,160,36,36,http://localhost:5173/menu-inicial,318,0,0
+1765020141379,316,GET Frontend Menu Page,200,OK,Frontend Test 1-3,text,true,,870,160,35,35,http://localhost:5173/menu-inicial,316,0,0
+1765020141377,321,GET Frontend Menu Page,200,OK,Frontend Test 1-32,text,true,,870,160,34,34,http://localhost:5173/menu-inicial,321,0,0
+1765020141377,325,GET Frontend Menu Page,200,OK,Frontend Test 1-6,text,true,,870,160,33,33,http://localhost:5173/menu-inicial,325,0,0
+1765020141382,322,GET Frontend Menu Page,200,OK,Frontend Test 1-11,text,true,,870,160,32,32,http://localhost:5173/menu-inicial,322,0,0
+1765020141384,323,GET Frontend Menu Page,200,OK,Frontend Test 1-8,text,true,,870,160,31,31,http://localhost:5173/menu-inicial,323,0,0
+1765020141385,325,GET Frontend Menu Page,200,OK,Frontend Test 1-2,text,true,,870,160,30,30,http://localhost:5173/menu-inicial,325,0,0
+1765020141402,311,GET Frontend Menu Page,200,OK,Frontend Test 1-12,text,true,,870,160,29,29,http://localhost:5173/menu-inicial,311,0,0
+1765020141400,320,GET Frontend Menu Page,200,OK,Frontend Test 1-37,text,true,,870,160,28,28,http://localhost:5173/menu-inicial,320,0,0
+1765020141393,331,GET Frontend Menu Page,200,OK,Frontend Test 1-25,text,true,,870,160,27,27,http://localhost:5173/menu-inicial,331,0,0
+1765020141406,321,GET Frontend Menu Page,200,OK,Frontend Test 1-40,text,true,,870,160,26,26,http://localhost:5173/menu-inicial,321,0,0
+1765020141408,322,GET Frontend Menu Page,200,OK,Frontend Test 1-10,text,true,,870,160,25,25,http://localhost:5173/menu-inicial,322,0,0
+1765020141416,323,GET Frontend Menu Page,200,OK,Frontend Test 1-31,text,true,,870,160,24,24,http://localhost:5173/menu-inicial,323,0,0
+1765020141420,321,GET Frontend Menu Page,200,OK,Frontend Test 1-24,text,true,,870,160,23,23,http://localhost:5173/menu-inicial,321,0,0
+1765020141427,316,GET Frontend Menu Page,200,OK,Frontend Test 1-5,text,true,,870,160,22,22,http://localhost:5173/menu-inicial,316,0,0
+1765020141432,314,GET Frontend Menu Page,200,OK,Frontend Test 1-33,text,true,,870,160,21,21,http://localhost:5173/menu-inicial,314,0,0
+1765020141431,319,GET Frontend Menu Page,200,OK,Frontend Test 1-17,text,true,,870,160,20,20,http://localhost:5173/menu-inicial,319,0,0
+1765020141434,319,GET Frontend Menu Page,200,OK,Frontend Test 1-22,text,true,,870,160,19,19,http://localhost:5173/menu-inicial,318,0,0
+1765020141442,312,GET Frontend Menu Page,200,OK,Frontend Test 1-35,text,true,,870,160,18,18,http://localhost:5173/menu-inicial,312,0,0
+1765020141444,313,GET Frontend Menu Page,200,OK,Frontend Test 1-23,text,true,,870,160,17,17,http://localhost:5173/menu-inicial,313,0,0
+1765020141451,308,GET Frontend Menu Page,200,OK,Frontend Test 1-26,text,true,,870,160,16,16,http://localhost:5173/menu-inicial,308,0,0
+1765020141458,303,GET Frontend Menu Page,200,OK,Frontend Test 1-41,text,true,,870,160,15,15,http://localhost:5173/menu-inicial,303,0,0
+1765020141462,312,GET Frontend Menu Page,200,OK,Frontend Test 1-39,text,true,,870,160,14,14,http://localhost:5173/menu-inicial,312,0,0
+1765020141466,310,GET Frontend Menu Page,200,OK,Frontend Test 1-38,text,true,,870,160,13,13,http://localhost:5173/menu-inicial,310,0,0
+1765020141467,312,GET Frontend Menu Page,200,OK,Frontend Test 1-34,text,true,,870,160,12,12,http://localhost:5173/menu-inicial,312,0,0
+1765020141467,316,GET Frontend Menu Page,200,OK,Frontend Test 1-45,text,true,,870,160,11,11,http://localhost:5173/menu-inicial,316,0,0
+1765020141470,317,GET Frontend Menu Page,200,OK,Frontend Test 1-43,text,true,,870,160,10,10,http://localhost:5173/menu-inicial,317,0,0
+1765020141474,316,GET Frontend Menu Page,200,OK,Frontend Test 1-49,text,true,,870,160,9,9,http://localhost:5173/menu-inicial,316,0,0
+1765020141474,320,GET Frontend Menu Page,200,OK,Frontend Test 1-14,text,true,,870,160,8,8,http://localhost:5173/menu-inicial,319,0,0
+1765020141479,318,GET Frontend Menu Page,200,OK,Frontend Test 1-18,text,true,,870,160,7,7,http://localhost:5173/menu-inicial,318,0,0
+1765020141482,319,GET Frontend Menu Page,200,OK,Frontend Test 1-42,text,true,,870,160,6,6,http://localhost:5173/menu-inicial,319,0,0
+1765020141489,315,GET Frontend Menu Page,200,OK,Frontend Test 1-48,text,true,,870,160,5,5,http://localhost:5173/menu-inicial,315,0,0
+1765020141487,320,GET Frontend Menu Page,200,OK,Frontend Test 1-47,text,true,,870,160,4,4,http://localhost:5173/menu-inicial,320,0,0
+1765020141492,318,GET Frontend Menu Page,200,OK,Frontend Test 1-46,text,true,,870,160,3,3,http://localhost:5173/menu-inicial,318,0,0
+1765020141592,231,GET Frontend Menu Page,200,OK,Frontend Test 1-44,text,true,,870,160,2,2,http://localhost:5173/menu-inicial,231,0,0
+1765020141599,226,GET Frontend Menu Page,200,OK,Frontend Test 1-50,text,true,,870,160,1,1,http://localhost:5173/menu-inicial,225,0,0
+1765020150885,880,POST Login,200,,Frontend Test 1-31,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,879,0,7
+1765020150723,1112,POST Login,200,,Frontend Test 1-9,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1112,0,155
+1765020150726,929,POST Login,200,,Frontend Test 1-17,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,928,0,153
+1765020150725,960,POST Login,200,,Frontend Test 1-18,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,960,0,156
+1765020150723,932,POST Login,200,,Frontend Test 1-15,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,930,0,158
+1765020150726,1075,POST Login,200,,Frontend Test 1-2,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,1075,0,159
+1765020150721,957,POST Login,200,,Frontend Test 1-11,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,956,0,157
+1765020150723,1032,POST Login,200,,Frontend Test 1-6,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,1032,0,166
+1765020150584,1474,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-17,,true,,661,226,50,50,null,928,0,153
+1765020150723,932,POST Login,200,,Frontend Test 1-13,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,930,0,167
+1765020150486,1572,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-11,,true,,661,226,50,50,null,956,0,157
+1765020150399,1659,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-6,,true,,660,226,50,50,null,1032,0,166
+1765020150523,1535,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-13,,true,,661,226,50,50,null,930,0,167
+1765020150721,1029,POST Login,200,,Frontend Test 1-10,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1029,0,158
+1765020150611,1454,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-18,,true,,661,226,50,50,null,960,0,156
+1765020150446,1612,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-9,,true,,661,226,50,50,null,1112,0,155
+1765020150468,1598,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-10,,true,,661,226,50,50,null,1029,0,158
+1765020150556,1511,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-15,,true,,661,226,50,50,null,930,0,158
+1765020150399,1659,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-2,,true,,660,226,50,50,null,1075,0,159
+1765020150836,1268,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-31,,true,,661,226,50,50,null,879,0,7
+1765020150808,1348,POST Login,200,,Frontend Test 1-27,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1347,0,77
+1765020150769,1388,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-27,,true,,661,226,50,50,null,1347,0,77
+1765020150851,1410,POST Login,200,,Frontend Test 1-29,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1410,0,34
+1765020150720,1541,POST Login,200,,Frontend Test 1-3,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,1541,0,166
+1765020150808,1455,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-29,,true,,661,226,50,50,null,1410,0,34
+1765020150399,1864,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-3,,true,,660,226,50,50,null,1541,0,166
+1765020150723,1599,POST Login,200,,Frontend Test 1-4,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,1598,0,158
+1765020150399,1924,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-4,,true,,660,226,50,50,null,1598,0,158
+1765020150734,1819,POST Login,200,,Frontend Test 1-23,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1818,0,144
+1765020150688,1866,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-23,,true,,661,226,50,50,null,1818,0,144
+1765020150720,1858,POST Login,200,,Frontend Test 1-21,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1858,0,161
+1765020150664,1917,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-21,,true,,661,226,50,50,null,1858,0,161
+1765020150723,1873,POST Login,200,,Frontend Test 1-8,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1872,0,155
+1765020150439,2159,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-8,,true,,661,226,50,50,null,1872,0,155
+1765020150720,1957,POST Login,200,,Frontend Test 1-7,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1957,0,165
+1765020150412,2266,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-7,,true,,661,226,50,50,null,1957,0,165
+1765020150833,1871,POST Login,200,,Frontend Test 1-28,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,1870,0,47
+1765020150796,1909,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-28,,true,,661,226,50,50,null,1870,0,47
+1765020150723,2077,POST Login,200,,Frontend Test 1-16,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2070,0,155
+1765020150566,2235,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-16,,true,,661,226,50,50,null,2070,0,155
+1765020150721,2097,POST Login,200,,Frontend Test 1-5,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,2096,0,170
+1765020150399,2420,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-5,,true,,660,226,50,50,null,2096,0,170
+1765020150723,2279,POST Login,200,,Frontend Test 1-12,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2279,0,156
+1765020150510,2494,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-12,,true,,661,226,50,50,null,2279,0,156
+1765020150761,2291,POST Login,200,,Frontend Test 1-24,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2290,0,118
+1765020150707,2346,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-24,,true,,661,226,50,50,null,2290,0,118
+1765020150720,2431,POST Login,200,,Frontend Test 1-20,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2430,0,161
+1765020150641,2511,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-20,,true,,661,226,50,50,null,2430,0,161
+1765020150727,2534,POST Login,200,,Frontend Test 1-22,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2534,0,151
+1765020150683,2580,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-22,,true,,661,226,50,50,null,2534,0,151
+1765020150720,2566,POST Login,200,,Frontend Test 1-1,text,true,,660,226,50,50,http://localhost:8080/usuarios/login,2565,0,170
+1765020150399,2888,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-1,,true,,660,226,50,50,null,2565,0,170
+1765020150726,2592,POST Login,200,,Frontend Test 1-14,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2592,0,157
+1765020150544,2775,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-14,,true,,661,226,50,50,null,2592,0,157
+1765020150788,2567,POST Login,200,,Frontend Test 1-26,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2566,0,98
+1765020150747,2609,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-26,,true,,661,226,50,50,null,2566,0,98
+1765020150933,2431,POST Login,200,,Frontend Test 1-33,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2423,0,22
+1765020150866,2500,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-33,,true,,661,226,50,50,null,2423,0,22
+1765020150776,2674,POST Login,200,,Frontend Test 1-25,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2674,0,113
+1765020150736,2716,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-25,,true,,661,226,50,50,null,2674,0,113
+1765020150855,2751,POST Login,200,,Frontend Test 1-30,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2751,0,27
+1765020150816,2791,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-30,,true,,661,226,50,50,null,2751,0,27
+1765020150894,2723,POST Login,200,,Frontend Test 1-32,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2722,0,61
+1765020150851,2767,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-32,,true,,661,226,50,50,null,2722,0,61
+1765020150725,2968,POST Login,200,,Frontend Test 1-19,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2960,0,160
+1765020150619,3075,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-19,,true,,661,226,50,50,null,2960,0,160
+1765020150973,2744,POST Login,200,,Frontend Test 1-35,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2743,0,10
+1765020150893,2825,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-35,,true,,661,226,50,50,null,2743,0,10
+1765020151013,2772,POST Login,200,,Frontend Test 1-36,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2772,0,4
+1765020150959,2827,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-36,,true,,661,226,50,50,null,2772,0,4
+1765020150970,2887,POST Login,200,,Frontend Test 1-34,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2887,0,15
+1765020150892,2966,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-34,,true,,661,226,50,50,null,2887,0,15
+1765020151018,2932,POST Login,200,,Frontend Test 1-39,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2932,0,23
+1765020150976,2975,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-39,,true,,661,226,50,50,null,2932,0,23
+1765020150996,2956,POST Login,200,,Frontend Test 1-37,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,2956,0,24
+1765020150956,2997,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-37,,true,,661,226,50,50,null,2956,0,24
+1765020151041,3012,POST Login,200,,Frontend Test 1-40,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3006,0,4
+1765020150989,3065,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-40,,true,,661,226,50,50,null,3006,0,4
+1765020151045,3072,POST Login,200,,Frontend Test 1-38,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3072,0,8
+1765020150980,3138,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-38,,true,,661,226,50,50,null,3072,0,8
+1765020151087,3123,POST Login,200,,Frontend Test 1-42,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3123,0,13
+1765020151041,3170,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-42,,true,,661,226,50,50,null,3123,0,13
+1765020151106,3181,POST Login,200,,Frontend Test 1-43,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3180,0,2
+1765020151051,3237,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-43,,true,,661,226,50,50,null,3180,0,2
+1765020151136,3161,POST Login,200,,Frontend Test 1-45,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3160,0,3
+1765020151085,3213,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-45,,true,,661,226,50,50,null,3160,0,3
+1765020152097,2218,POST Criar Cliente Teste,201,,Frontend Test 1-6,text,true,,483,543,50,50,http://localhost:8080/clientes,2218,0,0
+1765020152103,2213,POST Criar Cliente Teste,201,,Frontend Test 1-18,text,true,,484,545,50,50,http://localhost:8080/clientes,2213,0,0
+1765020152115,2201,POST Criar Cliente Teste,201,,Frontend Test 1-15,text,true,,484,545,50,50,http://localhost:8080/clientes,2201,0,0
+1765020152150,2172,POST Criar Cliente Teste,201,,Frontend Test 1-31,text,true,,484,545,50,50,http://localhost:8080/clientes,2172,0,0
+1765020152102,2224,POST Criar Cliente Teste,201,,Frontend Test 1-10,text,true,,484,545,50,50,http://localhost:8080/clientes,2224,0,0
+1765020152199,2127,POST Criar Cliente Teste,201,,Frontend Test 1-27,text,true,,484,545,50,50,http://localhost:8080/clientes,2127,0,0
+1765020152102,2231,POST Criar Cliente Teste,201,,Frontend Test 1-9,text,true,,483,543,50,50,http://localhost:8080/clientes,2231,0,0
+1765020151125,3213,POST Login,200,,Frontend Test 1-44,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3213,0,3
+1765020152297,2042,POST Criar Cliente Teste,201,,Frontend Test 1-29,text,true,,484,545,50,50,http://localhost:8080/clientes,2042,0,0
+1765020151065,3275,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-44,,true,,661,226,50,50,null,3213,0,3
+1765020153393,949,POST Criar Cliente Teste,201,,Frontend Test 1-26,text,true,,484,545,50,50,http://localhost:8080/clientes,949,0,0
+1765020152097,2251,POST Criar Cliente Teste,201,,Frontend Test 1-13,text,true,,484,545,50,50,http://localhost:8080/clientes,2251,0,0
+1765020152299,2051,POST Criar Cliente Teste,201,,Frontend Test 1-3,text,true,,483,543,50,50,http://localhost:8080/clientes,2050,0,0
+1765020152118,2232,POST Criar Cliente Teste,201,,Frontend Test 1-2,text,true,,483,543,50,50,http://localhost:8080/clientes,2232,0,0
+1765020152363,1994,POST Criar Cliente Teste,201,,Frontend Test 1-4,text,true,,483,543,50,50,http://localhost:8080/clientes,1994,0,0
+1765020152854,1511,POST Criar Cliente Teste,201,,Frontend Test 1-5,text,true,,483,543,50,50,http://localhost:8080/clientes,1511,0,0
+1765020152838,1541,POST Criar Cliente Teste,201,,Frontend Test 1-16,text,true,,484,545,50,50,http://localhost:8080/clientes,1541,0,0
+1765020152589,1790,POST Criar Cliente Teste,201,,Frontend Test 1-23,text,true,,484,545,50,50,http://localhost:8080/clientes,1790,0,0
+1765020152634,1747,POST Criar Cliente Teste,201,,Frontend Test 1-8,text,true,,483,543,50,50,http://localhost:8080/clientes,1746,0,0
+1765020153094,1290,POST Criar Cliente Teste,201,,Frontend Test 1-24,text,true,,484,545,50,50,http://localhost:8080/clientes,1290,0,0
+1765020153302,1103,POST Criar Cliente Teste,201,,Frontend Test 1-22,text,true,,484,545,50,50,http://localhost:8080/clientes,1102,0,0
+1765020153192,1214,POST Criar Cliente Teste,201,,Frontend Test 1-20,text,true,,484,545,50,50,http://localhost:8080/clientes,1214,0,0
+1765020153041,1365,POST Criar Cliente Teste,201,,Frontend Test 1-12,text,true,,484,545,50,50,http://localhost:8080/clientes,1365,0,0
+1765020152101,2308,POST Criar Cliente Teste,201,,Frontend Test 1-17,text,true,,484,545,50,50,http://localhost:8080/clientes,2307,0,0
+1765020151075,3336,POST Login,200,,Frontend Test 1-41,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3332,0,2
+1765020151027,3386,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-41,,true,,661,226,50,50,null,3332,0,2
+1765020153826,595,POST Criar Cliente Teste,201,,Frontend Test 1-36,text,true,,484,545,50,50,http://localhost:8080/clientes,595,0,0
+1765020153399,1023,POST Criar Cliente Teste,201,,Frontend Test 1-33,text,true,,484,545,50,50,http://localhost:8080/clientes,1023,0,0
+1765020152741,1682,POST Criar Cliente Teste,201,,Frontend Test 1-28,text,true,,484,545,50,50,http://localhost:8080/clientes,1681,0,0
+1765020153899,526,POST Criar Cliente Teste,201,,Frontend Test 1-34,text,true,,484,545,50,50,http://localhost:8080/clientes,525,0,0
+1765020154090,335,POST Criar Cliente Teste,201,,Frontend Test 1-40,text,true,,484,545,50,50,http://localhost:8080/clientes,335,0,0
+1765020153496,942,POST Criar Cliente Teste,201,,Frontend Test 1-25,text,true,,484,545,50,50,http://localhost:8080/clientes,941,0,0
+1765020153753,685,POST Criar Cliente Teste,201,,Frontend Test 1-35,text,true,,484,545,50,50,http://localhost:8080/clientes,685,0,0
+1765020153356,1082,POST Criar Cliente Teste,201,,Frontend Test 1-14,text,true,,484,545,50,50,http://localhost:8080/clientes,1082,0,0
+1765020152717,1722,POST Criar Cliente Teste,201,,Frontend Test 1-7,text,true,,483,543,50,50,http://localhost:8080/clientes,1721,0,0
+1765020153993,457,POST Criar Cliente Teste,201,,Frontend Test 1-37,text,true,,484,545,50,50,http://localhost:8080/clientes,456,0,0
+1765020153657,807,POST Criar Cliente Teste,201,,Frontend Test 1-32,text,true,,484,545,50,50,http://localhost:8080/clientes,807,0,0
+1765020154154,311,POST Criar Cliente Teste,201,,Frontend Test 1-38,text,true,,484,545,50,50,http://localhost:8080/clientes,311,0,0
+1765020153327,1140,POST Criar Cliente Teste,201,,Frontend Test 1-1,text,true,,483,543,50,50,http://localhost:8080/clientes,1136,0,0
+1765020153732,735,POST Criar Cliente Teste,201,,Frontend Test 1-19,text,true,,484,545,50,50,http://localhost:8080/clientes,734,0,0
+1765020152618,1850,POST Criar Cliente Teste,201,,Frontend Test 1-21,text,true,,484,545,50,50,http://localhost:8080/clientes,1849,0,0
+1765020153992,495,POST Criar Cliente Teste,201,,Frontend Test 1-39,text,true,,484,545,50,50,http://localhost:8080/clientes,495,0,0
+1765020153644,844,POST Criar Cliente Teste,201,,Frontend Test 1-30,text,true,,484,545,50,50,http://localhost:8080/clientes,844,0,0
+1765020154245,243,POST Criar Cliente Teste,201,,Frontend Test 1-42,text,true,,484,545,50,50,http://localhost:8080/clientes,243,0,0
+1765020152099,2390,POST Criar Cliente Teste,201,,Frontend Test 1-11,text,true,,484,545,50,50,http://localhost:8080/clientes,2389,0,0
+1765020154373,122,POST Criar Cliente Teste,201,,Frontend Test 1-44,text,true,,484,545,50,50,http://localhost:8080/clientes,122,0,0
+1765020154322,186,POST Criar Cliente Teste,201,,Frontend Test 1-43,text,true,,484,545,50,50,http://localhost:8080/clientes,185,0,0
+1765020151149,3364,POST Login,200,,Frontend Test 1-46,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3364,0,3
+1765020151104,3411,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-46,,true,,661,226,50,50,null,3364,0,3
+1765020154331,192,POST Criar Cliente Teste,201,,Frontend Test 1-45,text,true,,484,545,50,50,http://localhost:8080/clientes,191,0,0
+1765020154446,111,POST Criar Cliente Teste,201,,Frontend Test 1-41,text,true,,484,545,50,50,http://localhost:8080/clientes,111,0,0
+1765020154551,33,POST Criar Cliente Teste,201,,Frontend Test 1-46,text,true,,484,545,50,50,http://localhost:8080/clientes,32,0,0
+1765020151175,3502,POST Login,200,,Frontend Test 1-47,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3501,0,28
+1765020151119,3559,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-47,,true,,661,226,50,50,null,3501,0,28
+1765020151198,3511,POST Login,200,,Frontend Test 1-49,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3511,0,5
+1765020151156,3555,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-49,,true,,661,226,50,50,null,3511,0,5
+1765020154715,34,POST Criar Cliente Teste,201,,Frontend Test 1-47,text,true,,484,545,50,50,http://localhost:8080/clientes,33,0,0
+1765020154749,23,POST Criar Cliente Teste,201,,Frontend Test 1-49,text,true,,484,545,50,50,http://localhost:8080/clientes,23,0,0
+1765020151200,3576,POST Login,200,,Frontend Test 1-48,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3576,0,10
+1765020151136,3641,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-48,,true,,661,226,50,50,null,3576,0,10
+1765020154366,444,GET Frontend Dashboard Page,200,OK,Frontend Test 1-10,text,true,,870,157,50,50,http://localhost:5173/dashboard,444,0,3
+1765020154366,445,GET Frontend Dashboard Page,200,OK,Frontend Test 1-31,text,true,,870,157,50,50,http://localhost:5173/dashboard,445,0,4
+1765020154353,463,GET Frontend Dashboard Page,200,OK,Frontend Test 1-6,text,true,,870,157,50,50,http://localhost:5173/dashboard,463,0,17
+1765020154355,464,GET Frontend Dashboard Page,200,OK,Frontend Test 1-15,text,true,,870,157,50,50,http://localhost:5173/dashboard,464,0,15
+1765020154371,458,GET Frontend Dashboard Page,200,OK,Frontend Test 1-9,text,true,,870,157,50,50,http://localhost:5173/dashboard,458,0,9
+1765020154356,477,GET Frontend Dashboard Page,200,OK,Frontend Test 1-18,text,true,,870,157,50,50,http://localhost:5173/dashboard,477,0,19
+1765020154372,463,GET Frontend Dashboard Page,200,OK,Frontend Test 1-29,text,true,,870,157,50,50,http://localhost:5173/dashboard,463,0,10
+1765020154817,29,POST Criar Cliente Teste,201,,Frontend Test 1-48,text,true,,484,545,50,50,http://localhost:8080/clientes,29,0,0
+1765020154377,469,GET Frontend Dashboard Page,200,OK,Frontend Test 1-26,text,true,,870,157,50,50,http://localhost:5173/dashboard,469,0,24
+1765020154388,463,GET Frontend Dashboard Page,200,OK,Frontend Test 1-13,text,true,,870,157,50,50,http://localhost:5173/dashboard,462,0,12
+1765020154370,484,GET Frontend Dashboard Page,200,OK,Frontend Test 1-27,text,true,,870,157,50,50,http://localhost:5173/dashboard,484,0,28
+1765020154387,469,GET Frontend Dashboard Page,200,OK,Frontend Test 1-2,text,true,,870,157,50,50,http://localhost:5173/dashboard,469,0,21
+1765020154400,458,GET Frontend Dashboard Page,200,OK,Frontend Test 1-5,text,true,,870,157,50,50,http://localhost:5173/dashboard,458,0,14
+1765020151232,3628,POST Login,200,,Frontend Test 1-50,text,true,,661,226,50,50,http://localhost:8080/usuarios/login,3628,0,7
+1765020154393,467,GET Frontend Dashboard Page,200,OK,Frontend Test 1-4,text,true,,870,157,50,50,http://localhost:5173/dashboard,467,0,39
+1765020151178,3683,Login,200,"Number of samples in transaction : 1, number of failing samples : 0",Frontend Test 1-50,,true,,661,226,50,50,null,3628,0,7
+1765020154419,444,GET Frontend Dashboard Page,200,OK,Frontend Test 1-8,text,true,,870,157,50,50,http://localhost:5173/dashboard,444,0,35
+1765020154399,467,GET Frontend Dashboard Page,200,OK,Frontend Test 1-3,text,true,,870,157,50,50,http://localhost:5173/dashboard,467,0,46
+1765020154423,445,GET Frontend Dashboard Page,200,OK,Frontend Test 1-23,text,true,,870,157,50,50,http://localhost:5173/dashboard,445,0,32
+1765020154420,451,GET Frontend Dashboard Page,200,OK,Frontend Test 1-24,text,true,,870,157,50,50,http://localhost:5173/dashboard,451,0,31
+1765020154449,425,GET Frontend Dashboard Page,200,OK,Frontend Test 1-12,text,true,,870,157,50,50,http://localhost:5173/dashboard,424,0,4
+1765020154417,458,GET Frontend Dashboard Page,200,OK,Frontend Test 1-16,text,true,,870,157,50,50,http://localhost:5173/dashboard,458,0,37
+1765020154443,433,GET Frontend Dashboard Page,200,OK,Frontend Test 1-22,text,true,,870,157,50,50,http://localhost:5173/dashboard,433,0,23
+1765020154456,422,GET Frontend Dashboard Page,200,OK,Frontend Test 1-36,text,true,,870,157,50,50,http://localhost:5173/dashboard,422,0,3
+1765020154462,419,GET Frontend Dashboard Page,200,OK,Frontend Test 1-40,text,true,,870,157,50,50,http://localhost:5173/dashboard,419,0,15
+1765020154450,433,GET Frontend Dashboard Page,200,OK,Frontend Test 1-20,text,true,,870,157,50,50,http://localhost:5173/dashboard,433,0,32
+1765020154474,412,GET Frontend Dashboard Page,200,OK,Frontend Test 1-28,text,true,,870,157,50,50,http://localhost:5173/dashboard,412,0,5
+1765020154481,407,GET Frontend Dashboard Page,200,OK,Frontend Test 1-35,text,true,,870,157,50,50,http://localhost:5173/dashboard,406,0,4
+1765020154476,413,GET Frontend Dashboard Page,200,OK,Frontend Test 1-7,text,true,,870,157,50,50,http://localhost:5173/dashboard,413,0,15
+1765020154460,431,GET Frontend Dashboard Page,200,OK,Frontend Test 1-33,text,true,,870,157,50,50,http://localhost:5173/dashboard,431,0,32
+1765020154448,445,GET Frontend Dashboard Page,200,OK,Frontend Test 1-17,text,true,,870,157,50,50,http://localhost:5173/dashboard,445,0,44
+1765020154472,423,GET Frontend Dashboard Page,200,OK,Frontend Test 1-25,text,true,,870,157,50,50,http://localhost:5173/dashboard,422,0,31
+1765020154476,422,GET Frontend Dashboard Page,200,OK,Frontend Test 1-14,text,true,,870,157,50,50,http://localhost:5173/dashboard,422,0,27
+1765020154464,438,GET Frontend Dashboard Page,200,OK,Frontend Test 1-34,text,true,,870,157,50,50,http://localhost:5173/dashboard,438,0,62
+1765020154508,396,GET Frontend Dashboard Page,200,OK,Frontend Test 1-1,text,true,,870,157,50,50,http://localhost:5173/dashboard,396,0,4
+1765020154509,397,GET Frontend Dashboard Page,200,OK,Frontend Test 1-19,text,true,,870,157,50,50,http://localhost:5173/dashboard,397,0,3
+1765020154503,406,GET Frontend Dashboard Page,200,OK,Frontend Test 1-32,text,true,,870,157,50,50,http://localhost:5173/dashboard,406,0,15
+1765020154499,413,GET Frontend Dashboard Page,200,OK,Frontend Test 1-37,text,true,,870,157,50,50,http://localhost:5173/dashboard,412,0,32
+1765020154523,392,GET Frontend Dashboard Page,200,OK,Frontend Test 1-39,text,true,,870,157,50,50,http://localhost:5173/dashboard,392,0,4
+1765020154499,418,GET Frontend Dashboard Page,200,OK,Frontend Test 1-38,text,true,,870,157,50,50,http://localhost:5173/dashboard,418,0,32
+1765020154527,392,GET Frontend Dashboard Page,200,OK,Frontend Test 1-11,text,true,,870,157,50,50,http://localhost:5173/dashboard,392,0,6
+1765020154505,419,GET Frontend Dashboard Page,200,OK,Frontend Test 1-21,text,true,,870,157,50,50,http://localhost:5173/dashboard,418,0,29
+1765020154523,404,GET Frontend Dashboard Page,200,OK,Frontend Test 1-42,text,true,,870,157,50,50,http://localhost:5173/dashboard,404,0,20
+1765020154898,32,POST Criar Cliente Teste,201,,Frontend Test 1-50,text,true,,484,545,50,50,http://localhost:8080/clientes,31,0,0
+1765020154524,407,GET Frontend Dashboard Page,200,OK,Frontend Test 1-30,text,true,,870,157,50,50,http://localhost:5173/dashboard,407,0,15
+1765020154545,388,GET Frontend Dashboard Page,200,OK,Frontend Test 1-43,text,true,,870,157,50,50,http://localhost:5173/dashboard,388,0,6
+1765020154537,398,GET Frontend Dashboard Page,200,OK,Frontend Test 1-44,text,true,,870,157,50,50,http://localhost:5173/dashboard,398,0,4
+1765020154561,376,GET Frontend Dashboard Page,200,OK,Frontend Test 1-45,text,true,,870,157,50,50,http://localhost:5173/dashboard,376,0,6
+1765020154591,349,GET Frontend Dashboard Page,200,OK,Frontend Test 1-41,text,true,,870,157,50,50,http://localhost:5173/dashboard,349,0,8
+1765020154619,420,GET Frontend Dashboard Page,200,OK,Frontend Test 1-46,text,true,,870,157,50,50,http://localhost:5173/dashboard,420,0,8
+1765020154789,328,GET Frontend Dashboard Page,200,OK,Frontend Test 1-47,text,true,,870,157,50,50,http://localhost:5173/dashboard,327,0,3
+1765020154815,312,GET Frontend Dashboard Page,200,OK,Frontend Test 1-49,text,true,,870,157,50,50,http://localhost:5173/dashboard,312,0,4
+1765020154847,286,GET Frontend Menu Page,200,OK,Frontend Test 1-10,text,true,,870,160,50,50,http://localhost:5173/menu-inicial,286,0,0
+1765020154852,283,GET Frontend Menu Page,200,OK,Frontend Test 1-6,text,true,,870,160,50,50,http://localhost:5173/menu-inicial,283,0,0
+1765020154848,289,GET Frontend Menu Page,200,OK,Frontend Test 1-31,text,true,,870,160,48,48,http://localhost:5173/menu-inicial,289,0,0
+1765020154852,288,GET Frontend Menu Page,200,OK,Frontend Test 1-15,text,true,,870,160,47,47,http://localhost:5173/menu-inicial,288,0,0
+1765020154866,276,GET Frontend Menu Page,200,OK,Frontend Test 1-9,text,true,,870,160,46,46,http://localhost:5173/menu-inicial,276,0,0
+1765020154872,272,GET Frontend Menu Page,200,OK,Frontend Test 1-18,text,true,,870,160,45,45,http://localhost:5173/menu-inicial,272,0,0
+1765020154877,272,GET Frontend Menu Page,200,OK,Frontend Test 1-29,text,true,,870,160,44,44,http://localhost:5173/menu-inicial,272,0,0
+1765020154881,270,GET Frontend Menu Page,200,OK,Frontend Test 1-26,text,true,,870,160,43,43,http://localhost:5173/menu-inicial,269,0,0
+1765020154884,269,GET Frontend Menu Page,200,OK,Frontend Test 1-13,text,true,,870,160,42,42,http://localhost:5173/menu-inicial,269,0,0
+1765020154896,259,GET Frontend Menu Page,200,OK,Frontend Test 1-4,text,true,,870,160,41,41,http://localhost:5173/menu-inicial,259,0,0
+1765020154893,264,GET Frontend Menu Page,200,OK,Frontend Test 1-27,text,true,,870,160,40,40,http://localhost:5173/menu-inicial,264,0,0
+1765020154897,262,GET Frontend Menu Page,200,OK,Frontend Test 1-2,text,true,,870,160,39,39,http://localhost:5173/menu-inicial,262,0,0
+1765020154898,263,GET Frontend Menu Page,200,OK,Frontend Test 1-8,text,true,,870,160,38,38,http://localhost:5173/menu-inicial,263,0,0
+1765020154901,264,GET Frontend Menu Page,200,OK,Frontend Test 1-3,text,true,,870,160,37,37,http://localhost:5173/menu-inicial,264,0,0
+1765020154898,269,GET Frontend Menu Page,200,OK,Frontend Test 1-5,text,true,,870,160,36,36,http://localhost:5173/menu-inicial,269,0,0
+1765020154906,264,GET Frontend Menu Page,200,OK,Frontend Test 1-16,text,true,,870,160,35,35,http://localhost:5173/menu-inicial,264,0,0
+1765020154908,264,GET Frontend Menu Page,200,OK,Frontend Test 1-24,text,true,,870,160,34,34,http://localhost:5173/menu-inicial,264,0,0
+1765020154907,267,GET Frontend Menu Page,200,OK,Frontend Test 1-23,text,true,,870,160,33,33,http://localhost:5173/menu-inicial,267,0,0
+1765020154908,268,GET Frontend Menu Page,200,OK,Frontend Test 1-12,text,true,,870,160,32,32,http://localhost:5173/menu-inicial,268,0,0
+1765020154913,267,GET Frontend Menu Page,200,OK,Frontend Test 1-22,text,true,,870,160,31,31,http://localhost:5173/menu-inicial,267,0,0
+1765020154919,264,GET Frontend Menu Page,200,OK,Frontend Test 1-36,text,true,,870,160,30,30,http://localhost:5173/menu-inicial,264,0,0
+1765020154919,267,GET Frontend Menu Page,200,OK,Frontend Test 1-40,text,true,,870,160,29,29,http://localhost:5173/menu-inicial,267,0,0
+1765020154919,270,GET Frontend Menu Page,200,OK,Frontend Test 1-20,text,true,,870,160,28,28,http://localhost:5173/menu-inicial,270,0,0
+1765020154921,271,GET Frontend Menu Page,200,OK,Frontend Test 1-35,text,true,,870,160,27,27,http://localhost:5173/menu-inicial,271,0,0
+1765020154880,314,GET Frontend Dashboard Page,200,OK,Frontend Test 1-48,text,true,,870,157,26,26,http://localhost:5173/dashboard,314,0,3
+1765020154921,278,GET Frontend Menu Page,200,OK,Frontend Test 1-28,text,true,,870,160,26,26,http://localhost:5173/menu-inicial,278,0,0
+1765020154926,279,GET Frontend Menu Page,200,OK,Frontend Test 1-33,text,true,,870,160,25,25,http://localhost:5173/menu-inicial,279,0,0
+1765020154929,278,GET Frontend Menu Page,200,OK,Frontend Test 1-17,text,true,,870,160,24,24,http://localhost:5173/menu-inicial,278,0,0
+1765020154932,278,GET Frontend Menu Page,200,OK,Frontend Test 1-7,text,true,,870,160,23,23,http://localhost:5173/menu-inicial,277,0,0
+1765020154933,279,GET Frontend Menu Page,200,OK,Frontend Test 1-14,text,true,,870,160,22,22,http://localhost:5173/menu-inicial,279,0,0
+1765020154935,280,GET Frontend Menu Page,200,OK,Frontend Test 1-25,text,true,,870,160,21,21,http://localhost:5173/menu-inicial,280,0,0
+1765020154940,278,GET Frontend Menu Page,200,OK,Frontend Test 1-1,text,true,,870,160,20,20,http://localhost:5173/menu-inicial,278,0,0
+1765020154940,280,GET Frontend Menu Page,200,OK,Frontend Test 1-34,text,true,,870,160,19,19,http://localhost:5173/menu-inicial,280,0,0
+1765020154941,282,GET Frontend Menu Page,200,OK,Frontend Test 1-19,text,true,,870,160,18,18,http://localhost:5173/menu-inicial,282,0,0
+1765020154945,280,GET Frontend Menu Page,200,OK,Frontend Test 1-32,text,true,,870,160,17,17,http://localhost:5173/menu-inicial,280,0,0
+1765020154950,277,GET Frontend Menu Page,200,OK,Frontend Test 1-38,text,true,,870,160,16,16,http://localhost:5173/menu-inicial,277,0,0
+1765020154952,277,GET Frontend Menu Page,200,OK,Frontend Test 1-39,text,true,,870,160,15,15,http://localhost:5173/menu-inicial,277,0,0
+1765020154954,279,GET Frontend Menu Page,200,OK,Frontend Test 1-37,text,true,,870,160,14,14,http://localhost:5173/menu-inicial,278,0,0
+1765020154964,270,GET Frontend Menu Page,200,OK,Frontend Test 1-21,text,true,,870,160,14,14,http://localhost:5173/menu-inicial,270,0,0
+1765020154954,282,GET Frontend Menu Page,200,OK,Frontend Test 1-11,text,true,,870,160,12,12,http://localhost:5173/menu-inicial,282,0,0
+1765020154963,276,GET Frontend Menu Page,200,OK,Frontend Test 1-42,text,true,,870,160,11,11,http://localhost:5173/menu-inicial,276,0,0
+1765020154970,271,GET Frontend Menu Page,200,OK,Frontend Test 1-44,text,true,,870,160,10,10,http://localhost:5173/menu-inicial,270,0,0
+1765020154972,271,GET Frontend Menu Page,200,OK,Frontend Test 1-45,text,true,,870,160,9,9,http://localhost:5173/menu-inicial,270,0,0
+1765020154974,272,GET Frontend Menu Page,200,OK,Frontend Test 1-43,text,true,,870,160,8,8,http://localhost:5173/menu-inicial,271,0,0
+1765020154972,276,GET Frontend Menu Page,200,OK,Frontend Test 1-30,text,true,,870,160,8,8,http://localhost:5173/menu-inicial,276,0,0
+1765020154977,273,GET Frontend Menu Page,200,OK,Frontend Test 1-41,text,true,,870,160,6,6,http://localhost:5173/menu-inicial,273,0,0
+1765020154967,298,GET Frontend Dashboard Page,200,OK,Frontend Test 1-50,text,true,,870,157,5,5,http://localhost:5173/dashboard,298,0,4
+1765020155074,192,GET Frontend Menu Page,200,OK,Frontend Test 1-46,text,true,,870,160,5,5,http://localhost:5173/menu-inicial,192,0,0
+1765020155150,127,GET Frontend Menu Page,200,OK,Frontend Test 1-47,text,true,,870,160,4,4,http://localhost:5173/menu-inicial,126,0,0
+1765020155166,112,GET Frontend Menu Page,200,OK,Frontend Test 1-49,text,true,,870,160,3,3,http://localhost:5173/menu-inicial,112,0,0
+1765020155228,54,GET Frontend Menu Page,200,OK,Frontend Test 1-48,text,true,,870,160,2,2,http://localhost:5173/menu-inicial,54,0,0
+1765020155299,7,GET Frontend Menu Page,200,OK,Frontend Test 1-50,text,true,,870,160,1,1,http://localhost:5173/menu-inicial,7,0,0
